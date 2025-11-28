@@ -1,7 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:path_provider/path_provider.dart' as path;
 import 'package:workout_notebook/presentation/home/widgets/home_view.dart';
 
-void main() {
+/*
+TODO in the app:
+  - add hive TypeAdapters(ExcersiseAdapter, TrainingAdapter)
+  - implement Result for error handling
+  - unit/widget/integrations tests
+
+ */
+
+void main() async {
+  // init local db
+  WidgetsFlutterBinding.ensureInitialized();
+  final localPath = await path.getApplicationDocumentsDirectory();
+  Hive.init(localPath.path);
+
   runApp(const MyApp());
 }
 

@@ -1,0 +1,1 @@
+enum HiveBoxKey {trainings, exercises}
