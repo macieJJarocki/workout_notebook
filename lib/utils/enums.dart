@@ -1,1 +1,1 @@
-enum HiveBoxKey {trainings, exercises}
+enum HiveBoxKey { workouts, exercises }

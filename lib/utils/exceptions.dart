@@ -1,9 +1,17 @@
-class DbException implements Exception {
+class AppException<T> implements Exception {
   final String message;
-  DbException(this.message);
-
+  AppException(this.message);
+  
   @override
   String toString() {
-    return 'DbException: $message';
+    return '$runtimeType: $message';
   }
+}
+
+class DataException extends AppException {
+  DataException(super.message);
+}
+
+class DbException extends AppException {
+  DbException(super.message);
 }

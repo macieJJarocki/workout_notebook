@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:workout_notebook/utils/const.dart';
 import 'package:workout_notebook/utils/enums.dart';
@@ -8,7 +7,6 @@ class LocalDbService {
   final HiveInterface _hive;
 
   LocalDbService(this._hive);
-  @visibleForTesting
   Future<Box> init(String boxName) async {
     try {
       return await _hive.openBox(boxName);
@@ -16,22 +14,26 @@ class LocalDbService {
       throw DbException("Can't connect to the local db.");
     }
   }
-@visibleForTesting
-  // TODO should return List<TypeAdapter>
-  Future<List<dynamic>> read(HiveBoxKey key) async {
+
+  // TODO should take List<TypeAdapter> instead List<Map<String, dynamic>>
+  Future<List<Map<String, dynamic>>> read(HiveBoxKey key) async {
     // return part of the box state
-    final box = await init(boxName);
-    final List<dynamic>? dataOrNull = box.get(key.name);
-    if (dataOrNull == null) {
-      throw DbException("Can't read from the local db.");
+    try {
+      final box = await init(boxName);
+      final List<Map<String, dynamic>>? dataOrNull = box.get(key.name);
+      if (dataOrNull == null) {
+        throw DbException("Can't read from the local db.");
+      }
+      return dataOrNull;
+    } catch (e) {
+      rethrow;
     }
-    return dataOrNull;
   }
 
-  // TODO should take List<TypeAdapter>
-  Future<void> write(HiveBoxKey key, List<dynamic> list) async {
+  // TODO should take List<TypeAdapter> instead List<Map<String, dynamic>>
+  Future<void> write(HiveBoxKey key, List<Map<String, dynamic>> list) async {
     try {
-    final box = await init(boxName);
+      final box = await init(boxName);
       await box.put(key.name, list);
     } catch (e) {
       throw DbException("Can't put data into the local db.");

@@ -10,6 +10,8 @@ import 'package:workout_notebook/utils/const.dart';
 import 'package:workout_notebook/utils/enums.dart';
 import 'package:workout_notebook/utils/exceptions.dart';
 
+import 'utils/fake_data.dart';
+
 class MockHive extends Mock implements HiveInterface {}
 
 class MockBox extends Mock implements Box {}
@@ -18,13 +20,13 @@ class FakeBox extends Fake implements Box {
   @override
   String get name => 'App';
 
-  Map<String, List<dynamic>> fakeBoxState = {
-    HiveBoxKey.exercises.name: <dynamic>[],
-    HiveBoxKey.trainings.name: <dynamic>[],
+  Map<String, List<Map<String, dynamic>>> fakeBoxState = {
+    HiveBoxKey.exercises.name: <Map<String, dynamic>>[],
+    HiveBoxKey.workouts.name: <Map<String, dynamic>>[],
   };
   @override
   get(key, {defaultValue}) {
-    if (key == HiveBoxKey.exercises.name || HiveBoxKey.trainings.name == key) {
+    if (key == HiveBoxKey.exercises.name || HiveBoxKey.workouts.name == key) {
       return fakeBoxState[key];
     }
     return null;
@@ -148,10 +150,10 @@ void main() {
 
             when(
               () => mockBox.get(any()),
-            ).thenReturn(<dynamic>[]);
+            ).thenReturn(<Map<String, dynamic>>[]);
 
             final data = await service.read(HiveBoxKey.exercises);
-            final data2 = await service.read(HiveBoxKey.trainings);
+            final data2 = await service.read(HiveBoxKey.workouts);
 
             expect(data, isList);
             expect(data2, isList);
@@ -184,11 +186,12 @@ void main() {
             final initExcersiceState = await service.read(HiveBoxKey.exercises);
             expect(initExcersiceState, isList);
             expect(initExcersiceState, isEmpty);
-            await service.write(HiveBoxKey.exercises, [777]);
+            await service.write(HiveBoxKey.exercises, [
+              FakeData.getExerciseAsMap(),
+            ]);
             final newExcersiceState = await service.read(HiveBoxKey.exercises);
             expect(newExcersiceState, isNotEmpty);
-            expect(newExcersiceState, contains(777));
-            expect(newExcersiceState.length, 1);
+            expect(newExcersiceState, hasLength(1));
           },
         );
         test(
