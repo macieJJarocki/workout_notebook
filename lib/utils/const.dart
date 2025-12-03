@@ -1,1 +1,1 @@
-const String boxName = 'App';
+const String boxName = 'Data';

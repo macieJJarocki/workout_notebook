@@ -9,28 +9,32 @@ class LocalDbService {
   LocalDbService(this._hive);
   Future<Box> init(String boxName) async {
     try {
-      return await _hive.openBox(boxName);
+      final box = await _hive.openBox(boxName);
+      return box;
     } catch (e) {
       throw DbException("Can't connect to the local db.");
     }
   }
 
-  // TODO should take List<TypeAdapter> instead List<Map<String, dynamic>>
+  // TODO should return List<TypeAdapter> instead List<Map<String, dynamic>>
   Future<List<Map<String, dynamic>>> read(HiveBoxKey key) async {
-    // return part of the box state
     try {
       final box = await init(boxName);
-      final List<Map<String, dynamic>>? dataOrNull = box.get(key.name);
-      if (dataOrNull == null) {
-        throw DbException("Can't read from the local db.");
-      }
+      final dataOrNull = box.get(
+        key.name,
+        defaultValue: <Map<String, dynamic>>[],
+      );
+      // TODO After first data pulling box.get return null so method throw error
+      // if (dataOrNull == null) {
+      //   throw DbException("Can't read from the local db.");
+      // }
       return dataOrNull;
     } catch (e) {
       rethrow;
     }
   }
 
-  // TODO should take List<TypeAdapter> instead List<Map<String, dynamic>>
+  // TODO return List<TypeAdapter> instead List<Map<String, dynamic>>
   Future<void> write(HiveBoxKey key, List<Map<String, dynamic>> list) async {
     try {
       final box = await init(boxName);
