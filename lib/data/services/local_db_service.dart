@@ -1,6 +1,6 @@
 import 'package:hive_ce/hive.dart';
 import 'package:workout_notebook/utils/const.dart';
-import 'package:workout_notebook/utils/enums.dart';
+import 'package:workout_notebook/utils/enums/hive_box_keys.dart';
 import 'package:workout_notebook/utils/exceptions.dart';
 
 class LocalDbService {
@@ -20,15 +20,11 @@ class LocalDbService {
   Future<List<Map<String, dynamic>>> read(HiveBoxKey key) async {
     try {
       final box = await init(boxName);
-      final dataOrNull = box.get(
+      final List<Map<String, dynamic>> data = box.get(
         key.name,
         defaultValue: <Map<String, dynamic>>[],
       );
-      // TODO After first data pulling box.get return null so method throw error
-      // if (dataOrNull == null) {
-      //   throw DbException("Can't read from the local db.");
-      // }
-      return dataOrNull;
+      return data;
     } catch (e) {
       rethrow;
     }

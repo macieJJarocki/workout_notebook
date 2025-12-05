@@ -4,7 +4,7 @@ import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/data/models/model.dart';
 import 'package:workout_notebook/data/repository/local_db_repository.dart';
 import 'package:workout_notebook/data/services/local_db_service.dart';
-import 'package:workout_notebook/utils/enums.dart';
+import 'package:workout_notebook/utils/enums/hive_box_keys.dart';
 import 'package:workout_notebook/utils/exceptions.dart';
 
 import 'utils/fake_data.dart';

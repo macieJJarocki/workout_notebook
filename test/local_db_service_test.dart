@@ -7,7 +7,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:workout_notebook/data/services/local_db_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:workout_notebook/utils/const.dart';
-import 'package:workout_notebook/utils/enums.dart';
+import 'package:workout_notebook/utils/enums/hive_box_keys.dart';
 import 'package:workout_notebook/utils/exceptions.dart';
 
 import 'utils/fake_data.dart';

@@ -5,7 +5,7 @@ class AppBlocsObserver extends BlocObserver {
   @override
   void onCreate(BlocBase<dynamic> bloc) {
     super.onCreate(bloc);
-    debugPrint('--------${bloc.runtimeType} created');
+    // debugPrint('--------${bloc.runtimeType} created');
   }
 
   @override

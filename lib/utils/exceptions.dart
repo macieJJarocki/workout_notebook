@@ -1,7 +1,7 @@
-class AppException<T> implements Exception {
+class AppException implements Exception {
   final String message;
   AppException(this.message);
-  
+
   @override
   String toString() {
     return '$runtimeType: $message';
