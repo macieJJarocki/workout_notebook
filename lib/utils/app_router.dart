@@ -8,7 +8,8 @@ import 'package:workout_notebook/utils/enums/router_names.dart';
 class AppRouter {
   RouterConfig<RouteMatchList> get router => _router;
   final _router = GoRouter(
-    initialLocation: '/intro',
+    // initialLocation: '/intro',
+    initialLocation: '/creator',
     routes: [
       GoRoute(
         path: '/intro',
