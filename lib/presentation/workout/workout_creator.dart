@@ -1,13 +1,13 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
+import 'package:workout_notebook/presentation/workout/widgets/exercise_form_field.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 
 class WorkoutCreator extends StatelessWidget {
-  const WorkoutCreator({super.key});
+  WorkoutCreator({super.key});
+  final GlobalKey _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +32,8 @@ class WorkoutCreator extends StatelessWidget {
       ),
       body: Center(
         child: Container(
-          height: MediaQuery.of(context).size.height * 0.8,
-          width: MediaQuery.of(context).size.width * 0.8,
+          height: MediaQuery.of(context).size.height * 0.95,
+          width: MediaQuery.of(context).size.width * 0.95,
           decoration: BoxDecoration(
             color: Colors.blueGrey.shade100,
             borderRadius: .circular(10),
@@ -41,7 +41,7 @@ class WorkoutCreator extends StatelessWidget {
           child: Column(
             children: [
               Container(
-                height: MediaQuery.of(context).size.height * 0.6,
+                height: MediaQuery.of(context).size.height * 0.5,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.blueGrey.shade200,
@@ -83,7 +83,9 @@ class WorkoutCreator extends StatelessWidget {
               ),
               Expanded(
                 child: DraggableScrollableSheet(
-                  initialChildSize: 0.6,
+                  maxChildSize: 0.99,
+                  minChildSize: 0.19,
+                  initialChildSize: 0.2,
                   builder: (context, scrollController) {
                     return SingleChildScrollView(
                       controller: scrollController,
@@ -95,39 +97,39 @@ class WorkoutCreator extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: .spaceEvenly,
                           children: [
+                            Icon(Icons.linear_scale_outlined),
                             Text(
-                              'Add  exercise',
+                              'Create exercise',
                               style: TextStyle(
                                 fontSize: 27,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-
-                            TextField(
-                              decoration: InputDecoration(
-                                label: Text('name'),
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(),
-                                ),
+                            Form(
+                              key: _formKey,
+                              child: Column(
+                                children: [
+                                  ExerciseFormField(
+                                    name: 'name',
+                                  ),
+                                  ExerciseFormField(
+                                    name: 'weight',
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                  ExerciseFormField(
+                                    name: 'repetitions',
+                                    keyboardType: TextInputType.phone,
+                                  ),
+                                  ExerciseFormField(
+                                    name: 'sets',
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                ],
                               ),
                             ),
-                            TextField(
-                              decoration: InputDecoration(
-                                label: Text('weight'),
-                                border: OutlineInputBorder(),
-                              ),
-                            ),
-                            TextField(
-                              decoration: InputDecoration(
-                                label: Text('repetitions'),
-                                border: OutlineInputBorder(),
-                              ),
-                            ),
-                            TextField(
-                              decoration: InputDecoration(
-                                label: Text('sets'),
-                                border: OutlineInputBorder(),
-                              ),
+                            OutlinedButton(
+                              onPressed: () {},
+                              child: Text('Save'),
                             ),
                           ],
                         ),

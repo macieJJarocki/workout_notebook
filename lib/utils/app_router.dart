@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:workout_notebook/presentation/workout/widgets/workout_creator.dart';
-import 'package:workout_notebook/presentation/workout/widgets/workout_intro.dart';
-import 'package:workout_notebook/presentation/workout/widgets/workout_view.dart';
+import 'package:workout_notebook/presentation/workout/workout_creator.dart';
+import 'package:workout_notebook/presentation/workout/workout_intro.dart';
+import 'package:workout_notebook/presentation/workout/workout_view.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 
 class AppRouter {
