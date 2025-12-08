@@ -2,17 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
-import 'package:workout_notebook/presentation/workout/widgets/exercise_form_field.dart';
+import 'package:workout_notebook/presentation/workout/widgets/app_form_field.dart';
+import 'package:workout_notebook/utils/app_form_validator.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 
-class WorkoutCreator extends StatelessWidget {
+class WorkoutCreator extends StatefulWidget {
   WorkoutCreator({super.key});
-  final GlobalKey _formKey = GlobalKey<FormState>();
+
+  @override
+  State<WorkoutCreator> createState() => _WorkoutCreatorState();
+}
+
+class _WorkoutCreatorState extends State<WorkoutCreator> {
+  final _formKey = GlobalKey<FormState>();
+  // TODO move controler and focusnodes to the AppFormField ??
+  final FocusNode nameFocusNode = FocusNode();
+  final FocusNode weightFocusNode = FocusNode();
+  final FocusNode repetitionsFocusNode = FocusNode();
+  final FocusNode setsFocusNode = FocusNode();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController weightController = TextEditingController();
+  final TextEditingController repetitionsController = TextEditingController();
+  final TextEditingController setsController = TextEditingController();
+
+  @override
+  void dispose() {
+    nameFocusNode.dispose();
+    nameController.dispose();
+    weightFocusNode.dispose();
+    weightController.dispose();
+    repetitionsFocusNode.dispose();
+    repetitionsController.dispose();
+    setsFocusNode.dispose();
+    setsController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final WorkoutBloc workoutBloc = context.read<WorkoutBloc>();
-
+    // TODO fix focus when validator "throw" error msg
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -107,21 +136,41 @@ class WorkoutCreator extends StatelessWidget {
                             ),
                             Form(
                               key: _formKey,
+                              autovalidateMode: .onUnfocus,
                               child: Column(
                                 children: [
-                                  ExerciseFormField(
+                                  AppFormField(
+                                    controller: nameController,
+                                    focusNode: nameFocusNode,
                                     name: 'name',
+                                    validator:
+                                        AppFormValidator.validateNameField,
+                                    nextFocusNode: weightFocusNode,
                                   ),
-                                  ExerciseFormField(
+                                  AppFormField(
+                                    controller: weightController,
+                                    focusNode: weightFocusNode,
                                     name: 'weight',
+                                    validator:
+                                        AppFormValidator.validateWeightField,
+                                    nextFocusNode: repetitionsFocusNode,
                                     keyboardType: TextInputType.number,
                                   ),
-                                  ExerciseFormField(
+                                  AppFormField(
+                                    controller: repetitionsController,
+                                    focusNode: repetitionsFocusNode,
                                     name: 'repetitions',
+                                    validator: AppFormValidator
+                                        .validateRepetitionsField,
+                                    nextFocusNode: setsFocusNode,
                                     keyboardType: TextInputType.phone,
                                   ),
-                                  ExerciseFormField(
+                                  AppFormField(
+                                    controller: setsController,
+                                    focusNode: setsFocusNode,
                                     name: 'sets',
+                                    validator:
+                                        AppFormValidator.validateSetsField,
                                     keyboardType: TextInputType.number,
                                   ),
                                 ],
@@ -129,7 +178,7 @@ class WorkoutCreator extends StatelessWidget {
                             ),
                             OutlinedButton(
                               onPressed: () {},
-                              child: Text('Save'),
+                              child: Text('Submit'),
                             ),
                           ],
                         ),
