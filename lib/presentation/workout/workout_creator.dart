@@ -16,14 +16,28 @@ class WorkoutCreator extends StatefulWidget {
 class _WorkoutCreatorState extends State<WorkoutCreator> {
   final _formKey = GlobalKey<FormState>();
   // TODO move controler and focusnodes to the AppFormField ??
-  final FocusNode nameFocusNode = FocusNode();
-  final FocusNode weightFocusNode = FocusNode();
-  final FocusNode repetitionsFocusNode = FocusNode();
-  final FocusNode setsFocusNode = FocusNode();
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController weightController = TextEditingController();
-  final TextEditingController repetitionsController = TextEditingController();
-  final TextEditingController setsController = TextEditingController();
+  late final FocusNode nameFocusNode;
+  late final FocusNode weightFocusNode;
+  late final FocusNode repetitionsFocusNode;
+  late final FocusNode setsFocusNode;
+  late final TextEditingController nameController;
+  late final TextEditingController weightController;
+  late final TextEditingController repetitionsController;
+  late final TextEditingController setsController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    nameFocusNode = FocusNode();
+    weightFocusNode = FocusNode();
+    repetitionsFocusNode = FocusNode();
+    setsFocusNode = FocusNode();
+    nameController = TextEditingController();
+    weightController = TextEditingController();
+    repetitionsController = TextEditingController();
+    setsController = TextEditingController();
+  }
 
   @override
   void dispose() {
@@ -35,6 +49,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
     repetitionsController.dispose();
     setsFocusNode.dispose();
     setsController.dispose();
+
     super.dispose();
   }
 

@@ -24,27 +24,24 @@ class AppFormField extends StatelessWidget {
     return Padding(
       // TODO padding?
       padding: const EdgeInsets.fromLTRB(5, 3, 5, 3),
-      child: Focus(
+      child: TextFormField(
         focusNode: focusNode,
-        child: TextFormField(
-          controller: controller,
-          validator: validator,
-          keyboardType: keyboardType,
-          onChanged: (value) {
-            controller.text = value;
-          },
-          decoration: InputDecoration(
-            // TODO add FormFieldState.errorText
-            label: Text(name),
-            border: OutlineInputBorder(
-              borderSide: BorderSide(),
-            ),
+        controller: controller,
+        validator: validator,
+        keyboardType: keyboardType,
+        onChanged: (value) {
+          controller.text = value;
+        },
+        decoration: InputDecoration(
+          // TODO add FormFieldState.errorText
+          label: Text(name),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(),
           ),
-          onFieldSubmitted: (newValue) {
-            print('asdasd');
-            FocusScope.of(context).requestFocus(nextFocusNode);
-          },
         ),
+        onFieldSubmitted: (newValue) {
+          FocusScope.of(context).requestFocus(nextFocusNode);
+        },
       ),
     );
   }
