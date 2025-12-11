@@ -10,6 +10,7 @@ TODO in the app:
   - add hive TypeAdapters(ExcersiseAdapter, TrainingAdapter)
   - implement Result for error handling
   - unit/widget/integrations tests
+  - icons licence 
 
 TODO fix:
   - unit tests

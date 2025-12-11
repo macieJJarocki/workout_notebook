@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
 import 'package:workout_notebook/presentation/workout/widgets/app_form_field.dart';
+import 'package:workout_notebook/presentation/workout/widgets/exercise_list_element.dart';
 import 'package:workout_notebook/utils/app_form_validator.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 
@@ -55,8 +57,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
 
   @override
   Widget build(BuildContext context) {
-    final WorkoutBloc workoutBloc = context.read<WorkoutBloc>();
-    // TODO fix focus when validator "throw" error msg
+    final WorkoutBloc workoutBloc = context.watch<WorkoutBloc>();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -101,10 +102,34 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                             color: Colors.blueGrey.shade100,
                             borderRadius: .circular(10),
                           ),
-                          child: ListView(
-                            children: [
-                              Text('data'),
-                            ],
+                          child: BlocBuilder<WorkoutBloc, WorkoutState>(
+                            builder: (context, state) {
+                              if (state is WorkoutStateSuccess) {
+                                final exercises = state.exercises;
+                                return SingleChildScrollView(
+                                  child: Column(
+                                    children: List.generate(
+                                      exercises.length,
+                                      (int index) {
+                                        final exercise =
+                                            exercises[index] as Exercise;
+                                        return Padding(
+                                          padding: const EdgeInsets.all(4),
+                                          child: ExerciseListElement(
+                                            name: exercise.name,
+                                            weight: exercise.weight.toString(),
+                                            repetitions: exercise.repetitions
+                                                .toString(),
+                                            sets: exercise.sets.toString(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }
+                              return Text('State is WorkoutFailure or other');
+                            },
                           ),
                         ),
                       ),
@@ -192,7 +217,16 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                               ),
                             ),
                             OutlinedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                workoutBloc.add(
+                                  WorkoutExerciseCreated(
+                                    name: nameController.text,
+                                    weight: weightController.text,
+                                    repetitions: repetitionsController.text,
+                                    sets: setsController.text,
+                                  ),
+                                );
+                              },
                               child: Text('Submit'),
                             ),
                           ],

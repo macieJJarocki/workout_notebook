@@ -8,3 +8,17 @@ sealed class WorkoutEvent {
 }
 
 class WorkoutDataRequested extends WorkoutEvent {}
+
+class WorkoutExerciseCreated extends WorkoutEvent {
+  final String name;
+  final String weight;
+  final String repetitions;
+  final String sets;
+
+  WorkoutExerciseCreated({
+    required this.name,
+    required this.weight,
+    required this.repetitions,
+    required this.sets,
+  });
+}

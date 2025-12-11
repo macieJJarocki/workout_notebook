@@ -9,7 +9,7 @@ class WorkoutIntro extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final WorkoutBloc workoutBloc = context.read<WorkoutBloc>();
+    final WorkoutBloc workoutBloc = context.watch<WorkoutBloc>();
 
     return Scaffold(
       appBar: AppBar(
