@@ -6,10 +6,11 @@ import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
 import 'package:workout_notebook/presentation/workout/widgets/app_form_field.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_list_element.dart';
 import 'package:workout_notebook/utils/app_form_validator.dart';
+import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 
 class WorkoutCreator extends StatefulWidget {
-  WorkoutCreator({super.key});
+  const WorkoutCreator({super.key});
 
   @override
   State<WorkoutCreator> createState() => _WorkoutCreatorState();
@@ -62,45 +63,51 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
       appBar: AppBar(
         title: Text(
           'Creator',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 30,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
         ),
         centerTitle: true,
         leading: IconButton(
           onPressed: () => context.goNamed(RouterNames.intro.name),
-          icon: Icon(
-            Icons.arrow_back,
-          ),
+          icon: Icon(Icons.arrow_back),
         ),
       ),
       body: Center(
         child: Container(
-          height: MediaQuery.of(context).size.height * 0.95,
-          width: MediaQuery.of(context).size.width * 0.95,
+          margin: .only(top: 12),
+          height: AppTheme.deviceHeight(context) * 0.95,
+          width: AppTheme.deviceWidth(context) * 0.95,
           decoration: BoxDecoration(
             color: Colors.blueGrey.shade100,
-            borderRadius: .circular(10),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+            ),
           ),
           child: Column(
             children: [
               Container(
-                height: MediaQuery.of(context).size.height * 0.5,
+                height: AppTheme.deviceHeight(context) * 0.5,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.blueGrey.shade200,
-                  borderRadius: .circular(10),
+                  boxShadow: kElevationToShadow[8],
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(8),
+                    topRight: Radius.circular(8),
+                  ),
                 ),
                 child: Column(
                   children: [
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(4.0),
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.blueGrey.shade100,
-                            borderRadius: .circular(10),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(8),
+                              topRight: Radius.circular(8),
+                            ),
                           ),
                           child: BlocBuilder<WorkoutBloc, WorkoutState>(
                             builder: (context, state) {
@@ -139,11 +146,25 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                       children: [
                         OutlinedButton(
                           onPressed: () {},
-                          child: Text('Add exercise'),
+                          style: AppTheme.buttonBorder(),
+                          child: Text(
+                            'Add exercise',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
                         OutlinedButton(
                           onPressed: () {},
-                          child: Text('Add superset'),
+                          style: AppTheme.buttonBorder(),
+                          child: Text(
+                            'Add superset',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -161,7 +182,11 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.blueGrey.shade200,
-                          borderRadius: .circular(10),
+
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(8),
+                            topRight: Radius.circular(8),
+                          ),
                         ),
                         child: Column(
                           mainAxisAlignment: .spaceEvenly,
@@ -170,7 +195,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                             Text(
                               'Create exercise',
                               style: TextStyle(
-                                fontSize: 27,
+                                fontSize: 28,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -227,7 +252,14 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                   ),
                                 );
                               },
-                              child: Text('Submit'),
+                              style: AppTheme.buttonBorder(),
+                              child: Text(
+                                'Submit',
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  color: Colors.black,
+                                ),
+                              ),
                             ),
                           ],
                         ),

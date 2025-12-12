@@ -31,8 +31,12 @@ class WorkoutView extends StatelessWidget {
           routerConfig: AppRouter().router,
           title: 'Workout Notebook',
           theme: ThemeData(
-            colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+            scaffoldBackgroundColor: Colors.blueGrey.shade100,
+            appBarTheme: AppBarTheme(
+              backgroundColor: Colors.blueGrey.shade100,
+            ),
           ),
+          debugShowCheckedModeBanner: false,
         ),
       ),
     );

@@ -18,36 +18,33 @@ class ExerciseListElement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: .all(4),
       decoration: BoxDecoration(
         color: Colors.blueGrey.shade200,
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
+          bottomLeft: Radius.circular(7),
+          topRight: Radius.circular(7),
         ),
       ),
-      child: Padding(
-        padding: EdgeInsetsGeometry.symmetric(vertical: 10),
-        child: Row(
-          mainAxisAlignment: .spaceEvenly,
-          children: [
-            ExerciseDataElement(
-              fieldName: 'Weight:',
-              fieldValue: weight,
-              iconPath: 'lib/utils/icons/weight1.png',
-            ),
-            // TODO replece icon
-            ExerciseDataElement(
-              fieldName: 'Repetitions:',
-              fieldValue: repetitions,
-              iconPath: 'lib/utils/icons/sets.png',
-            ),
-            ExerciseDataElement(
-              fieldName: 'Sets:',
-              fieldValue: sets,
-              iconPath: 'lib/utils/icons/sets.png',
-            ),
-          ],
-        ),
+      child: Row(
+        mainAxisAlignment: .spaceBetween,
+        children: [
+          ExerciseDataElement(
+            fieldName: 'Weight:',
+            fieldValue: weight,
+            iconPath: 'lib/utils/icons/weight1.png',
+          ),
+          ExerciseDataElement(
+            fieldName: 'Reps:',
+            fieldValue: repetitions,
+            iconPath: 'lib/utils/icons/rep2.png',
+          ),
+          ExerciseDataElement(
+            fieldName: 'Sets:',
+            fieldValue: sets,
+            iconPath: 'lib/utils/icons/sets.png',
+          ),
+        ],
       ),
     );
   }

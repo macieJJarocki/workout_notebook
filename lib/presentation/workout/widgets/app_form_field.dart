@@ -36,7 +36,10 @@ class AppFormField extends StatelessWidget {
           // TODO add FormFieldState.errorText
           label: Text(name),
           border: OutlineInputBorder(
-            borderSide: BorderSide(),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(7),
+              topRight: Radius.circular(7),
+            ),
           ),
         ),
         onFieldSubmitted: (newValue) {

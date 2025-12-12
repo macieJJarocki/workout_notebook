@@ -15,28 +15,38 @@ class ExerciseDataElement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: AppTheme.width(context) * 0.25,
+      padding: .symmetric(horizontal: 6),
+      width: AppTheme.deviceWidth(context) * 0.27,
       decoration: BoxDecoration(
         color: Colors.blueGrey.shade100,
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
+          bottomLeft: Radius.circular(7),
+          topRight: Radius.circular(7),
         ),
       ),
       child: Column(
         children: [
           Row(
+            mainAxisAlignment: .spaceBetween,
             children: [
-              Text(fieldName),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: .spaceAround,
-            children: [
-              Text(fieldValue.toString()),
-              Image.asset(
-                iconPath,
-                width: AppTheme.width(context) * 0.08,
+              Column(
+                children: [
+                  Text(fieldName),
+                  Image.asset(
+                    iconPath,
+                    width: AppTheme.deviceWidth(context) * 0.08,
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Text(
+                    fieldValue.toString(),
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.aspectRatio,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
