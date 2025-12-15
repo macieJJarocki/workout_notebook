@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
+import 'package:workout_notebook/presentation/workout/widgets/app_outlined_button.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 
@@ -27,13 +28,8 @@ class WorkoutIntro extends StatelessWidget {
         child: Container(
           width: AppTheme.deviceWidth(context) * 0.8,
           height: AppTheme.deviceHeight(context) * 0.8,
-          decoration: BoxDecoration(
-            color: Colors.blueGrey.shade200,
-            boxShadow: kElevationToShadow[24],
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(8),
-              topRight: Radius.circular(8),
-            ),
+          decoration: AppTheme.boxDecoration(
+            backgrounColor: Colors.blueGrey.shade200,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -52,16 +48,11 @@ class WorkoutIntro extends StatelessWidget {
                   fontSize: 48,
                 ),
               ),
-              OutlinedButton(
+              AppOutlinedButton(
+                padding: EdgeInsetsGeometry.zero,
+                name: 'Create workout',
                 onPressed: () => context.goNamed(RouterNames.creator.name),
-                style: AppTheme.buttonBorder(),
-                child: Text(
-                  'Create workout',
-                  style: TextStyle(
-                    fontSize: 28,
-                    color: Colors.black,
-                  ),
-                ),
+                backgrounColor: Colors.blueGrey.shade100,
               ),
             ],
           ),

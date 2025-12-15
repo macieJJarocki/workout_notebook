@@ -7,12 +7,20 @@ class AppTheme {
   static double deviceHeight(BuildContext context) =>
       MediaQuery.of(context).size.height;
 
-  static ButtonStyle buttonBorder() => OutlinedButton.styleFrom(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(18),
-        topRight: Radius.circular(18),
-      ),
-    ),
+  static OutlineInputBorder inputBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
   );
+
+  static Decoration boxDecoration({
+    required Color backgrounColor,
+    bool hasBorder = true,
+    List<BoxShadow>? shadow,
+  }) {
+    return BoxDecoration(
+      border: hasBorder ? BoxBorder.all(color: Colors.black) : null,
+      color: backgrounColor,
+      boxShadow: shadow,
+      borderRadius: BorderRadius.circular(8),
+    );
+  }
 }

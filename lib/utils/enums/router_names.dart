@@ -1,1 +1,1 @@
-enum RouterNames {intro, creator}
+enum RouterNames { intro, creator }

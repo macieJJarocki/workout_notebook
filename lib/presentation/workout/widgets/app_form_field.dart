@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notebook/utils/app_theme.dart';
 
 // TODO stateful widget is necessary?
 class AppFormField extends StatelessWidget {
@@ -22,9 +23,9 @@ class AppFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      // TODO padding?
-      padding: const EdgeInsets.fromLTRB(5, 3, 5, 3),
+      padding: .symmetric(vertical: 2, horizontal: 4),
       child: TextFormField(
+        scrollPadding: .all(50),
         focusNode: focusNode,
         controller: controller,
         validator: validator,
@@ -32,19 +33,13 @@ class AppFormField extends StatelessWidget {
         onChanged: (value) {
           controller.text = value;
         },
-        decoration: InputDecoration(
-          // TODO add FormFieldState.errorText
-          label: Text(name),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(7),
-              topRight: Radius.circular(7),
-            ),
-          ),
-        ),
         onFieldSubmitted: (newValue) {
           FocusScope.of(context).requestFocus(nextFocusNode);
         },
+        decoration: InputDecoration(
+          label: Text(name, style: TextStyle(fontSize: 14)),
+          border: AppTheme.inputBorder,
+        ),
       ),
     );
   }
