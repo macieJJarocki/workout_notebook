@@ -22,3 +22,19 @@ class WorkoutExerciseCreated extends WorkoutEvent {
     required this.sets,
   });
 }
+
+class WorkoutExerciseDeleted extends WorkoutEvent {
+  final Exercise exercise;
+
+  WorkoutExerciseDeleted({required this.exercise});
+}
+
+class WorkoutExerciseEdited extends WorkoutEvent {
+  final Exercise exercise;
+  final Map<String, dynamic> modyfiedExerciseData;
+
+  WorkoutExerciseEdited({
+    required this.modyfiedExerciseData,
+    required this.exercise,
+  });
+}

@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:workout_notebook/data/models/exercise.dart';
+import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
+import 'package:workout_notebook/presentation/workout/widgets/app_alert_dailog.dart';
+import 'package:workout_notebook/presentation/workout/widgets/app_form_field.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_data_element.dart';
+import 'package:workout_notebook/utils/app_form_validator.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 
 class ExerciseListElement extends StatelessWidget {
-  final String name;
-  final String weight;
-  final String repetitions;
-  final String sets;
+  final Exercise exercise;
 
   const ExerciseListElement({
     super.key,
-    required this.name,
-    required this.weight,
-    required this.repetitions,
-    required this.sets,
+    required this.exercise,
   });
 
   @override
   Widget build(BuildContext context) {
+    final workoutBloc = context.watch<WorkoutBloc>();
     return Container(
       // change .all(8) ??
       margin: .only(top: 8, left: 4, right: 4, bottom: 8),
@@ -38,7 +39,7 @@ class ExerciseListElement extends StatelessWidget {
                   crossAxisAlignment: .start,
                   children: [
                     Text(
-                      name,
+                      exercise.name,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 20,
@@ -68,9 +69,14 @@ class ExerciseListElement extends StatelessWidget {
                       width: AppTheme.deviceWidth(context) * 0.05,
                       child: IconButton(
                         icon: Icon(Icons.edit),
-                        padding: .all(0),
+                        padding: .zero,
                         onPressed: () {
-                          print('edit clicked');
+                          showDialog(
+                            context: context,
+                            builder: (context) => AppAlertDailog(
+                              exercise: exercise,
+                            ),
+                          );
                         },
                       ),
                     ),
@@ -82,10 +88,10 @@ class ExerciseListElement extends StatelessWidget {
                       width: AppTheme.deviceWidth(context) * 0.05,
                       child: IconButton(
                         icon: Icon(Icons.delete),
-                        padding: .all(0),
-                        onPressed: () {
-                          print('delete clicked');
-                        },
+                        padding: .zero,
+                        onPressed: () => workoutBloc.add(
+                          WorkoutExerciseDeleted(exercise: exercise),
+                        ),
                       ),
                     ),
                   ],
@@ -99,17 +105,17 @@ class ExerciseListElement extends StatelessWidget {
           children: [
             ExerciseDataElement(
               fieldName: 'Weight:',
-              fieldValue: weight,
+              fieldValue: exercise.weight,
               iconPath: 'lib/utils/icons/weight1.png',
             ),
             ExerciseDataElement(
               fieldName: 'Reps:',
-              fieldValue: repetitions,
+              fieldValue: exercise.repetitions,
               iconPath: 'lib/utils/icons/rep2.png',
             ),
             ExerciseDataElement(
               fieldName: 'Sets:',
-              fieldValue: sets,
+              fieldValue: exercise.sets,
               iconPath: 'lib/utils/icons/sets.png',
             ),
           ],

@@ -114,14 +114,9 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                       children: List.generate(
                                         exercises.length,
                                         (int index) {
-                                          final exercise =
-                                              exercises[index] as Exercise;
                                           return ExerciseListElement(
-                                            name: exercise.name,
-                                            weight: exercise.weight.toString(),
-                                            repetitions: exercise.repetitions
-                                                .toString(),
-                                            sets: exercise.sets.toString(),
+                                            exercise:
+                                                exercises[index] as Exercise,
                                           );
                                         },
                                       ),
@@ -206,6 +201,8 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                           validator: AppFormValidator
                                               .validateNameField,
                                           nextFocusNode: weightFocusNode,
+                                          backgroundColor:
+                                              Colors.blueGrey.shade200,
                                         ),
                                         AppFormField(
                                           controller: weightController,
@@ -214,7 +211,9 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                           validator: AppFormValidator
                                               .validateWeightField,
                                           nextFocusNode: repetitionsFocusNode,
-                                          keyboardType: TextInputType.number,
+                                          keyboardType: .number,
+                                          backgroundColor:
+                                              Colors.blueGrey.shade200,
                                         ),
                                         AppFormField(
                                           controller: repetitionsController,
@@ -223,7 +222,9 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                           validator: AppFormValidator
                                               .validateRepetitionsField,
                                           nextFocusNode: setsFocusNode,
-                                          keyboardType: TextInputType.phone,
+                                          keyboardType: .phone,
+                                          backgroundColor:
+                                              Colors.blueGrey.shade200,
                                         ),
                                         AppFormField(
                                           controller: setsController,
@@ -231,7 +232,9 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                           name: 'sets',
                                           validator: AppFormValidator
                                               .validateSetsField,
-                                          keyboardType: TextInputType.number,
+                                          keyboardType: .number,
+                                          backgroundColor:
+                                              Colors.blueGrey.shade200,
                                         ),
                                       ],
                                     ),
@@ -239,7 +242,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                   AppOutlinedButton(
                                     name: 'Create',
                                     padding: EdgeInsets.only(top: 8, bottom: 8),
-                                    backgrounColor: Colors.blueGrey.shade100,
+                                    backgrounColor: Colors.blueGrey.shade200,
                                     onPressed: () {
                                       if (_formKey.currentState!.validate()) {
                                         workoutBloc.add(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 
-// TODO stateful widget is necessary?
 class AppFormField extends StatelessWidget {
   final String name;
   final String? Function(String? value) validator;
@@ -9,6 +8,7 @@ class AppFormField extends StatelessWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final FocusNode? nextFocusNode;
+  final Color? backgroundColor;
 
   const AppFormField({
     super.key,
@@ -18,6 +18,7 @@ class AppFormField extends StatelessWidget {
     required this.focusNode,
     this.keyboardType,
     this.nextFocusNode,
+    this.backgroundColor,
   });
 
   @override
@@ -39,6 +40,8 @@ class AppFormField extends StatelessWidget {
         decoration: InputDecoration(
           label: Text(name, style: TextStyle(fontSize: 14)),
           border: AppTheme.inputBorder,
+          filled: true,
+          fillColor: backgroundColor,
         ),
       ),
     );
