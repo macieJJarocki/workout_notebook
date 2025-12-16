@@ -30,65 +30,66 @@ class ExerciseListElement extends StatelessWidget {
         title: Row(
           mainAxisAlignment: .spaceBetween,
           children: [
-            SizedBox(
-              child: Padding(
+            Expanded(
+              flex: 3,
+              child: Container(
                 padding: .only(left: 8, bottom: 4),
-                child: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: '$name \n',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                child: Column(
+                  crossAxisAlignment: .start,
+                  children: [
+                    Text(
+                      name,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      TextSpan(
-                        text: 'Exercise',
-                        style: TextStyle(
-                          color: Colors.blueGrey.shade600,
-                          fontSize: 12,
-                          fontStyle: FontStyle.italic,
-                        ),
+                    ),
+                    Text(
+                      'Exercise',
+                      style: TextStyle(
+                        color: Colors.blueGrey.shade600,
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            Container(
-              padding: EdgeInsets.only(right: 8),
-              child: Row(
-                mainAxisAlignment: .center,
-                mainAxisSize: .min,
-                children: [
-                  SizedBox(
-                    height: AppTheme.deviceWidth(context) * 0.05,
-                    width: AppTheme.deviceWidth(context) * 0.05,
-                    child: IconButton(
-                      icon: Icon(Icons.edit),
-                      padding: .all(0),
-                      onPressed: () {
-                        print('edit clicked');
-                      },
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.only(right: 8),
+                child: Row(
+                  mainAxisAlignment: .center,
+                  children: [
+                    SizedBox(
+                      height: AppTheme.deviceWidth(context) * 0.05,
+                      width: AppTheme.deviceWidth(context) * 0.05,
+                      child: IconButton(
+                        icon: Icon(Icons.edit),
+                        padding: .all(0),
+                        onPressed: () {
+                          print('edit clicked');
+                        },
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    width: AppTheme.deviceWidth(context) * 0.05,
-                  ),
-                  SizedBox(
-                    height: AppTheme.deviceWidth(context) * 0.05,
-                    width: AppTheme.deviceWidth(context) * 0.05,
-                    child: IconButton(
-                      icon: Icon(Icons.delete),
-                      padding: .all(0),
-                      onPressed: () {
-                        print('delete clicked');
-                      },
+                    SizedBox(
+                      width: AppTheme.deviceWidth(context) * 0.05,
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      height: AppTheme.deviceWidth(context) * 0.05,
+                      width: AppTheme.deviceWidth(context) * 0.05,
+                      child: IconButton(
+                        icon: Icon(Icons.delete),
+                        padding: .all(0),
+                        onPressed: () {
+                          print('delete clicked');
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

@@ -5,8 +5,8 @@ class AppOutlinedButton extends StatelessWidget {
   final String name;
   final Color backgrounColor;
   final void Function() onPressed;
-  EdgeInsetsGeometry padding;
-  AppOutlinedButton({
+  final EdgeInsetsGeometry padding;
+  const AppOutlinedButton({
     super.key,
     required this.padding,
     required this.name,

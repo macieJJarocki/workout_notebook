@@ -57,6 +57,13 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
     super.dispose();
   }
 
+  void _clearFormFields() {
+    nameController.text = '';
+    weightController.text = '';
+    repetitionsController.text = '';
+    setsController.text = '';
+  }
+
   @override
   Widget build(BuildContext context) {
     final WorkoutBloc workoutBloc = context.watch<WorkoutBloc>();
@@ -92,6 +99,8 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                       children: [
                         Expanded(
                           child: Container(
+                            width: double.infinity,
+                            height: double.infinity,
                             decoration: AppTheme.boxDecoration(
                               backgrounColor: Colors.blueGrey.shade100,
                               shadow: kElevationToShadow[8],
@@ -228,20 +237,23 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                     ),
                                   ),
                                   AppOutlinedButton(
-                                    name: 'Submit',
+                                    name: 'Create',
                                     padding: EdgeInsets.only(top: 8, bottom: 8),
-                                    onPressed: () {
-                                      workoutBloc.add(
-                                        WorkoutExerciseCreated(
-                                          name: nameController.text,
-                                          weight: weightController.text,
-                                          repetitions:
-                                              repetitionsController.text,
-                                          sets: setsController.text,
-                                        ),
-                                      );
-                                    },
                                     backgrounColor: Colors.blueGrey.shade100,
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        workoutBloc.add(
+                                          WorkoutExerciseCreated(
+                                            name: nameController.text,
+                                            weight: weightController.text,
+                                            repetitions:
+                                                repetitionsController.text,
+                                            sets: setsController.text,
+                                          ),
+                                        );
+                                        setState(_clearFormFields);
+                                      }
+                                    },
                                   ),
                                 ],
                               ),
