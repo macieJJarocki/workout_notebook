@@ -20,18 +20,11 @@ class LocalDbService {
   Future<List<Map<String, dynamic>>> read(HiveBoxKey key) async {
     try {
       final box = await init(boxName);
-      final List<dynamic> data = box.get(
-        key.name,
-        defaultValue: <Map<String, dynamic>>[],
+      final data = List<Map<String, dynamic>>.from(
+        box.get(key.name, defaultValue: []),
       );
 
-      return data.isNotEmpty
-          ? data
-                .map(
-                  (e) => Map<String, dynamic>.from(e),
-                )
-                .toList()
-          : data as List<Map<String, dynamic>>;
+      return data;
     } catch (e) {
       rethrow;
     }

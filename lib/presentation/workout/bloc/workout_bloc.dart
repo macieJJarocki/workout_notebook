@@ -81,13 +81,13 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     Emitter<WorkoutState> emit,
   ) async {
     try {
-      final workoutState = state as WorkoutStateSuccess;
+      final blocState = state as WorkoutStateSuccess;
       await repository.delete(HiveBoxKey.exercises, event.exercise);
       final exercises = await repository.read(HiveBoxKey.exercises);
       emit(
         WorkoutStateSuccess(
           exercises: exercises,
-          workouts: workoutState.workouts,
+          workouts: blocState.workouts,
         ),
       );
     } catch (e) {
