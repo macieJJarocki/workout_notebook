@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/data/models/model.dart';
+import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/data/repository/local_db_repository.dart';
 import 'package:workout_notebook/utils/enums/hive_box_keys.dart';
 import 'package:flutter/foundation.dart';
@@ -23,10 +24,14 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     Emitter<WorkoutState> emit,
   ) async {
     try {
-      final workouts = await repository.read(HiveBoxKey.workouts);
-      final exercises = await repository.read(HiveBoxKey.exercises);
+      final workouts = List<Workout>.from(
+        await repository.read(HiveBoxKey.workouts),
+      );
+      final exercises = List<Exercise>.from(
+        await repository.read(HiveBoxKey.exercises),
+      );
       // TODO remove delay ??
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(Duration(seconds: 1));
       emit(
         WorkoutStateSuccess(
           workouts: workouts,
@@ -83,7 +88,9 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     try {
       final blocState = state as WorkoutStateSuccess;
       await repository.delete(HiveBoxKey.exercises, event.exercise);
-      final exercises = await repository.read(HiveBoxKey.exercises);
+      final exercises = List<Exercise>.from(
+        await repository.read(HiveBoxKey.exercises),
+      );
       emit(
         WorkoutStateSuccess(
           exercises: exercises,
@@ -105,7 +112,9 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   ) async {
     try {
       final workoutState = state as WorkoutStateSuccess;
-      final exercise = event.exercise;
+      final exercise = workoutState.exercises.firstWhere(
+        (element) => element.id == event.id,
+      );
       final modifiedExercise = Exercise(
         id: 9999999,
         name: event.modyfiedExerciseData['name'],
@@ -128,7 +137,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
             sets: modifiedExercise.sets,
           ),
         );
-        final exercises = await repository.read(HiveBoxKey.exercises);
+        final exercises = List<Exercise>.from(
+          await repository.read(HiveBoxKey.exercises),
+        );
+
         emit(
           WorkoutStateSuccess(
             exercises: exercises,
@@ -136,8 +148,6 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
           ),
         );
       }
-      // TODO remove debugPrint
-      debugPrint('The data has not changed');
     } catch (e) {
       emit(
         WorkoutStateFailure(

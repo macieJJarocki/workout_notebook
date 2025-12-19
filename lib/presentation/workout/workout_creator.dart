@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
-import 'package:workout_notebook/presentation/workout/widgets/app_form_field.dart';
 import 'package:workout_notebook/presentation/workout/widgets/app_outlined_button.dart';
+import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_list_element.dart';
-import 'package:workout_notebook/utils/app_form_validator.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 
@@ -18,56 +16,10 @@ class WorkoutCreator extends StatefulWidget {
 }
 
 class _WorkoutCreatorState extends State<WorkoutCreator> {
-  final _formKey = GlobalKey<FormState>();
-  // TODO move controler and focusnodes to the AppFormField ??
-  late final FocusNode nameFocusNode;
-  late final FocusNode weightFocusNode;
-  late final FocusNode repetitionsFocusNode;
-  late final FocusNode setsFocusNode;
-  late final TextEditingController nameController;
-  late final TextEditingController weightController;
-  late final TextEditingController repetitionsController;
-  late final TextEditingController setsController;
-
-  @override
-  void initState() {
-    super.initState();
-
-    nameFocusNode = FocusNode();
-    weightFocusNode = FocusNode();
-    repetitionsFocusNode = FocusNode();
-    setsFocusNode = FocusNode();
-    nameController = TextEditingController();
-    weightController = TextEditingController();
-    repetitionsController = TextEditingController();
-    setsController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    nameFocusNode.dispose();
-    nameController.dispose();
-    weightFocusNode.dispose();
-    weightController.dispose();
-    repetitionsFocusNode.dispose();
-    repetitionsController.dispose();
-    setsFocusNode.dispose();
-    setsController.dispose();
-
-    super.dispose();
-  }
-
-  void _clearFormFields() {
-    nameController.text = '';
-    weightController.text = '';
-    repetitionsController.text = '';
-    setsController.text = '';
-  }
-
   @override
   Widget build(BuildContext context) {
-    final WorkoutBloc workoutBloc = context.watch<WorkoutBloc>();
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           'Workout Creator',
@@ -79,198 +31,101 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
           icon: Icon(Icons.arrow_back),
         ),
       ),
-      body: Stack(
-        children: [
-          Center(
-            child: SizedBox(
-              height: AppTheme.deviceHeight(context) * 0.80,
-              width: AppTheme.deviceWidth(context) * 0.95,
-              child: Column(
-                children: [
-                  Container(
-                    height: AppTheme.deviceHeight(context) * 0.7,
-                    width: double.infinity,
-                    padding: .all(6),
-                    decoration: AppTheme.boxDecoration(
-                      backgrounColor: Colors.blueGrey.shade200,
-                      shadow: kElevationToShadow[8],
-                    ),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            width: double.infinity,
-                            height: double.infinity,
-                            decoration: AppTheme.boxDecoration(
-                              backgrounColor: Colors.blueGrey.shade100,
-                              shadow: kElevationToShadow[8],
-                            ),
-                            child: BlocBuilder<WorkoutBloc, WorkoutState>(
-                              builder: (context, state) {
-                                if (state is WorkoutStateSuccess) {
-                                  final exercises = state.exercises;
-                                  return SingleChildScrollView(
-                                    child: Column(
-                                      children: List.generate(
-                                        exercises.length,
-                                        (int index) {
-                                          return ExerciseListElement(
-                                            exercise:
-                                                exercises[index] as Exercise,
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  );
-                                }
-                                return Text(
-                                  'State is WorkoutFailure or other',
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: .spaceAround,
-                          children: [
-                            AppOutlinedButton(
-                              name: 'Add exercise',
-                              backgrounColor: Colors.blueGrey.shade100,
-                              onPressed: () {},
-                              padding: EdgeInsets.only(top: 8),
-                            ),
-                            AppOutlinedButton(
-                              name: 'Add superset',
-                              backgrounColor: Colors.blueGrey.shade100,
-                              onPressed: () {},
-                              padding: EdgeInsets.only(top: 8),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      body: Center(
+        child: Container(
+          height: AppTheme.deviceHeight(context) * 0.8,
+
+          width: AppTheme.deviceWidth(context) * 0.95,
+          padding: .all(6),
+          decoration: AppTheme.boxDecoration(
+            backgrounColor: Colors.blueGrey.shade200,
+            shadow: kElevationToShadow[8],
           ),
-          Center(
-            child: SizedBox(
-              width: AppTheme.deviceWidth(context) * 0.95,
-              child: DraggableScrollableSheet(
-                snap: true,
-                maxChildSize: 0.56,
-                minChildSize: 0.08,
-                initialChildSize: 0.09,
-                builder: (context, scrollController) {
-                  return ListView(
-                    controller: scrollController,
+          child: BlocBuilder<WorkoutBloc, WorkoutState>(
+            builder: (context, state) {
+              if (state is WorkoutStateSuccess) {
+                if (state.exercises.isNotEmpty) {
+                  return Column(
+                    mainAxisAlignment: .spaceBetween,
                     children: [
-                      Container(
-                        decoration: AppTheme.boxDecoration(
-                          backgrounColor: Colors.blueGrey.shade200,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: .spaceEvenly,
+                      Expanded(
+                        child: Stack(
                           children: [
-                            Icon(Icons.linear_scale_outlined),
-                            Container(
-                              decoration: AppTheme.boxDecoration(
-                                backgrounColor: Colors.blueGrey.shade100,
-                              ),
-                              margin: .all(4),
+                            SingleChildScrollView(
                               child: Column(
-                                children: [
-                                  Text(
-                                    'Create exercise',
-                                    style: TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                children: List.generate(
+                                  state.exercises.length,
+                                  (int index) {
+                                    return ExerciseListElement(
+                                      exercise: state.exercises[index],
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: .bottomRight,
+                              child: Container(
+                                width: AppTheme.deviceWidth(context) * 0.13,
+                                height: AppTheme.deviceWidth(context) * 0.13,
+                                // margin: .only(bottom: 5),
+                                decoration: AppTheme.boxDecoration(
+                                  backgrounColor: Colors.blueGrey.shade100,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    print('Superset creator');
+                                  },
+                                  child: Image.asset(
+                                    'lib/utils/icons/superset.png',
                                   ),
-                                  Form(
-                                    key: _formKey,
-                                    autovalidateMode: .onUnfocus,
-                                    child: Column(
-                                      children: [
-                                        // TODO if can generate list of the widgets
-                                        AppFormField(
-                                          controller: nameController,
-                                          focusNode: nameFocusNode,
-                                          name: 'name',
-                                          validator: AppFormValidator
-                                              .validateNameField,
-                                          nextFocusNode: weightFocusNode,
-                                          backgroundColor:
-                                              Colors.blueGrey.shade200,
-                                        ),
-                                        AppFormField(
-                                          controller: weightController,
-                                          focusNode: weightFocusNode,
-                                          name: 'weight',
-                                          validator: AppFormValidator
-                                              .validateWeightField,
-                                          nextFocusNode: repetitionsFocusNode,
-                                          keyboardType: .number,
-                                          backgroundColor:
-                                              Colors.blueGrey.shade200,
-                                        ),
-                                        AppFormField(
-                                          controller: repetitionsController,
-                                          focusNode: repetitionsFocusNode,
-                                          name: 'repetitions',
-                                          validator: AppFormValidator
-                                              .validateRepetitionsField,
-                                          nextFocusNode: setsFocusNode,
-                                          keyboardType: .phone,
-                                          backgroundColor:
-                                              Colors.blueGrey.shade200,
-                                        ),
-                                        AppFormField(
-                                          controller: setsController,
-                                          focusNode: setsFocusNode,
-                                          name: 'sets',
-                                          validator: AppFormValidator
-                                              .validateSetsField,
-                                          keyboardType: .number,
-                                          backgroundColor:
-                                              Colors.blueGrey.shade200,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  AppOutlinedButton(
-                                    name: 'Create',
-                                    padding: EdgeInsets.only(top: 8, bottom: 8),
-                                    backgrounColor: Colors.blueGrey.shade200,
-                                    onPressed: () {
-                                      if (_formKey.currentState!.validate()) {
-                                        workoutBloc.add(
-                                          WorkoutExerciseCreated(
-                                            name: nameController.text,
-                                            weight: weightController.text,
-                                            repetitions:
-                                                repetitionsController.text,
-                                            sets: setsController.text,
-                                          ),
-                                        );
-                                        setState(_clearFormFields);
-                                      }
-                                    },
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
+                      AppOutlinedButton(
+                        name: 'Add exercise',
+                        backgrounColor: Colors.blueGrey.shade100,
+                        onPressed: () => showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ExerciseFormDailog(
+                              title: 'Create new Exercise',
+                            );
+                          },
+                        ),
+                        padding: EdgeInsets.only(top: 8),
+                      ),
                     ],
                   );
-                },
-              ),
-            ),
+                } else {
+                  return Column(
+                    children: [
+                      Text('dont waist time create your workaout here'),
+                      AppOutlinedButton(
+                        name: 'Add exercise',
+                        backgrounColor: Colors.blueGrey.shade100,
+                        onPressed: () => showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ExerciseFormDailog(
+                              title: 'Create new Exercise',
+                            );
+                          },
+                        ),
+                        padding: EdgeInsets.only(top: 8),
+                      ),
+                    ],
+                  );
+                }
+              }
+              // TODO add shimmer widget
+              return Text('Error or other state');
+            },
           ),
-        ],
+        ),
       ),
     );
   }

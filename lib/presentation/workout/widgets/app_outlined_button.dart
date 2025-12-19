@@ -16,18 +16,6 @@ class AppOutlinedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //   return Padding(
-    //     padding: const EdgeInsets.only(top: 4),
-    //     child: OutlinedButton(
-    //       onPressed: onPressed,
-    //       style: AppTheme.buttonBorder,
-    //       child: Text(
-    //         name,
-    //         style: TextStyle(fontSize: 14, color: Colors.black),
-    //       ),
-    //     ),
-    //   );
-    // }
     return GestureDetector(
       onTap: onPressed,
       child: Padding(

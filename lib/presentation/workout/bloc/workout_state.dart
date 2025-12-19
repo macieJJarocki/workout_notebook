@@ -10,8 +10,8 @@ sealed class WorkoutState {
 final class WorkoutStateLoading extends WorkoutState {}
 
 final class WorkoutStateSuccess extends WorkoutState {
-  final List<Model> workouts;
-  final List<Model> exercises;
+  final List<Workout> workouts;
+  final List<Exercise> exercises;
 
   WorkoutStateSuccess({
     this.workouts = const [],

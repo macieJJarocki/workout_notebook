@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
-import 'package:workout_notebook/presentation/workout/widgets/app_alert_dailog.dart';
-import 'package:workout_notebook/presentation/workout/widgets/app_form_field.dart';
+import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_data_element.dart';
-import 'package:workout_notebook/utils/app_form_validator.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 
 class ExerciseListElement extends StatelessWidget {
@@ -21,13 +19,13 @@ class ExerciseListElement extends StatelessWidget {
     final workoutBloc = context.watch<WorkoutBloc>();
     return Container(
       // change .all(8) ??
-      margin: .only(top: 8, left: 4, right: 4, bottom: 8),
+      margin: .only(top: 8, left: 4, right: 4),
       decoration: AppTheme.boxDecoration(
         backgrounColor: Colors.blueGrey.shade200,
         shadow: kElevationToShadow[4],
       ),
       child: ListTile(
-        contentPadding: EdgeInsets.all(2),
+        contentPadding: .symmetric(horizontal: 4),
         title: Row(
           mainAxisAlignment: .spaceBetween,
           children: [
@@ -73,8 +71,10 @@ class ExerciseListElement extends StatelessWidget {
                         onPressed: () {
                           showDialog(
                             context: context,
-                            builder: (context) => AppAlertDailog(
+                            builder: (context) => ExerciseFormDailog(
                               exercise: exercise,
+                              title:
+                                  'Adjust the exercise to suit your preferences.',
                             ),
                           );
                         },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
 import 'package:workout_notebook/presentation/workout/widgets/app_form_field.dart';
@@ -7,19 +8,20 @@ import 'package:workout_notebook/presentation/workout/widgets/app_outlined_butto
 import 'package:workout_notebook/utils/app_form_validator.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 
-class AppAlertDailog extends StatefulWidget {
-  final Exercise exercise;
-
-  const AppAlertDailog({
+class ExerciseFormDailog extends StatefulWidget {
+  final Exercise? exercise;
+  final String title;
+  const ExerciseFormDailog({
     super.key,
-    required this.exercise,
+    this.exercise,
+    required this.title,
   });
 
   @override
-  State<AppAlertDailog> createState() => _AppAlertDailogState();
+  State<ExerciseFormDailog> createState() => _ExerciseFormDailogState();
 }
 
-class _AppAlertDailogState extends State<AppAlertDailog> {
+class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
   final _formKey = GlobalKey<FormState>();
   late final FocusNode nameFocusNode;
   late final FocusNode weightFocusNode;
@@ -38,15 +40,15 @@ class _AppAlertDailogState extends State<AppAlertDailog> {
     weightFocusNode = FocusNode();
     repetitionsFocusNode = FocusNode();
     setsFocusNode = FocusNode();
-    nameController = TextEditingController(text: widget.exercise.name);
+    nameController = TextEditingController(text: widget.exercise?.name);
     weightController = TextEditingController(
-      text: widget.exercise.weight.toString(),
+      text: widget.exercise?.weight.toString(),
     );
     repetitionsController = TextEditingController(
-      text: widget.exercise.repetitions.toString(),
+      text: widget.exercise?.repetitions.toString(),
     );
     setsController = TextEditingController(
-      text: widget.exercise.sets.toString(),
+      text: widget.exercise?.sets.toString(),
     );
   }
 
@@ -67,7 +69,7 @@ class _AppAlertDailogState extends State<AppAlertDailog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Adjust the exercise to suit your preferences.'),
+      title: Text(widget.title),
 
       backgroundColor: Colors.blueGrey.shade100,
       content: Container(
@@ -116,24 +118,29 @@ class _AppAlertDailogState extends State<AppAlertDailog> {
               ),
               AppOutlinedButton(
                 padding: EdgeInsetsGeometry.only(top: 4),
-                name: 'Edit',
+                name: widget.exercise == null ? 'Create' : 'Edit',
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     context.read<WorkoutBloc>().add(
-                      WorkoutExerciseEdited(
-                        exercise: widget.exercise,
-                        modyfiedExerciseData: {
-                          'name': nameController.text,
-                          'weight': weightController.text,
-                          'repetitions': repetitionsController.text,
-                          'sets': setsController.text,
-                        },
-                      ),
+                      widget.exercise == null
+                          ? WorkoutExerciseCreated(
+                              name: nameController.text,
+                              weight: weightController.text,
+                              repetitions: repetitionsController.text,
+                              sets: setsController.text,
+                            )
+                          : WorkoutExerciseEdited(
+                              id: widget.exercise!.id,
+                              modyfiedExerciseData: {
+                                'name': nameController.text,
+                                'weight': weightController.text,
+                                'repetitions': repetitionsController.text,
+                                'sets': setsController.text,
+                              },
+                            ),
                     );
-                  } else {
-                    debugPrint('invalid form');
+                    context.pop();
                   }
-                  // TODO remove
                 },
                 backgrounColor: Colors.blueGrey.shade100,
               ),
