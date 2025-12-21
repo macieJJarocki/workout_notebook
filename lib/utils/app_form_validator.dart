@@ -6,7 +6,7 @@ class AppFormValidator {
       return 'Please enter the value.';
     }
     if (value.length < 2) {
-      return 'Name is to short';
+      return 'The name is too short';
     }
     return null;
   }

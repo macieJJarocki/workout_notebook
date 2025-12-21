@@ -14,45 +14,48 @@ class ExerciseDataElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: .symmetric(horizontal: 6),
+    return SizedBox(
       width: AppTheme.deviceWidth(context) * 0.27,
-      decoration: AppTheme.boxDecoration(
-        backgrounColor: Colors.blueGrey.shade100,
-        shadow: kElevationToShadow[2],
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: .spaceBetween,
-            children: [
-              Expanded(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: .start,
-                  children: [
-                    Text(fieldName),
-                    Image.asset(
-                      iconPath,
-                      width: AppTheme.deviceWidth(context) * 0.08,
-                    ),
-                  ],
+      height: AppTheme.deviceHeight(context) * 0.13,
+      child: Card(
+        color: Colors.blueGrey.shade100,
+        child: Column(
+          mainAxisAlignment: .spaceAround,
+          children: [
+            Padding(
+              padding: .only(top: 2),
+              child: Container(
+                width: AppTheme.deviceWidth(context) * 0.1,
+                padding: .all(6),
+                decoration: BoxDecoration(
+                  color: Colors.blueGrey.shade200,
+                  borderRadius: .circular(100),
+                  boxShadow: kElevationToShadow[6],
+                ),
+                child: Image.asset(
+                  color: Colors.black.withValues(alpha: 0.7),
+                  iconPath,
                 ),
               ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: .center,
-                  crossAxisAlignment: .center,
-                  children: [
-                    Text(
-                      fieldValue.toString(),
-                    ),
-                  ],
-                ),
+            ),
+            Text(
+              fieldValue.toString(),
+              style: TextStyle(
+                fontWeight: .bold,
+                overflow: .ellipsis,
+                fontSize: 16,
               ),
-            ],
-          ),
-        ],
+            ),
+            Text(
+              fieldName,
+              style: TextStyle(
+                fontSize: 12,
+                fontStyle: .italic,
+                color: Colors.blueGrey.shade600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -6,7 +6,6 @@ import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
 import 'package:workout_notebook/presentation/workout/widgets/app_form_field.dart';
 import 'package:workout_notebook/presentation/workout/widgets/app_outlined_button.dart';
 import 'package:workout_notebook/utils/app_form_validator.dart';
-import 'package:workout_notebook/utils/app_theme.dart';
 
 class ExerciseFormDailog extends StatefulWidget {
   final Exercise? exercise;
@@ -69,84 +68,89 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.title),
-
+      title: Center(child: Text(widget.title)),
       backgroundColor: Colors.blueGrey.shade100,
-      content: Container(
-        decoration: AppTheme.boxDecoration(
-          backgrounColor: Colors.blueGrey.shade200,
-        ),
-        padding: EdgeInsets.all(4),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AppFormField(
-                controller: nameController,
-                focusNode: nameFocusNode,
-                name: 'name',
-                validator: AppFormValidator.validateNameField,
-                nextFocusNode: weightFocusNode,
-                backgroundColor: Colors.blueGrey.shade100,
-              ),
-              AppFormField(
-                controller: weightController,
-                focusNode: weightFocusNode,
-                name: 'weight',
-                validator: AppFormValidator.validateWeightField,
-                nextFocusNode: repetitionsFocusNode,
-                keyboardType: TextInputType.number,
-                backgroundColor: Colors.blueGrey.shade100,
-              ),
-              AppFormField(
-                controller: repetitionsController,
-                focusNode: repetitionsFocusNode,
-                name: 'repetitions',
-                validator: AppFormValidator.validateRepetitionsField,
-                nextFocusNode: setsFocusNode,
-                keyboardType: TextInputType.phone,
-                backgroundColor: Colors.blueGrey.shade100,
-              ),
-              AppFormField(
-                controller: setsController,
-                focusNode: setsFocusNode,
-                name: 'sets',
-                validator: AppFormValidator.validateSetsField,
-                keyboardType: TextInputType.number,
-                backgroundColor: Colors.blueGrey.shade100,
-              ),
-              AppOutlinedButton(
-                padding: EdgeInsetsGeometry.only(top: 4),
-                name: widget.exercise == null ? 'Create' : 'Edit',
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    context.read<WorkoutBloc>().add(
-                      widget.exercise == null
-                          ? WorkoutExerciseCreated(
-                              name: nameController.text,
-                              weight: weightController.text,
-                              repetitions: repetitionsController.text,
-                              sets: setsController.text,
-                            )
-                          : WorkoutExerciseEdited(
-                              id: widget.exercise!.id,
-                              modyfiedExerciseData: {
-                                'name': nameController.text,
-                                'weight': weightController.text,
-                                'repetitions': repetitionsController.text,
-                                'sets': setsController.text,
-                              },
-                            ),
-                    );
-                    context.pop();
-                  }
-                },
-                backgrounColor: Colors.blueGrey.shade100,
-              ),
-            ],
+      contentPadding: .all(4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(8),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                AppFormField(
+                  controller: nameController,
+                  padding: .symmetric(horizontal: 8, vertical: 4),
+                  focusNode: nameFocusNode,
+                  name: 'name',
+                  validator: AppFormValidator.validateNameField,
+                  nextFocusNode: weightFocusNode,
+                  backgroundColor: Colors.blueGrey.shade200,
+                ),
+                AppFormField(
+                  controller: weightController,
+                  padding: .symmetric(horizontal: 8, vertical: 4),
+                  focusNode: weightFocusNode,
+                  name: 'weight',
+                  validator: AppFormValidator.validateWeightField,
+                  nextFocusNode: repetitionsFocusNode,
+                  keyboardType: TextInputType.number,
+                  backgroundColor: Colors.blueGrey.shade200,
+                ),
+                AppFormField(
+                  controller: repetitionsController,
+                  padding: .symmetric(horizontal: 8, vertical: 4),
+                  focusNode: repetitionsFocusNode,
+                  name: 'repetitions',
+                  validator: AppFormValidator.validateRepetitionsField,
+                  nextFocusNode: setsFocusNode,
+                  keyboardType: TextInputType.phone,
+                  backgroundColor: Colors.blueGrey.shade200,
+                ),
+                AppFormField(
+                  controller: setsController,
+                  padding: .symmetric(horizontal: 8, vertical: 4),
+                  focusNode: setsFocusNode,
+                  name: 'sets',
+                  validator: AppFormValidator.validateSetsField,
+                  keyboardType: TextInputType.number,
+                  backgroundColor: Colors.blueGrey.shade200,
+                ),
+              ],
+            ),
           ),
-        ),
+          AppOutlinedButton(
+            padding: EdgeInsetsGeometry.symmetric(vertical: 4),
+            name: widget.exercise == null ? 'Create' : 'Edit',
+            backgrounColor: Colors.blueGrey.shade200,
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                context.read<WorkoutBloc>().add(
+                  widget.exercise == null
+                      ? WorkoutExerciseCreated(
+                          name: nameController.text,
+                          weight: weightController.text,
+                          repetitions: repetitionsController.text,
+                          sets: setsController.text,
+                        )
+                      : WorkoutExerciseEdited(
+                          id: widget.exercise!.id,
+                          modyfiedExerciseData: {
+                            'name': nameController.text,
+                            'weight': weightController.text,
+                            'repetitions': repetitionsController.text,
+                            'sets': setsController.text,
+                          },
+                        ),
+                );
+                context.pop();
+              }
+            },
+          ),
+        ],
       ),
     );
   }

@@ -9,6 +9,7 @@ class AppFormField extends StatelessWidget {
   final FocusNode focusNode;
   final FocusNode? nextFocusNode;
   final Color? backgroundColor;
+  final EdgeInsetsGeometry? padding;
 
   const AppFormField({
     super.key,
@@ -16,6 +17,7 @@ class AppFormField extends StatelessWidget {
     required this.validator,
     required this.controller,
     required this.focusNode,
+    this.padding,
     this.keyboardType,
     this.nextFocusNode,
     this.backgroundColor,
@@ -24,7 +26,7 @@ class AppFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: .symmetric(vertical: 2, horizontal: 4),
+      padding: padding ?? .symmetric(vertical: 2, horizontal: 4),
       child: TextFormField(
         scrollPadding: .all(50),
         focusNode: focusNode,
