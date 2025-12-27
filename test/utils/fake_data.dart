@@ -14,6 +14,7 @@ class FakeData {
 
   static Exercise getExercise() {
     return Exercise(
+      isCompleted: false,
       id: 1,
       name: 'deadlift',
       weight: 50,

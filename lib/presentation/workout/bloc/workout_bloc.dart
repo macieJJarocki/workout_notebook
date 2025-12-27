@@ -1,10 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
-import 'package:workout_notebook/data/models/model.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/data/repository/local_db_repository.dart';
 import 'package:workout_notebook/utils/enums/hive_box_keys.dart';
-import 'package:flutter/foundation.dart';
 
 part 'workout_event.dart';
 part 'workout_state.dart';
@@ -58,6 +56,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
           ? exercises.reduce((curr, next) => curr.id > next.id ? curr : next).id
           : 0;
       final exercise = Exercise(
+        isCompleted: false,
         id: maxWorkoutsId + 1,
         name: event.name,
         weight: double.parse(event.weight),
@@ -115,28 +114,35 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       final exercise = workoutState.exercises.firstWhere(
         (element) => element.id == event.id,
       );
+      // TODO change in the future
       final modifiedExercise = Exercise(
         id: 9999999,
+        isCompleted: event.modyfiedExerciseData['isCompleted'],
         name: event.modyfiedExerciseData['name'],
-        weight: double.parse(event.modyfiedExerciseData['weight']),
-        repetitions: int.parse(event.modyfiedExerciseData['repetitions']),
-        sets: int.parse(event.modyfiedExerciseData['sets']),
+        weight: double.parse(event.modyfiedExerciseData['weight'].toString()),
+        repetitions: int.parse(
+          event.modyfiedExerciseData['repetitions'].toString(),
+        ),
+        sets: int.parse(event.modyfiedExerciseData['sets'].toString()),
       );
 
       if (modifiedExercise.name != exercise.name ||
           modifiedExercise.weight != exercise.weight ||
           modifiedExercise.repetitions != exercise.repetitions ||
-          modifiedExercise.sets != exercise.sets) {
+          modifiedExercise.sets != exercise.sets ||
+          modifiedExercise.isCompleted != exercise.isCompleted) {
         await repository.update(
           HiveBoxKey.exercises,
           Exercise(
             id: exercise.id,
+            isCompleted: modifiedExercise.isCompleted,
             name: modifiedExercise.name,
             weight: modifiedExercise.weight,
             repetitions: modifiedExercise.repetitions,
             sets: modifiedExercise.sets,
           ),
         );
+
         final exercises = List<Exercise>.from(
           await repository.read(HiveBoxKey.exercises),
         );

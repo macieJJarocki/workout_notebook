@@ -140,6 +140,7 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
                           id: widget.exercise!.id,
                           modyfiedExerciseData: {
                             'name': nameController.text,
+                            'isCompleted': widget.exercise?.isCompleted,
                             'weight': weightController.text,
                             'repetitions': repetitionsController.text,
                             'sets': setsController.text,

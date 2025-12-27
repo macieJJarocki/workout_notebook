@@ -212,6 +212,7 @@ void main() {
               await fakeRepository.update(
                 HiveBoxKey.exercises,
                 (Exercise(
+                  isCompleted: false,
                   id: 1,
                   name: 'hip thrust',
                   weight: 20.0,
@@ -277,6 +278,7 @@ void main() {
                 HiveBoxKey.exercises,
                 Exercise(
                   id: 1,
+                  isCompleted: false,
                   name: 'test',
                   weight: 10,
                   repetitions: 10,
@@ -287,6 +289,7 @@ void main() {
                 HiveBoxKey.exercises,
                 Exercise(
                   id: 2,
+                  isCompleted: false,
                   name: 'test',
                   weight: 10,
                   repetitions: 10,
@@ -299,6 +302,7 @@ void main() {
                 HiveBoxKey.exercises,
                 Exercise(
                   id: 1,
+                  isCompleted: false,
                   name: 'test',
                   weight: 10,
                   repetitions: 10,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
+import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_delete_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_data_element.dart';
@@ -31,13 +33,15 @@ class ExerciseListElement extends StatelessWidget {
         ),
       ),
       child: Card(
-        color: Colors.blueGrey.shade200,
+        color: exercise.isCompleted
+            ? Colors.lightGreen
+            : Colors.blueGrey.shade200,
         child: ListTile(
+          isThreeLine: true,
           contentPadding: .symmetric(horizontal: 4),
           title: Container(
             padding: .only(left: 8),
             child: Column(
-              // crossAxisAlignment: .start,
               children: [
                 Text(
                   exercise.name,
@@ -60,23 +64,47 @@ class ExerciseListElement extends StatelessWidget {
               ],
             ),
           ),
-          subtitle: Row(
-            mainAxisAlignment: .spaceBetween,
+          subtitle: Column(
             children: [
-              ExerciseDataElement(
-                fieldName: 'Weight',
-                fieldValue: exercise.weight,
-                iconPath: 'lib/utils/icons/weight1.png',
+              Row(
+                mainAxisAlignment: .spaceBetween,
+                children: [
+                  ExerciseDataElement(
+                    fieldName: 'Weight',
+                    fieldValue: exercise.weight,
+                    iconPath: 'lib/utils/icons/weight1.png',
+                  ),
+                  ExerciseDataElement(
+                    fieldName: 'Reps',
+                    fieldValue: exercise.repetitions,
+                    iconPath: 'lib/utils/icons/rep2.png',
+                  ),
+                  ExerciseDataElement(
+                    fieldName: 'Sets',
+                    fieldValue: exercise.sets,
+                    iconPath: 'lib/utils/icons/sets.png',
+                  ),
+                ],
               ),
-              ExerciseDataElement(
-                fieldName: 'Reps',
-                fieldValue: exercise.repetitions,
-                iconPath: 'lib/utils/icons/rep2.png',
-              ),
-              ExerciseDataElement(
-                fieldName: 'Sets',
-                fieldValue: exercise.sets,
-                iconPath: 'lib/utils/icons/sets.png',
+              BlocBuilder<WorkoutBloc, WorkoutState>(
+                builder: (context, state) {
+                  return ListTile(
+                    title: Text('Exercise done?'),
+                    trailing: Checkbox(
+                      value: exercise.isCompleted,
+                      onChanged: (value) {
+                        context.read<WorkoutBloc>().add(
+                          WorkoutExerciseEdited(
+                            modyfiedExerciseData: exercise
+                                .copyWith(isCompleted: value)
+                                .toMap(),
+                            id: exercise.id,
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
             ],
           ),

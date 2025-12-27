@@ -21,7 +21,7 @@ class Workout extends Model {
     };
   }
 
-  Workout copyWith(int? id, List<Exercise>? exercises) {
+  Workout copyWith({int? id, List<Exercise>? exercises}) {
     return Workout(id: id ?? this.id, exercises: exercises ?? this.exercises);
   }
 }
