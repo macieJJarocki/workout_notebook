@@ -1,1 +1,1 @@
-enum EnumModels { workouts, exercises }
+enum EnumModels { workouts, exercises, appData }

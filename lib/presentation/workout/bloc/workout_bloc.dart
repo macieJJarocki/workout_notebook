@@ -17,6 +17,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     on<WorkoutExerciseCreated>(_onWorkoutExerciseCreated);
     on<WorkoutExerciseDeleted>(_onWorkoutExerciseDeleted);
     on<WorkoutExerciseEdited>(_onWorkoutExerciseEdited);
+    on<WorkoutCreated>(_onWorkoutCreated);
   }
   void _onWorkoutDataRequested(
     WorkoutDataRequested event,
@@ -29,12 +30,14 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       final exercises = List<Exercise>.from(
         await repository.read(EnumModels.exercises),
       );
-      // TODO remove delay ??
-      await Future.delayed(Duration(seconds: 1));
+      final unsavedExercises = List<Exercise>.from(
+        await repository.read(EnumModels.appData),
+      );
       emit(
         WorkoutStateSuccess(
           workouts: workouts,
           exercises: exercises,
+          unsavedExercises: unsavedExercises,
         ),
       );
     } catch (e) {
@@ -52,22 +55,22 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   ) async {
     try {
       final blocState = state as WorkoutStateSuccess;
-      final exercises = blocState.exercises;
-      final int maxId = _getUniqModelId(exercises);
+      final exercises = blocState.unsavedExercises;
+
       final exercise = Exercise(
         isCompleted: false,
-        id: maxId + 1,
+        id: _getUniqModelId(exercises) + 1,
         name: event.name,
         weight: double.parse(event.weight),
         repetitions: int.parse(event.repetitions),
         sets: int.parse(event.sets),
       );
-      await repository.write(EnumModels.exercises, exercise);
-      // TODO emit state or call _onWorkoutDataRequested()??
+      await repository.write(EnumModels.appData, exercise);
       emit(
         WorkoutStateSuccess(
-          exercises: [...exercises, exercise],
+          exercises: blocState.exercises,
           workouts: blocState.workouts,
+          unsavedExercises: [...blocState.unsavedExercises, exercise],
         ),
       );
     } catch (e) {
@@ -84,47 +87,37 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     Emitter<WorkoutState> emit,
   ) async {
     try {
-      final workoutState = state as WorkoutStateSuccess;
-      final exercise = workoutState.exercises.firstWhere(
+      final blocState = state as WorkoutStateSuccess;
+      final modifiedExercise = event.modyfiedExerciseData;
+      final exercise = blocState.unsavedExercises.firstWhere(
         (element) => element.id == event.id,
       );
-      // TODO change in the future
-      final modifiedExercise = Exercise(
-        id: 9999999,
-        isCompleted: event.modyfiedExerciseData['isCompleted'],
-        name: event.modyfiedExerciseData['name'],
-        weight: double.parse(event.modyfiedExerciseData['weight'].toString()),
-        repetitions: int.parse(
-          event.modyfiedExerciseData['repetitions'].toString(),
-        ),
-        sets: int.parse(event.modyfiedExerciseData['sets'].toString()),
-      );
-
-      if (modifiedExercise.name != exercise.name ||
-          modifiedExercise.weight != exercise.weight ||
-          modifiedExercise.repetitions != exercise.repetitions ||
-          modifiedExercise.sets != exercise.sets ||
-          modifiedExercise.isCompleted != exercise.isCompleted) {
+      if (modifiedExercise['name'] != exercise.name ||
+          modifiedExercise['weight'] != exercise.weight ||
+          modifiedExercise['repetitions'] != exercise.repetitions ||
+          modifiedExercise['sets'] != exercise.sets ||
+          modifiedExercise['isCompleted'] != exercise.isCompleted) {
         await repository.update(
-          EnumModels.exercises,
+          EnumModels.appData,
           Exercise(
             id: exercise.id,
-            isCompleted: modifiedExercise.isCompleted,
-            name: modifiedExercise.name,
-            weight: modifiedExercise.weight,
-            repetitions: modifiedExercise.repetitions,
-            sets: modifiedExercise.sets,
+            name: modifiedExercise['name'],
+            weight: double.parse(modifiedExercise['weight']),
+            repetitions: int.parse(modifiedExercise['repetitions']),
+            sets: int.parse(modifiedExercise['sets']),
+            isCompleted: modifiedExercise['isCompleted'],
           ),
         );
 
         final exercises = List<Exercise>.from(
-          await repository.read(EnumModels.exercises),
+          await repository.read(EnumModels.appData),
         );
 
         emit(
           WorkoutStateSuccess(
-            exercises: exercises,
-            workouts: workoutState.workouts,
+            exercises: blocState.exercises,
+            workouts: blocState.workouts,
+            unsavedExercises: exercises,
           ),
         );
       }
@@ -143,20 +136,49 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   ) async {
     try {
       final blocState = state as WorkoutStateSuccess;
-      await repository.delete(EnumModels.exercises, event.exercise);
+      await repository.delete(EnumModels.appData, event.exercise);
       final exercises = List<Exercise>.from(
-        await repository.read(EnumModels.exercises),
+        await repository.read(EnumModels.appData),
       );
       emit(
         WorkoutStateSuccess(
-          exercises: exercises,
+          exercises: blocState.exercises,
           workouts: blocState.workouts,
+          unsavedExercises: exercises,
         ),
       );
     } catch (e) {
       emit(
         WorkoutStateFailure(
           message: 'An error occurred during the delete operation.',
+        ),
+      );
+    }
+  }
+
+  void _onWorkoutCreated(
+    WorkoutCreated event,
+    Emitter<WorkoutState> emit,
+  ) async {
+    try {
+      final blocState = state as WorkoutStateSuccess;
+      final workout = Workout(
+        id: _getUniqModelId(blocState.workouts),
+        isCompleted: false,
+        exercises: event.exercises
+      );
+      await repository.write(EnumModels.workouts, workout);
+      emit(
+        WorkoutStateSuccess(
+          workouts: [...blocState.workouts, workout],
+          exercises: blocState.exercises,
+          unsavedExercises: [],
+        ),
+      );
+    } catch (e) {
+      emit(
+        WorkoutStateFailure(
+          message: 'An error occurred during the write operation.',
         ),
       );
     }

@@ -90,12 +90,18 @@ class ExerciseListElement extends StatelessWidget {
                     trailing: Checkbox(
                       value: exercise.isCompleted,
                       onChanged: (value) {
+                        print(value);
                         context.read<WorkoutBloc>().add(
                           WorkoutExerciseEdited(
-                            modyfiedExerciseData: exercise
-                                .copyWith(isCompleted: value)
-                                .toMap(),
                             id: exercise.id,
+                            // TO use copyWith in the future
+                            modyfiedExerciseData: {
+                              'name': exercise.name,
+                              'weight': exercise.weight.toString(),
+                              'repetitions': exercise.repetitions.toString(),
+                              'sets': exercise.sets.toString(),
+                              'isCompleted': value,
+                            },
                           ),
                         );
                       },

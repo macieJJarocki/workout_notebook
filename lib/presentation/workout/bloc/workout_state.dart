@@ -12,10 +12,12 @@ final class WorkoutStateLoading extends WorkoutState {}
 final class WorkoutStateSuccess extends WorkoutState {
   final List<Workout> workouts;
   final List<Exercise> exercises;
+  final List<Exercise> unsavedExercises;
 
   WorkoutStateSuccess({
-    this.workouts = const [],
-    this.exercises = const [],
+    required this.workouts,
+    required this.exercises,
+    required this.unsavedExercises,
   });
 }
 

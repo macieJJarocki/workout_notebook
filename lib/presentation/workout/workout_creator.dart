@@ -40,7 +40,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
         child: BlocBuilder<WorkoutBloc, WorkoutState>(
           builder: (context, state) {
             if (state is WorkoutStateSuccess) {
-              if (state.exercises.isNotEmpty) {
+              if (state.unsavedExercises.isNotEmpty) {
                 return SizedBox(
                   height: height * 0.8,
                   width: width * 0.95,
@@ -50,7 +50,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                       mainAxisAlignment: .spaceBetween,
                       children: [
                         Text(
-                          'e:${state.exercises.length} w: ${state.workouts.length}',
+                          'e:${state.exercises.length} w: ${state.workouts.length} u: ${state.unsavedExercises.length}',
                         ),
                         Expanded(
                           child: Padding(
@@ -63,10 +63,11 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                     child: Column(
                                       mainAxisSize: .max,
                                       children: List.generate(
-                                        state.exercises.length,
+                                        state.unsavedExercises.length,
                                         (int index) {
                                           return ExerciseListElement(
-                                            exercise: state.exercises[index],
+                                            exercise:
+                                                state.unsavedExercises[index],
                                           );
                                         },
                                       ),
@@ -77,7 +78,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                     child: Column(
                                       mainAxisAlignment: .end,
                                       children: [
-                                        state.exercises.length >= 2
+                                        state.unsavedExercises.length >= 2
                                             ? AppOutlinedButton(
                                                 width: width * 0.12,
                                                 height: width * 0.12,
@@ -123,7 +124,14 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                       width: width * 0.8,
                                       backgrounColor: Colors.blueGrey.shade100,
                                       padding: .all(8),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        context.read<WorkoutBloc>().add(
+                                          WorkoutCreated(
+                                            exercises: state.unsavedExercises,
+                                          ),
+                                        );
+                                        context.goNamed(RouterNames.intro.name);
+                                      },
                                       child: Text(
                                         'Create workout',
                                         style: TextStyle(fontSize: 20),
@@ -149,6 +157,9 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                     child: Column(
                       mainAxisAlignment: .spaceAround,
                       children: [
+                        Text(
+                          'e:${state.exercises.length} w: ${state.workouts.length} u: ${state.unsavedExercises.length}',
+                        ),
                         Text(
                           "Don't waste time - create your workout here!",
                           textAlign: .center,

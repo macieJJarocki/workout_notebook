@@ -17,7 +17,7 @@ class LocalDbRepository {
           switch (key) {
             case EnumModels.workouts:
               return Workout.fromMap(map);
-            case EnumModels.exercises:
+            case EnumModels.exercises || EnumModels.appData:
               return Exercise.fromMap(map);
           }
         },
