@@ -2,22 +2,22 @@ import 'package:workout_notebook/data/models/model.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/data/services/local_db_service.dart';
-import 'package:workout_notebook/utils/enums/hive_box_keys.dart';
+import 'package:workout_notebook/utils/enums/enum_models.dart';
 
 class LocalDbRepository {
   final LocalDbService service;
 
   LocalDbRepository(this.service);
 
-  Future<List<Model>> read(HiveBoxKey key) async {
+  Future<List<Model>> read(EnumModels key) async {
     try {
       final List<Map<String, dynamic>> rawData = await service.read(key);
       final data = rawData.map(
         (map) {
           switch (key) {
-            case HiveBoxKey.workouts:
+            case EnumModels.workouts:
               return Workout.fromMap(map);
-            case HiveBoxKey.exercises:
+            case EnumModels.exercises:
               return Exercise.fromMap(map);
           }
         },
@@ -28,7 +28,7 @@ class LocalDbRepository {
     }
   }
 
-  Future<void> write(HiveBoxKey key, Model model) async {
+  Future<void> write(EnumModels key, Model model) async {
     try {
       final data = [...await read(key), model]
           .map(
@@ -42,7 +42,7 @@ class LocalDbRepository {
     }
   }
 
-  Future<void> update(HiveBoxKey key, Model model) async {
+  Future<void> update(EnumModels key, Model model) async {
     try {
       final data = await read(key);
 
@@ -57,7 +57,7 @@ class LocalDbRepository {
     }
   }
 
-  Future<void> delete(HiveBoxKey key, Model model) async {
+  Future<void> delete(EnumModels key, Model model) async {
     try {
       final data = await read(key);
 

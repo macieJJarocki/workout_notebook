@@ -23,12 +23,6 @@ class WorkoutExerciseCreated extends WorkoutEvent {
   });
 }
 
-class WorkoutExerciseDeleted extends WorkoutEvent {
-  final Exercise exercise;
-
-  WorkoutExerciseDeleted({required this.exercise});
-}
-
 class WorkoutExerciseEdited extends WorkoutEvent {
   final int id;
   final Map<String, dynamic> modyfiedExerciseData;
@@ -37,4 +31,10 @@ class WorkoutExerciseEdited extends WorkoutEvent {
     required this.modyfiedExerciseData,
     required this.id,
   });
+}
+
+class WorkoutExerciseDeleted extends WorkoutEvent {
+  final Exercise exercise;
+
+  WorkoutExerciseDeleted({required this.exercise});
 }

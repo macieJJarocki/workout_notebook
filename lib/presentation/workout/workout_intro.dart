@@ -50,9 +50,13 @@ class WorkoutIntro extends StatelessWidget {
               ),
               AppOutlinedButton(
                 padding: EdgeInsetsGeometry.zero,
-                name: 'Create workout',
                 onPressed: () => context.goNamed(RouterNames.creator.name),
                 backgrounColor: Colors.blueGrey.shade100,
+                child: Text(
+                  'Create workout',
+                  style: TextStyle(fontSize: 20),
+                  textAlign: .center,
+                ),
               ),
             ],
           ),

@@ -39,30 +39,27 @@ class ExerciseListElement extends StatelessWidget {
         child: ListTile(
           isThreeLine: true,
           contentPadding: .symmetric(horizontal: 4),
-          title: Container(
-            padding: .only(left: 8),
-            child: Column(
-              children: [
-                Text(
-                  exercise.name,
-                  textAlign: .center,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: .bold,
-                    fontSize: 20,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+          title: Column(
+            children: [
+              Text(
+                exercise.name,
+                textAlign: .center,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: .bold,
+                  fontSize: 20,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                Text(
-                  'Exercise',
-                  style: TextStyle(
-                    color: Colors.blueGrey.shade600,
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
-                  ),
+              ),
+              Text(
+                'Exercise',
+                style: TextStyle(
+                  color: Colors.blueGrey.shade600,
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           subtitle: Column(
             children: [

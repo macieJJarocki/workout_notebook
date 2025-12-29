@@ -7,7 +7,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:workout_notebook/data/services/local_db_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:workout_notebook/utils/const.dart';
-import 'package:workout_notebook/utils/enums/hive_box_keys.dart';
+import 'package:workout_notebook/utils/enums/enum_models.dart';
 import 'package:workout_notebook/utils/exceptions.dart';
 
 import 'utils/fake_data.dart';
@@ -21,12 +21,12 @@ class FakeBox extends Fake implements Box {
   String get name => 'App';
 
   Map<String, List<Map<String, dynamic>>> fakeBoxState = {
-    HiveBoxKey.exercises.name: <Map<String, dynamic>>[],
-    HiveBoxKey.workouts.name: <Map<String, dynamic>>[],
+    EnumModels.exercises.name: <Map<String, dynamic>>[],
+    EnumModels.workouts.name: <Map<String, dynamic>>[],
   };
   @override
   get(key, {defaultValue}) {
-    if (key == HiveBoxKey.exercises.name || HiveBoxKey.workouts.name == key) {
+    if (key == EnumModels.exercises.name || EnumModels.workouts.name == key) {
       return fakeBoxState[key];
     }
     return null;
@@ -130,7 +130,7 @@ void main() {
             await service.init(boxName);
 
             expect(
-              () => service.read(HiveBoxKey.exercises),
+              () => service.read(EnumModels.exercises),
               throwsA(
                 isA<DbException>().having(
                   (e) => e.message,
@@ -152,8 +152,8 @@ void main() {
               () => mockBox.get(any()),
             ).thenReturn(<Map<String, dynamic>>[]);
 
-            final data = await service.read(HiveBoxKey.exercises);
-            final data2 = await service.read(HiveBoxKey.workouts);
+            final data = await service.read(EnumModels.exercises);
+            final data2 = await service.read(EnumModels.workouts);
 
             expect(data, isList);
             expect(data2, isList);
@@ -183,13 +183,13 @@ void main() {
               (_) => Future.value(fakeBox),
             );
 
-            final initExcersiceState = await service.read(HiveBoxKey.exercises);
+            final initExcersiceState = await service.read(EnumModels.exercises);
             expect(initExcersiceState, isList);
             expect(initExcersiceState, isEmpty);
-            await service.write(HiveBoxKey.exercises, [
+            await service.write(EnumModels.exercises, [
               FakeData.getExerciseAsMap(),
             ]);
-            final newExcersiceState = await service.read(HiveBoxKey.exercises);
+            final newExcersiceState = await service.read(EnumModels.exercises);
             expect(newExcersiceState, isNotEmpty);
             expect(newExcersiceState, hasLength(1));
           },
@@ -211,7 +211,7 @@ void main() {
             ).thenThrow(DbException("Can't put data into the local db."));
 
             expect(
-              () => service.write(HiveBoxKey.exercises, []),
+              () => service.write(EnumModels.exercises, []),
               throwsA(
                 isA<DbException>().having(
                   (e) => e.message,

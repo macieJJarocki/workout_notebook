@@ -1,8 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
+import 'package:workout_notebook/data/models/model.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/data/repository/local_db_repository.dart';
-import 'package:workout_notebook/utils/enums/hive_box_keys.dart';
+import 'package:workout_notebook/utils/enums/enum_models.dart';
 
 part 'workout_event.dart';
 part 'workout_state.dart';
@@ -23,10 +24,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   ) async {
     try {
       final workouts = List<Workout>.from(
-        await repository.read(HiveBoxKey.workouts),
+        await repository.read(EnumModels.workouts),
       );
       final exercises = List<Exercise>.from(
-        await repository.read(HiveBoxKey.exercises),
+        await repository.read(EnumModels.exercises),
       );
       // TODO remove delay ??
       await Future.delayed(Duration(seconds: 1));
@@ -52,18 +53,16 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     try {
       final blocState = state as WorkoutStateSuccess;
       final exercises = blocState.exercises;
-      final int maxWorkoutsId = exercises.isNotEmpty
-          ? exercises.reduce((curr, next) => curr.id > next.id ? curr : next).id
-          : 0;
+      final int maxId = _getUniqModelId(exercises);
       final exercise = Exercise(
         isCompleted: false,
-        id: maxWorkoutsId + 1,
+        id: maxId + 1,
         name: event.name,
         weight: double.parse(event.weight),
         repetitions: int.parse(event.repetitions),
         sets: int.parse(event.sets),
       );
-      await repository.write(HiveBoxKey.exercises, exercise);
+      await repository.write(EnumModels.exercises, exercise);
       // TODO emit state or call _onWorkoutDataRequested()??
       emit(
         WorkoutStateSuccess(
@@ -75,31 +74,6 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       emit(
         WorkoutStateFailure(
           message: 'An error occurred during the write operation.',
-        ),
-      );
-    }
-  }
-
-  void _onWorkoutExerciseDeleted(
-    WorkoutExerciseDeleted event,
-    Emitter<WorkoutState> emit,
-  ) async {
-    try {
-      final blocState = state as WorkoutStateSuccess;
-      await repository.delete(HiveBoxKey.exercises, event.exercise);
-      final exercises = List<Exercise>.from(
-        await repository.read(HiveBoxKey.exercises),
-      );
-      emit(
-        WorkoutStateSuccess(
-          exercises: exercises,
-          workouts: blocState.workouts,
-        ),
-      );
-    } catch (e) {
-      emit(
-        WorkoutStateFailure(
-          message: 'An error occurred during the delete operation.',
         ),
       );
     }
@@ -132,7 +106,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
           modifiedExercise.sets != exercise.sets ||
           modifiedExercise.isCompleted != exercise.isCompleted) {
         await repository.update(
-          HiveBoxKey.exercises,
+          EnumModels.exercises,
           Exercise(
             id: exercise.id,
             isCompleted: modifiedExercise.isCompleted,
@@ -144,7 +118,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
         );
 
         final exercises = List<Exercise>.from(
-          await repository.read(HiveBoxKey.exercises),
+          await repository.read(EnumModels.exercises),
         );
 
         emit(
@@ -161,5 +135,39 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
         ),
       );
     }
+  }
+
+  void _onWorkoutExerciseDeleted(
+    WorkoutExerciseDeleted event,
+    Emitter<WorkoutState> emit,
+  ) async {
+    try {
+      final blocState = state as WorkoutStateSuccess;
+      await repository.delete(EnumModels.exercises, event.exercise);
+      final exercises = List<Exercise>.from(
+        await repository.read(EnumModels.exercises),
+      );
+      emit(
+        WorkoutStateSuccess(
+          exercises: exercises,
+          workouts: blocState.workouts,
+        ),
+      );
+    } catch (e) {
+      emit(
+        WorkoutStateFailure(
+          message: 'An error occurred during the delete operation.',
+        ),
+      );
+    }
+  }
+
+  int _getUniqModelId(List<Model> list) {
+    return list.isNotEmpty
+        ? list
+              .cast<Model>()
+              .reduce((curr, next) => curr.id > next.id ? curr : next)
+              .id
+        : 0;
   }
 }

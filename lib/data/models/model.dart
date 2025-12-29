@@ -1,6 +1,9 @@
 abstract class Model {
+  Model(this.id, this.isCompleted);
+
   final int id;
-  Model(this.id);
+  final bool isCompleted;
+
   Map<String, dynamic> toMap();
-  // TODO ?-> add copyWith method <-?
+  Model copyWith();
 }

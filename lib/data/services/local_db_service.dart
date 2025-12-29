@@ -1,6 +1,6 @@
 import 'package:hive_ce/hive.dart';
 import 'package:workout_notebook/utils/const.dart';
-import 'package:workout_notebook/utils/enums/hive_box_keys.dart';
+import 'package:workout_notebook/utils/enums/enum_models.dart';
 import 'package:workout_notebook/utils/exceptions.dart';
 
 class LocalDbService {
@@ -17,7 +17,7 @@ class LocalDbService {
   }
 
   // TODO should return List<TypeAdapter> instead List<Map<String, dynamic>>
-  Future<List<Map<String, dynamic>>> read(HiveBoxKey key) async {
+  Future<List<Map<String, dynamic>>> read(EnumModels key) async {
     try {
       final box = await init(boxName);
       final List<dynamic> boxContent = box.get(key.name, defaultValue: []);
@@ -32,7 +32,7 @@ class LocalDbService {
   }
 
   // TODO return List<TypeAdapter> instead List<Map<String, dynamic>>
-  Future<void> write(HiveBoxKey key, List<Map<String, dynamic>> list) async {
+  Future<void> write(EnumModels key, List<Map<String, dynamic>> list) async {
     try {
       final box = await init(boxName);
       await box.put(key.name, list);

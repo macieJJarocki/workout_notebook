@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 
 class AppOutlinedButton extends StatelessWidget {
-  final String name;
+  final double? width;
+  final double? height;
   final Color backgrounColor;
-  final void Function() onPressed;
   final EdgeInsetsGeometry padding;
+  final void Function() onPressed;
+  final Widget child;
   const AppOutlinedButton({
     super.key,
-    required this.padding,
-    required this.name,
-    required this.onPressed,
+    this.width,
+    this.height,
     required this.backgrounColor,
+    required this.padding,
+    required this.onPressed,
+    required this.child,
   });
 
   @override
@@ -21,17 +25,15 @@ class AppOutlinedButton extends StatelessWidget {
       child: Padding(
         padding: padding,
         child: Container(
+          width: width,
+          height: height,
           decoration: AppTheme.boxDecoration(
             backgrounColor: backgrounColor,
             shadow: kElevationToShadow[2],
           ),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              name,
-              style: TextStyle(fontSize: 20),
-              textAlign: .center,
-            ),
+            padding: const .all(4),
+            child: child,
           ),
         ),
       ),

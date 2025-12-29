@@ -124,8 +124,12 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
           ),
           AppOutlinedButton(
             padding: EdgeInsetsGeometry.symmetric(vertical: 4),
-            name: widget.exercise == null ? 'Create' : 'Edit',
             backgrounColor: Colors.blueGrey.shade200,
+            child: Text(
+              widget.exercise == null ? 'Create' : 'Edit',
+              style: TextStyle(fontSize: 20),
+              textAlign: .center,
+            ),
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 context.read<WorkoutBloc>().add(

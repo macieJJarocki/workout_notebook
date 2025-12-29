@@ -19,14 +19,18 @@ class ExerciseDeleteDailog extends StatelessWidget {
       actions: [
         AppOutlinedButton(
           padding: EdgeInsetsGeometry.zero,
-          name: 'Delete',
+          backgrounColor: Colors.blueGrey.shade200,
           onPressed: () {
             context.read<WorkoutBloc>().add(
               WorkoutExerciseDeleted(exercise: exercise),
             );
             context.pop();
           },
-          backgrounColor: Colors.blueGrey.shade200,
+          child: Text(
+            'Delete',
+            style: TextStyle(fontSize: 20),
+            textAlign: .center,
+          ),
         ),
       ],
     );

@@ -21,6 +21,8 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
 
   @override
   Widget build(BuildContext context) {
+    final width = AppTheme.deviceWidth(context);
+    final height = AppTheme.deviceHeight(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -40,13 +42,16 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
             if (state is WorkoutStateSuccess) {
               if (state.exercises.isNotEmpty) {
                 return SizedBox(
-                  height: AppTheme.deviceHeight(context) * 0.8,
-                  width: AppTheme.deviceWidth(context) * 0.95,
+                  height: height * 0.8,
+                  width: width * 0.95,
                   child: Card(
                     color: Colors.blueGrey.shade200,
                     child: Column(
                       mainAxisAlignment: .spaceBetween,
                       children: [
+                        Text(
+                          'e:${state.exercises.length} w: ${state.workouts.length}',
+                        ),
                         Expanded(
                           child: Padding(
                             padding: .all(4),
@@ -68,111 +73,32 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                     ),
                                   ),
                                   Align(
-                                    alignment: .bottomCenter,
+                                    alignment: .bottomRight,
                                     child: Column(
-                                      mainAxisSize: .min,
+                                      mainAxisAlignment: .end,
                                       children: [
                                         state.exercises.length >= 2
-                                            ? Row(
-                                                mainAxisAlignment: .end,
-                                                children: [
-                                                  Container(
-                                                    margin: .only(
-                                                      right: 4,
-                                                    ),
-                                                    padding: .all(2),
-                                                    width:
-                                                        AppTheme.deviceWidth(
-                                                          context,
-                                                        ) *
-                                                        0.13,
-                                                    height:
-                                                        AppTheme.deviceWidth(
-                                                          context,
-                                                        ) *
-                                                        0.13,
-                                                    decoration: BoxDecoration(
-                                                      border: BoxBorder.all(
-                                                        color: isSupersetMode
-                                                            ? Colors.deepOrange
-                                                            : Colors.black,
-                                                      ),
-                                                      color: isSupersetMode
-                                                          ? Colors.amber
-                                                          : Colors
-                                                                .blueGrey
-                                                                .shade100,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
-                                                          ),
-                                                    ),
-                                                    child: Tooltip(
-                                                      key: tooltipKey,
-                                                      preferBelow: false,
-                                                      margin: .only(
-                                                        bottom: 4,
-                                                      ),
-                                                      textStyle: TextStyle(
-                                                        color: Colors.black,
-                                                        fontStyle: .italic,
-                                                      ),
-                                                      decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .blueGrey
-                                                            .shade100,
-                                                        border: .all(
-                                                          color:
-                                                              Colors.blueGrey,
-                                                        ),
-                                                        borderRadius: .circular(
-                                                          8,
-                                                        ),
-                                                      ),
-                                                      message:
-                                                          'Tap on the exercise to create superset.',
-                                                      child: IconButton(
-                                                        padding: .zero,
-                                                        onPressed: () async {
-                                                          tooltipKey
-                                                              .currentState
-                                                              ?.ensureTooltipVisible();
-
-                                                          setState(() {
-                                                            isSupersetMode =
-                                                                !isSupersetMode;
-                                                          });
-
-                                                          await Future.delayed(
-                                                            Duration(
-                                                              seconds: 2,
-                                                            ),
-                                                          );
-
-                                                          Tooltip.dismissAllToolTips();
-                                                        },
-                                                        hoverColor:
-                                                            Colors.transparent,
-                                                        highlightColor:
-                                                            Colors.transparent,
-                                                        icon: Image.asset(
-                                                          'lib/utils/icons/superset.png',
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
+                                            ? AppOutlinedButton(
+                                                width: width * 0.12,
+                                                height: width * 0.12,
+                                                padding: .only(right: 4),
+                                                onPressed: () {},
+                                                backgrounColor:
+                                                    Colors.blueGrey.shade100,
+                                                child: Image.asset(
+                                                  'lib/utils/icons/power.png',
+                                                ),
                                               )
                                             : SizedBox(),
                                         AppOutlinedButton(
-                                          name: isSupersetMode
-                                              ? 'Add superset'
-                                              : 'Add exercise',
-                                          backgrounColor:
-                                              Colors.blueGrey.shade100,
-                                          padding: .all(4),
+                                          width: width * 0.12,
+                                          height: width * 0.12,
+                                          padding: .only(
+                                            top: 4,
+                                            bottom: 70,
+                                            right: 4,
+                                          ),
                                           onPressed: () {
-                                            // TODO isSupersetMode ? :
                                             showDialog(
                                               context: context,
                                               builder: (context) {
@@ -182,8 +108,27 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                               },
                                             );
                                           },
+                                          backgrounColor:
+                                              Colors.blueGrey.shade100,
+                                          child: Image.asset(
+                                            'lib/utils/icons/plus.png',
+                                          ),
                                         ),
                                       ],
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: AlignmentGeometry.bottomCenter,
+                                    child: AppOutlinedButton(
+                                      width: width * 0.8,
+                                      backgrounColor: Colors.blueGrey.shade100,
+                                      padding: .all(8),
+                                      onPressed: () {},
+                                      child: Text(
+                                        'Create workout',
+                                        style: TextStyle(fontSize: 20),
+                                        textAlign: .center,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -197,8 +142,8 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                 );
               } else {
                 return SizedBox(
-                  width: AppTheme.deviceWidth(context) * 0.95,
-                  height: AppTheme.deviceHeight(context) * 0.5,
+                  width: width * 0.95,
+                  height: height * 0.5,
                   child: Card(
                     color: Colors.blueGrey.shade200,
                     child: Column(
@@ -210,7 +155,6 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                           style: TextStyle(fontSize: 26, fontWeight: .bold),
                         ),
                         AppOutlinedButton(
-                          name: 'Add exercise',
                           backgrounColor: Colors.blueGrey.shade100,
                           padding: EdgeInsets.only(top: 8),
                           onPressed: () => showDialog(
@@ -220,6 +164,11 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                 title: 'Create new Exercise',
                               );
                             },
+                          ),
+                          child: Text(
+                            'Add exercise',
+                            style: TextStyle(fontSize: 20),
+                            textAlign: .center,
                           ),
                         ),
                       ],

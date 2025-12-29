@@ -15,7 +15,7 @@ class Exercise extends Model {
     required this.weight,
     required this.repetitions,
     required this.sets,
-  }) : super(id);
+  }) : super(id, isCompleted);
 
   factory Exercise.fromMap(Map<String, dynamic> map) {
     return Exercise(
@@ -40,6 +40,7 @@ class Exercise extends Model {
     };
   }
 
+  @override
   Exercise copyWith({
     int? id,
     bool? isCompleted,

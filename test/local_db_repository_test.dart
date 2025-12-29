@@ -4,7 +4,7 @@ import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/data/models/model.dart';
 import 'package:workout_notebook/data/repository/local_db_repository.dart';
 import 'package:workout_notebook/data/services/local_db_service.dart';
-import 'package:workout_notebook/utils/enums/hive_box_keys.dart';
+import 'package:workout_notebook/utils/enums/enum_models.dart';
 import 'package:workout_notebook/utils/exceptions.dart';
 
 import 'utils/fake_data.dart';
@@ -13,17 +13,17 @@ class MockService extends Mock implements LocalDbService {}
 
 class FakeService extends Fake implements LocalDbService {
   final Map<String, dynamic> fakeState = {
-    HiveBoxKey.exercises.name: <Map<String, dynamic>>[],
-    HiveBoxKey.workouts.name: <Map<String, dynamic>>[],
+    EnumModels.exercises.name: <Map<String, dynamic>>[],
+    EnumModels.workouts.name: <Map<String, dynamic>>[],
   };
 
   @override
-  Future<List<Map<String, dynamic>>> read(HiveBoxKey key) async {
+  Future<List<Map<String, dynamic>>> read(EnumModels key) async {
     return fakeState[key.name];
   }
 
   @override
-  Future<void> write(HiveBoxKey key, List<Map<String, dynamic>> list) async {
+  Future<void> write(EnumModels key, List<Map<String, dynamic>> list) async {
     fakeState[key.name] = list;
   }
 }
@@ -49,13 +49,13 @@ void main() {
             'should return list of models',
             () async {
               when(
-                () => mockService.read(HiveBoxKey.exercises),
+                () => mockService.read(EnumModels.exercises),
               ).thenAnswer(
                 (_) => Future.value(<Map<String, dynamic>>[]),
               );
-              final data = await repository.read(HiveBoxKey.exercises);
+              final data = await repository.read(EnumModels.exercises);
               verify(
-                () => mockService.read(HiveBoxKey.exercises),
+                () => mockService.read(EnumModels.exercises),
               ).called(1);
               expect(data, isA<List<Model>>());
             },
@@ -64,11 +64,11 @@ void main() {
             'should throw an error if the key does not occurred in the HiveBoxKey ',
             () async {
               when(
-                () => mockService.read(HiveBoxKey.exercises),
+                () => mockService.read(EnumModels.exercises),
               ).thenThrow(DbException("Can't read from the local db."));
 
               expect(
-                () => repository.read(HiveBoxKey.exercises),
+                () => repository.read(EnumModels.exercises),
                 throwsA(
                   isA<DbException>().having(
                     (e) => e.message,
@@ -98,18 +98,18 @@ void main() {
             'should add one element to the value returned from the LocalDbService',
             () async {
               final oldServiceState = await fakeRepository.read(
-                HiveBoxKey.exercises,
+                EnumModels.exercises,
               );
               expect(oldServiceState.length, 0);
               expect(oldServiceState, isEmpty);
 
               await fakeRepository.write(
-                HiveBoxKey.exercises,
+                EnumModels.exercises,
                 FakeData.getExercise(),
               );
 
               final newServiceState = await fakeRepository.read(
-                HiveBoxKey.exercises,
+                EnumModels.exercises,
               );
               expect(newServiceState.length, 1);
               expect(newServiceState, isNotEmpty);
@@ -117,16 +117,16 @@ void main() {
           );
           test('should rethrow error from the LocalDbService.write', () async {
             when(
-              () => mockService.read(HiveBoxKey.exercises),
+              () => mockService.read(EnumModels.exercises),
             ).thenAnswer((_) async => [FakeData.getExerciseAsMap()]);
 
             when(
-              () => mockService.write(HiveBoxKey.exercises, any()),
+              () => mockService.write(EnumModels.exercises, any()),
             ).thenThrow(DbException("Can't put data into the local db."));
 
             expect(
               () => repository.write(
-                HiveBoxKey.exercises,
+                EnumModels.exercises,
                 FakeData.getExercise(),
               ),
               throwsA(
@@ -153,11 +153,11 @@ void main() {
             'Should rethrow error from LocalDbService.read.',
             () {
               when(
-                () => mockService.read(HiveBoxKey.exercises),
+                () => mockService.read(EnumModels.exercises),
               ).thenThrow(DbException("Can't read from the local db."));
               expect(
                 () => repository.update(
-                  HiveBoxKey.exercises,
+                  EnumModels.exercises,
                   FakeData.getExercise(),
                 ),
                 throwsA(
@@ -172,20 +172,20 @@ void main() {
           );
           test('Should rethrow error from LocalDbService.write.', () {
             when(
-              () => mockService.read(HiveBoxKey.exercises),
+              () => mockService.read(EnumModels.exercises),
             ).thenAnswer(
               (_) async => [FakeData.getExerciseAsMap()],
             );
 
             when(
-              () => mockService.write(HiveBoxKey.exercises, [
+              () => mockService.write(EnumModels.exercises, [
                 FakeData.getExerciseAsMap(),
               ]),
             ).thenThrow(DbException("Can't put data into the local db."));
 
             expect(
               () => repository.update(
-                HiveBoxKey.exercises,
+                EnumModels.exercises,
                 FakeData.getExercise(),
               ),
               throwsA(
@@ -205,12 +205,12 @@ void main() {
                 fakeService,
               );
               await fakeRepository.write(
-                HiveBoxKey.exercises,
+                EnumModels.exercises,
                 FakeData.getExercise(),
               );
-              final data = await fakeRepository.read(HiveBoxKey.exercises);
+              final data = await fakeRepository.read(EnumModels.exercises);
               await fakeRepository.update(
-                HiveBoxKey.exercises,
+                EnumModels.exercises,
                 (Exercise(
                   isCompleted: false,
                   id: 1,
@@ -222,7 +222,7 @@ void main() {
               );
 
               final updatedData = await fakeRepository.read(
-                HiveBoxKey.exercises,
+                EnumModels.exercises,
               );
 
               final previousExercise = data[0] as Exercise;
@@ -251,12 +251,12 @@ void main() {
             'should rethrow error from LocalDbService.read',
             () {
               when(
-                () => mockService.read(HiveBoxKey.exercises),
+                () => mockService.read(EnumModels.exercises),
               ).thenThrow(DbException("Can't read from the local db."));
 
               expect(
                 () => repository.delete(
-                  HiveBoxKey.exercises,
+                  EnumModels.exercises,
                   FakeData.getExercise(),
                 ),
                 throwsA(
@@ -275,7 +275,7 @@ void main() {
               repository = LocalDbRepository(fakeService);
 
               await repository.write(
-                HiveBoxKey.exercises,
+                EnumModels.exercises,
                 Exercise(
                   id: 1,
                   isCompleted: false,
@@ -286,7 +286,7 @@ void main() {
                 ),
               );
               await repository.write(
-                HiveBoxKey.exercises,
+                EnumModels.exercises,
                 Exercise(
                   id: 2,
                   isCompleted: false,
@@ -296,10 +296,10 @@ void main() {
                   sets: 2,
                 ),
               );
-              final data = await repository.read(HiveBoxKey.exercises);
+              final data = await repository.read(EnumModels.exercises);
               expect(data, hasLength(2));
               await repository.delete(
-                HiveBoxKey.exercises,
+                EnumModels.exercises,
                 Exercise(
                   id: 1,
                   isCompleted: false,
@@ -309,7 +309,7 @@ void main() {
                   sets: 2,
                 ),
               );
-              final newData = await repository.read(HiveBoxKey.exercises);
+              final newData = await repository.read(EnumModels.exercises);
               expect(newData, hasLength(1));
             },
           );
