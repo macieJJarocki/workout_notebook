@@ -76,4 +76,12 @@ class LocalDbRepository {
       rethrow;
     }
   }
+
+  Future<void> deleteAll(EnumModels key) async {
+    try {
+      await service.write(key, []);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

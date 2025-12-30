@@ -165,9 +165,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       final workout = Workout(
         id: _getUniqModelId(blocState.workouts),
         isCompleted: false,
-        exercises: event.exercises
+        exercises: event.exercises,
       );
       await repository.write(EnumModels.workouts, workout);
+      await repository.deleteAll(EnumModels.appData);
       emit(
         WorkoutStateSuccess(
           workouts: [...blocState.workouts, workout],

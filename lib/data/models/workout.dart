@@ -18,8 +18,12 @@ class Workout extends Model {
     return Workout(
       id: map['id'],
       isCompleted: map['isCompleted'],
-      exercises: map['exercises'],
-      dateTime: DateTime.tryParse(map['dateTime']),
+      exercises: map['exercises']
+          .map<Exercise>((e) => Exercise.fromMap(Map<String, dynamic>.from(e)))
+          .toList(),
+      dateTime: map['dateTime'] == null
+          ? null
+          : DateTime.tryParse(map['dateTime']),
     );
   }
 
@@ -27,6 +31,7 @@ class Workout extends Model {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'isCompleted': isCompleted,
       'exercises': exercises
           .map(
             (e) => e.toMap(),
