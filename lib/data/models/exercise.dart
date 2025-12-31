@@ -7,6 +7,7 @@ class Exercise extends Model {
   final double weight;
   final int repetitions;
   final int sets;
+  // TODO add observations or comments
 
   Exercise({
     required this.id,

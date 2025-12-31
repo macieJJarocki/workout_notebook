@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:workout_notebook/presentation/workout/workout_view.dart';
+import 'package:workout_notebook/presentation/workout_view.dart';
 import 'package:workout_notebook/utils/custom_bloc_observer.dart';
 
 /*

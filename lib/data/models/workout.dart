@@ -6,6 +6,7 @@ class Workout extends Model {
   final bool isCompleted;
   final List<Exercise> exercises;
   final DateTime? dateTime;
+  // TODO add name 
 
   Workout({
     required this.id,
