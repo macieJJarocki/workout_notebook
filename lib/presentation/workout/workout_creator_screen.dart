@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
+import 'package:workout_notebook/presentation/workout/widgets/app_form_field.dart';
 import 'package:workout_notebook/presentation/workout/widgets/app_outlined_button.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_list_element.dart';
+import 'package:workout_notebook/presentation/workout/widgets/workout_dailog.dart';
+import 'package:workout_notebook/utils/app_form_validator.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 
@@ -16,8 +19,22 @@ class WorkoutCreator extends StatefulWidget {
 }
 
 class _WorkoutCreatorState extends State<WorkoutCreator> {
-  final GlobalKey<TooltipState> tooltipKey = GlobalKey<TooltipState>();
+  final TextEditingController nameController = TextEditingController();
   bool isSupersetMode = false;
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    super.dispose();
+  }
+
+  void _rebuildView(String name) {
+    setState(() {
+      // TODO remove debugPrint
+      debugPrint('View rebuilded');
+      nameController.text = name;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +50,15 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
         centerTitle: true,
         leading: IconButton(
           onPressed: () => context.goNamed(RouterNames.intro.name),
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back_ios),
         ),
       ),
       body: Center(
         child: BlocBuilder<WorkoutBloc, WorkoutState>(
           builder: (context, state) {
             if (state is WorkoutStateSuccess) {
-              if (state.unsavedExercises.isNotEmpty) {
+              // if (state.unsavedExercises.isNotEmpty) {
+              if (nameController.text.isNotEmpty) {
                 return SizedBox(
                   height: height * 0.8,
                   width: width * 0.95,
@@ -51,6 +69,14 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                       children: [
                         Text(
                           'e:${state.exercises.length} w: ${state.workouts.length} u: ${state.unsavedExercises.length}',
+                        ),
+                        AppFormField(
+                          name: 'name',
+                          validator: AppFormValidator.validateNameField,
+                          controller: nameController,
+                          padding: .symmetric(horizontal: 8),
+                          focusNode: null,
+                          backgroundColor: Colors.blueGrey.shade100,
                         ),
                         Expanded(
                           child: Padding(
@@ -127,6 +153,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                       onPressed: () {
                                         context.read<WorkoutBloc>().add(
                                           WorkoutCreated(
+                                            name: nameController.text,
                                             exercises: state.unsavedExercises,
                                           ),
                                         );
@@ -171,13 +198,11 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                           onPressed: () => showDialog(
                             context: context,
                             builder: (context) {
-                              return ExerciseFormDailog(
-                                title: 'Create new Exercise',
-                              );
+                              return WorkoutDailog(_rebuildView);
                             },
                           ),
                           child: Text(
-                            'Add exercise',
+                            'Create',
                             style: TextStyle(fontSize: 20),
                             textAlign: .center,
                           ),

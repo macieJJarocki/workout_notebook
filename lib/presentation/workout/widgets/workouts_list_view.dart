@@ -29,6 +29,7 @@ class WorkoutsListView extends StatelessWidget {
               onTap: () {},
             );
           }
+          // Change width to fill more viewport
           return WorkoutListViewElement(
             onTap: () => context.goNamed(RouterNames.creator.name),
           );

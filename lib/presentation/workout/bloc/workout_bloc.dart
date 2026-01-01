@@ -162,8 +162,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   ) async {
     try {
       final blocState = state as WorkoutStateSuccess;
+      print(blocState.workouts);
       final workout = Workout(
         id: _getUniqModelId(blocState.workouts),
+        name: event.name,
         isCompleted: false,
         exercises: event.exercises,
       );
@@ -185,6 +187,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     }
   }
 
+  // TODO Fix id for the models
   int _getUniqModelId(List<Model> list) {
     return list.isNotEmpty
         ? list

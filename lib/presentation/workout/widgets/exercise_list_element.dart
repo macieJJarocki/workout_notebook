@@ -42,7 +42,7 @@ class ExerciseListElement extends StatelessWidget {
           title: Column(
             children: [
               Text(
-                exercise.name,
+                '${exercise.name} id${exercise.id}',
                 textAlign: .center,
                 style: TextStyle(
                   color: Colors.black,
@@ -90,7 +90,6 @@ class ExerciseListElement extends StatelessWidget {
                     trailing: Checkbox(
                       value: exercise.isCompleted,
                       onChanged: (value) {
-                        print(value);
                         context.read<WorkoutBloc>().add(
                           WorkoutExerciseEdited(
                             id: exercise.id,

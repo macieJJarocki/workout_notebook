@@ -6,7 +6,7 @@ class AppFormField extends StatelessWidget {
   final String? Function(String? value) validator;
   final TextInputType? keyboardType;
   final TextEditingController controller;
-  final FocusNode focusNode;
+  final FocusNode? focusNode;
   final FocusNode? nextFocusNode;
   final Color? backgroundColor;
   final EdgeInsetsGeometry? padding;

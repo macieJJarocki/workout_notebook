@@ -40,7 +40,8 @@ class WorkoutExerciseDeleted extends WorkoutEvent {
 }
 
 class WorkoutCreated extends WorkoutEvent {
+  final String name;
   final List<Exercise> exercises;
 
-  WorkoutCreated({required this.exercises});
+  WorkoutCreated({required this.exercises, required this.name});
 }

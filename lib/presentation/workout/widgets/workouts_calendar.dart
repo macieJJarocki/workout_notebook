@@ -24,7 +24,6 @@ class WorkoutsCalendar extends StatelessWidget {
       margin: EdgeInsets.all(4),
       child: Column(
         mainAxisAlignment: .spaceBetween,
-
         children: [
           Container(
             margin: .directional(top: 20, bottom: 20, start: 8, end: 8),

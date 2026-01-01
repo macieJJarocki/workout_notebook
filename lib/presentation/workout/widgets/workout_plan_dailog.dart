@@ -19,7 +19,6 @@ class WorkoutPlanDailog extends StatelessWidget {
             'Choose workout',
             style: TextStyle(fontSize: 24),
           ),
-
           Container(
             color: Colors.blueGrey.shade200,
             margin: .only(top: 20),

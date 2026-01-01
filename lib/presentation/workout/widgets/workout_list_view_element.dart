@@ -24,11 +24,11 @@ class WorkoutListViewElement extends StatelessWidget {
         child: Column(
           mainAxisAlignment: .center,
           crossAxisAlignment: .center,
-          children: [
-            workout != null
-                ? Text(workout!.exercises.toString())
-                : Text('Add new Workout'),
-          ],
+          children: workout != null
+              ? [
+                  Text(workout!.name),
+                ]
+              : [Text('Add workout')],
         ),
       ),
     );

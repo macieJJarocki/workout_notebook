@@ -14,6 +14,7 @@ class WorkoutIntro extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade100,
       body: SafeArea(
+        
         child: BlocBuilder<WorkoutBloc, WorkoutState>(
           builder: (context, state) {
             if (state is WorkoutStateSuccess) {
