@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
-import 'package:workout_notebook/presentation/widgets/app_form_field.dart';
-import 'package:workout_notebook/presentation/widgets/app_outlined_button.dart';
+import 'package:workout_notebook/utils/widgets/app_form_field.dart';
+import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
 import 'package:workout_notebook/utils/app_form_validator.dart';
 
 class ExerciseFormDailog extends StatefulWidget {

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
-import 'package:workout_notebook/presentation/widgets/app_form_field.dart';
-import 'package:workout_notebook/presentation/widgets/app_outlined_button.dart';
+import 'package:workout_notebook/utils/widgets/app_dailog.dart';
+import 'package:workout_notebook/utils/widgets/app_form_field.dart';
+import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_list_element.dart';
-import 'package:workout_notebook/presentation/workout/widgets/workout_name_creation_dailog.dart';
 import 'package:workout_notebook/utils/app_form_validator.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
@@ -20,12 +20,14 @@ class WorkoutCreator extends StatefulWidget {
 }
 
 class _WorkoutCreatorState extends State<WorkoutCreator> {
-  TextEditingController nameController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final FocusNode nameFocusNode = FocusNode();
   bool isSupersetMode = false;
 
   @override
   void dispose() {
     nameController.dispose();
+    nameFocusNode.dispose();
     super.dispose();
   }
 
@@ -40,11 +42,6 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
     } catch (e) {
       nameController.text = '';
     }
-  }
-
-  _rebuild(String name) {
-    nameController.text = name;
-    context.read<NotebookBloc>().add(NotebookWorkoutNameRequested(name));
   }
 
   @override
@@ -216,12 +213,45 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                         AppOutlinedButton(
                           backgrounColor: Colors.blueGrey.shade100,
                           padding: EdgeInsets.only(top: 8),
-                          onPressed: () => showDialog(
-                            context: context,
-                            builder: (context) {
-                              return WorkoutDailog(_rebuild);
-                            },
-                          ),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AppDailog(
+                                title: 'Enter workout name',
+                                content: Column(
+                                  mainAxisSize: .min,
+                                  children: [
+                                    AppFormField(
+                                      name: 'name',
+                                      validator:
+                                          AppFormValidator.validateNameField,
+                                      controller: nameController,
+                                      focusNode: nameFocusNode,
+                                      backgroundColor: Colors.blueGrey.shade200,
+                                    ),
+                                  ],
+                                ),
+                                actions: [
+                                  AppOutlinedButton(
+                                    backgrounColor: Colors.blueGrey.shade200,
+                                    padding: .zero,
+                                    onPressed: () {
+                                      context.read<NotebookBloc>().add(
+                                        NotebookWorkoutNameRequested(
+                                          nameController.text,
+                                        ),
+                                      );
+                                      context.pop();
+                                    },
+                                    child: Text(
+                                      'Create',
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                           child: Text(
                             'Create',
                             style: TextStyle(fontSize: 20),
@@ -239,7 +269,6 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
               return Text('Error or Initial state');
             }
           },
-
           // TODO add shimmer widget
         ),
       ),

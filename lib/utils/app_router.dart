@@ -19,18 +19,7 @@ class AppRouter {
       GoRoute(
         path: '/creator',
         name: RouterNames.creator.name,
-        builder: (context, state) {
-          try {
-            if (state.extra != null) {
-              return WorkoutCreator(
-                workoutName: state.extra as String,
-              );
-            }
-            return WorkoutCreator();
-          } catch (e) {
-            return WorkoutCreator();
-          }
-        },
+        builder: (context, state) => WorkoutCreator(),
       ),
       GoRoute(
         path: '/',

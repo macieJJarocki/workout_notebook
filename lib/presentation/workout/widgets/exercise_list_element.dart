@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
-import 'package:workout_notebook/presentation/workout/widgets/exercise_delete_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_data_element.dart';
+import 'package:workout_notebook/utils/widgets/app_dailog.dart';
+import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
 
 class ExerciseListElement extends StatelessWidget {
   final Exercise exercise;
@@ -20,8 +22,25 @@ class ExerciseListElement extends StatelessWidget {
       onLongPress: () {
         showDialog(
           context: context,
-          builder: (context) => ExerciseDeleteDailog(
-            exercise: exercise,
+          builder: (context) => AppDailog(
+            title: 'Are you sure, you want to delete this exercise?',
+            actions: [
+              AppOutlinedButton(
+                padding: EdgeInsetsGeometry.zero,
+                backgrounColor: Colors.blueGrey.shade200,
+                onPressed: () {
+                  context.read<NotebookBloc>().add(
+                    NotebookExerciseDeleted(id: exercise.id),
+                  );
+                  context.pop();
+                },
+                child: Text(
+                  'Delete',
+                  style: TextStyle(fontSize: 20),
+                  textAlign: .center,
+                ),
+              ),
+            ],
           ),
         );
       },

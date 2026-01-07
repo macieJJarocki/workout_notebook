@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:workout_notebook/presentation/workout/widgets/workout_plan_dailog.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
+import 'package:workout_notebook/utils/widgets/app_dailog.dart';
+import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
 
 class WorkoutsCalendar extends StatelessWidget {
   const WorkoutsCalendar({
@@ -11,6 +14,8 @@ class WorkoutsCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final workouts =
+        (context.read<NotebookBloc>().state as NotebookSuccess).savedWorkouts;
     final DateTime dateNow = DateTime.now();
     final int daysInMonth = DateUtils.getDaysInMonth(
       dateNow.year,
@@ -51,7 +56,44 @@ class WorkoutsCalendar extends StatelessWidget {
                 return GestureDetector(
                   onTap: () => showDialog(
                     context: context,
-                    builder: (context) => WorkoutPlanDailog(),
+                    builder: (context) => AppDailog(
+                      title: 'Choose workout',
+                      content: Column(
+                        mainAxisSize: .min,
+                        children: [
+                          Container(
+                            color: Colors.blueGrey.shade200,
+                            child: DropdownMenu(
+                              label: Text('workouts'),
+                              dropdownMenuEntries: List.from(
+                                workouts.map(
+                                  (e) => DropdownMenuEntry(
+                                    value: e.id,
+                                    label: e.name,
+                                  ),
+                                ),
+                              ),
+                              menuStyle: MenuStyle(
+                                backgroundColor: WidgetStatePropertyAll(
+                                  Colors.blueGrey.shade200,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        AppOutlinedButton(
+                          backgrounColor: Colors.blueGrey.shade200,
+                          padding: .zero,
+                          onPressed: () {},
+                          child: Text(
+                            'Save',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   child: Container(
                     margin: _getMargin(index),
