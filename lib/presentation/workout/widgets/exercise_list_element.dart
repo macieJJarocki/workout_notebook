@@ -30,7 +30,7 @@ class ExerciseListElement extends StatelessWidget {
                 backgrounColor: Colors.blueGrey.shade200,
                 onPressed: () {
                   context.read<NotebookBloc>().add(
-                    NotebookExerciseDeleted(id: exercise.id),
+                    NotebookExerciseDeleted(uuid: exercise.uuid),
                   );
                   context.pop();
                 },
@@ -61,7 +61,7 @@ class ExerciseListElement extends StatelessWidget {
           title: Column(
             children: [
               Text(
-                '${exercise.name} id${exercise.id}',
+                '${exercise.name} id${exercise.uuid}',
                 textAlign: .center,
                 style: TextStyle(
                   color: Colors.black,

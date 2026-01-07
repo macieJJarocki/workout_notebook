@@ -68,7 +68,7 @@ class WorkoutsCalendar extends StatelessWidget {
                               dropdownMenuEntries: List.from(
                                 workouts.map(
                                   (e) => DropdownMenuEntry(
-                                    value: e.id,
+                                    value: e.uuid,
                                     label: e.name,
                                   ),
                                 ),

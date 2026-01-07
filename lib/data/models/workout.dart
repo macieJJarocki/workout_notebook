@@ -2,23 +2,25 @@ import 'package:workout_notebook/data/models/model.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
 
 class Workout extends Model {
-  final int id;
+  final String uuid;
+  final String? comment;
   final String name;
   final List<Exercise> exercises;
   final bool isCompleted;
   final DateTime? dateTime;
 
   Workout({
-    required this.id,
+    required this.uuid,
     required this.name,
     required this.exercises,
     required this.isCompleted,
     this.dateTime,
-  }) : super(id);
+    this.comment,
+  }) : super(uuid, comment);
 
   factory Workout.fromMap(Map<String, dynamic> map) {
     return Workout(
-      id: map['id'],
+      uuid: map['uuid'],
       name: map['name'],
       exercises: map['exercises']
           .map<Exercise>((e) => Exercise.fromMap(Map<String, dynamic>.from(e)))
@@ -33,13 +35,9 @@ class Workout extends Model {
   @override
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'uuid': uuid,
       'name': name,
-      'exercises': exercises
-          .map(
-            (e) => e.toMap(),
-          )
-          .toList(),
+      'exercises': exercises.map((e) => e.toMap()).toList(),
       'isCompleted': isCompleted,
       'dateTime': dateTime,
     };
@@ -53,7 +51,7 @@ class Workout extends Model {
     DateTime? dateTime,
   }) {
     return Workout(
-      id: id,
+      uuid: uuid,
       name: name ?? this.name,
       isCompleted: isCompleted ?? this.isCompleted,
       exercises: exercises ?? this.exercises,

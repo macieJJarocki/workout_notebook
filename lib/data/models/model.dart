@@ -1,7 +1,8 @@
 abstract class Model {
-  Model(this.id);
+  Model(this.uuid, this.comment);
 
-  final int id;
+  final String uuid;
+  final String? comment;
 
   Map<String, dynamic> toMap();
   Model copyWith();

@@ -1,4 +1,4 @@
-import 'package:hive_ce/hive.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 

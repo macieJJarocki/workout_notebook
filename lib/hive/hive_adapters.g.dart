@@ -17,30 +17,33 @@ class ExerciseAdapter extends TypeAdapter<Exercise> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Exercise(
-      id: (fields[0] as num).toInt(),
-      isCompleted: fields[1] as bool,
-      name: fields[2] as String,
-      weight: (fields[3] as num).toDouble(),
-      repetitions: (fields[4] as num).toInt(),
-      sets: (fields[5] as num).toInt(),
+      uuid: fields[0] as String,
+      isCompleted: fields[2] as bool,
+      name: fields[3] as String,
+      weight: (fields[4] as num).toDouble(),
+      repetitions: (fields[5] as num).toInt(),
+      sets: (fields[6] as num).toInt(),
+      comment: fields[1] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Exercise obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
-      ..write(obj.id)
+      ..write(obj.uuid)
       ..writeByte(1)
-      ..write(obj.isCompleted)
+      ..write(obj.comment)
       ..writeByte(2)
-      ..write(obj.name)
+      ..write(obj.isCompleted)
       ..writeByte(3)
-      ..write(obj.weight)
+      ..write(obj.name)
       ..writeByte(4)
-      ..write(obj.repetitions)
+      ..write(obj.weight)
       ..writeByte(5)
+      ..write(obj.repetitions)
+      ..writeByte(6)
       ..write(obj.sets);
   }
 
@@ -66,27 +69,30 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Workout(
-      id: (fields[0] as num).toInt(),
-      name: fields[1] as String,
-      exercises: (fields[2] as List).cast<Exercise>(),
-      isCompleted: fields[3] as bool,
-      dateTime: fields[4] as DateTime?,
+      uuid: fields[0] as String,
+      name: fields[2] as String,
+      exercises: (fields[3] as List).cast<Exercise>(),
+      isCompleted: fields[4] as bool,
+      dateTime: fields[5] as DateTime?,
+      comment: fields[1] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Workout obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
-      ..write(obj.id)
+      ..write(obj.uuid)
       ..writeByte(1)
-      ..write(obj.name)
+      ..write(obj.comment)
       ..writeByte(2)
-      ..write(obj.exercises)
+      ..write(obj.name)
       ..writeByte(3)
-      ..write(obj.isCompleted)
+      ..write(obj.exercises)
       ..writeByte(4)
+      ..write(obj.isCompleted)
+      ..writeByte(5)
       ..write(obj.dateTime);
   }
 

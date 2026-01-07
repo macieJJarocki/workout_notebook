@@ -43,7 +43,7 @@ class WorkoutsListView extends StatelessWidget {
                         onPressed: () {
                           context.read<NotebookBloc>().add(
                             NotebookWorkoutDeleted(
-                              workoutId: workouts[index].id,
+                              uuid: workouts[index].uuid,
                             ),
                           );
                           context.pop();

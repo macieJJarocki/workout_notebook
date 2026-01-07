@@ -1,12 +1,12 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/data/models/model.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/data/repository/local_db_repository.dart';
 import 'package:workout_notebook/utils/enums/hive_enums.dart';
+import 'package:uuid/uuid.dart';
 
 part 'notebook_event.dart';
 part 'notebook_state.dart';
@@ -77,7 +77,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
       final notebookState = state as NotebookSuccess;
       final exercise = Exercise(
         // TODO fix method
-        id: _getUniqModelId([]),
+        uuid: _getUniqModelId(),
         isCompleted: false,
         name: event.name,
         weight: double.tryParse(event.weight) as double,
@@ -106,7 +106,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     try {
       final notebookState = state as NotebookSuccess;
       final int idx = notebookState.unsavedExercises.indexWhere(
-        (element) => element.id == event.exercise.id,
+        (element) => element.uuid == event.exercise.uuid,
       );
       notebookState.unsavedExercises.removeAt(idx);
       notebookState.unsavedExercises.insert(idx, event.exercise);
@@ -139,13 +139,13 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
         case Workout _:
           exercises = event.workout!.exercises;
           exerciseIdx = exercises.indexWhere(
-            (element) => element.id == event.id,
+            (element) => element.uuid == event.uuid,
           );
           exercises.removeAt(exerciseIdx);
 
           final workouts = notebookState.savedWorkouts;
           final int workoutIdx = workouts.indexWhere(
-            (e) => e.id == event.workout!.id,
+            (e) => e.uuid == event.workout!.uuid,
           );
           workouts.replaceRange(workoutIdx, workoutIdx + 1, [
             workouts[workoutIdx].copyWith(exercises: exercises),
@@ -162,7 +162,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
 
         default:
           exercises = notebookState.unsavedExercises;
-          exerciseIdx = exercises.indexWhere((e) => e.id == event.id);
+          exerciseIdx = exercises.indexWhere((e) => e.uuid == event.uuid);
           key = DataBoxKeys.exercises;
           exercises.removeAt(exerciseIdx);
           await _repository.write(key, {
@@ -188,7 +188,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
       final notebookState = state as NotebookSuccess;
       final Workout workout = Workout(
         // TODO fix method
-        id: _getUniqModelId([]),
+        uuid: _getUniqModelId(),
         name: event.name,
         exercises: notebookState.unsavedExercises,
         isCompleted: false,
@@ -233,7 +233,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
       final notebookState = state as NotebookSuccess;
 
       final workoutIdx = notebookState.savedWorkouts.indexWhere(
-        (e) => e.id == event.workoutId,
+        (e) => e.uuid == event.uuid,
       );
       notebookState.savedWorkouts.removeAt(workoutIdx);
       await _repository.write(DataBoxKeys.workouts, {
@@ -252,12 +252,6 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
 
 //  TODO Fix id for the model
 // TODO in future change to return uuid
-int _getUniqModelId(List<Model> list) {
-  // return list.isNotEmpty
-  //     ? list
-  //           .cast<Model>()
-  //           .reduce((curr, next) => curr.id > next.id ? curr : next)
-  //           .id
-  //     : 0;
-  return Random().nextInt(9999999);
+String _getUniqModelId() {
+  return Uuid().v4();
 }

@@ -21,9 +21,9 @@ class NotebookWorkoutNameRequested extends NotebookEvent {
 }
 
 class NotebookWorkoutDeleted extends NotebookEvent {
-  final int workoutId;
+  final String uuid;
 
-  NotebookWorkoutDeleted({required this.workoutId});
+  NotebookWorkoutDeleted({required this.uuid});
 }
 
 class NotebookExerciseCreated extends NotebookEvent {
@@ -47,6 +47,6 @@ class NotebookExerciseEdited extends NotebookEvent {
 
 class NotebookExerciseDeleted extends NotebookEvent {
   final Workout? workout;
-  final int id;
-  NotebookExerciseDeleted({this.workout, required this.id});
+  final String uuid;
+  NotebookExerciseDeleted({this.workout, required this.uuid});
 }

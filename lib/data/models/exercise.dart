@@ -1,7 +1,8 @@
 import 'package:workout_notebook/data/models/model.dart';
 
 class Exercise extends Model {
-  final int id;
+  final String uuid;
+  final String? comment;
   final bool isCompleted;
   final String name;
   final double weight;
@@ -10,17 +11,18 @@ class Exercise extends Model {
   // TODO add observations or comments
 
   Exercise({
-    required this.id,
+    required this.uuid,
     required this.isCompleted,
     required this.name,
     required this.weight,
     required this.repetitions,
     required this.sets,
-  }) : super(id);
+    this.comment,
+  }) : super(uuid, comment);
 
   factory Exercise.fromMap(Map<String, dynamic> map) {
     return Exercise(
-      id: map['id'],
+      uuid: map['uuid'],
       isCompleted: map['isCompleted'],
       name: map['name'],
       weight: map['weight'],
@@ -32,7 +34,7 @@ class Exercise extends Model {
   @override
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'id': uuid,
       'isCompleted': isCompleted,
       'name': name,
       'weight': weight,
@@ -50,7 +52,7 @@ class Exercise extends Model {
     int? sets,
   }) {
     return Exercise(
-      id: id,
+      uuid: uuid,
       isCompleted: isCompleted ?? this.isCompleted,
       name: name ?? this.name,
       weight: weight ?? this.weight,

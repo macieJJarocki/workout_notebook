@@ -5,31 +5,35 @@ nextTypeId: 2
 types:
   Exercise:
     typeId: 0
-    nextIndex: 6
+    nextIndex: 7
     fields:
-      id:
+      uuid:
         index: 0
-      isCompleted:
+      comment:
         index: 1
-      name:
+      isCompleted:
         index: 2
-      weight:
+      name:
         index: 3
-      repetitions:
+      weight:
         index: 4
-      sets:
+      repetitions:
         index: 5
+      sets:
+        index: 6
   Workout:
     typeId: 1
-    nextIndex: 5
+    nextIndex: 6
     fields:
-      id:
+      uuid:
         index: 0
-      name:
+      comment:
         index: 1
-      exercises:
+      name:
         index: 2
-      isCompleted:
+      exercises:
         index: 3
-      dateTime:
+      isCompleted:
         index: 4
+      dateTime:
+        index: 5
