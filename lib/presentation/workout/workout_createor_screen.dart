@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
-import 'package:workout_notebook/presentation/workout/widgets/app_form_field.dart';
-import 'package:workout_notebook/presentation/workout/widgets/app_outlined_button.dart';
+import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
+import 'package:workout_notebook/presentation/widgets/app_form_field.dart';
+import 'package:workout_notebook/presentation/widgets/app_outlined_button.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_list_element.dart';
-import 'package:workout_notebook/presentation/workout/widgets/workout_dailog.dart';
+import 'package:workout_notebook/presentation/workout/widgets/workout_name_creation_dailog.dart';
 import 'package:workout_notebook/utils/app_form_validator.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 
 class WorkoutCreator extends StatefulWidget {
-  const WorkoutCreator({super.key});
+  const WorkoutCreator({this.workoutName, super.key});
+  final String? workoutName;
 
   @override
   State<WorkoutCreator> createState() => _WorkoutCreatorState();
 }
 
 class _WorkoutCreatorState extends State<WorkoutCreator> {
-  final TextEditingController nameController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
   bool isSupersetMode = false;
 
   @override
@@ -28,12 +29,22 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
     super.dispose();
   }
 
-  void _rebuildView(String name) {
-    setState(() {
-      // TODO remove debugPrint
-      debugPrint('View rebuilded');
-      nameController.text = name;
-    });
+  @override
+  void initState() {
+    super.initState();
+    try {
+      nameController.text =
+          widget.workoutName ??
+          (context.read<NotebookBloc>().state as NotebookSuccess)
+              .unsavedWorkoutName;
+    } catch (e) {
+      nameController.text = '';
+    }
+  }
+
+  _rebuild(String name) {
+    nameController.text = name;
+    context.read<NotebookBloc>().add(NotebookWorkoutNameRequested(name));
   }
 
   @override
@@ -45,7 +56,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
       appBar: AppBar(
         title: Text(
           'Workout Creator',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+          style: TextStyle(fontWeight: .bold, fontSize: 30),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -54,11 +65,15 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
         ),
       ),
       body: Center(
-        child: BlocBuilder<WorkoutBloc, WorkoutState>(
+        child: BlocConsumer<NotebookBloc, NotebookState>(
+          listener: (context, state) {
+            if (state is NotebookSuccess) {
+              nameController.text = state.unsavedWorkoutName;
+            }
+          },
           builder: (context, state) {
-            if (state is WorkoutStateSuccess) {
-              // if (state.unsavedExercises.isNotEmpty) {
-              if (nameController.text.isNotEmpty) {
+            if (state is NotebookSuccess) {
+              if (state.unsavedWorkoutName.isNotEmpty) {
                 return SizedBox(
                   height: height * 0.8,
                   width: width * 0.95,
@@ -68,14 +83,19 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                       mainAxisAlignment: .spaceBetween,
                       children: [
                         Text(
-                          'e:${state.exercises.length} w: ${state.workouts.length} u: ${state.unsavedExercises.length}',
+                          '''WN:${state.unsavedWorkoutName} W:${state.savedWorkouts.length} ES:${state.savedExercisesNames.length} EU:${state.unsavedExercises.length}''',
                         ),
                         AppFormField(
                           name: 'name',
+                          focusNode: null,
                           validator: AppFormValidator.validateNameField,
                           controller: nameController,
+                          onChange: () {
+                            context.read<NotebookBloc>().add(
+                              NotebookWorkoutNameRequested(nameController.text),
+                            );
+                          },
                           padding: .symmetric(horizontal: 8),
-                          focusNode: null,
                           backgroundColor: Colors.blueGrey.shade100,
                         ),
                         Expanded(
@@ -151,13 +171,14 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                       backgrounColor: Colors.blueGrey.shade100,
                                       padding: .all(8),
                                       onPressed: () {
-                                        context.read<WorkoutBloc>().add(
-                                          WorkoutCreated(
+                                        context.read<NotebookBloc>().add(
+                                          NotebookWorkoutCreated(
                                             name: nameController.text,
-                                            exercises: state.unsavedExercises,
                                           ),
                                         );
-                                        context.goNamed(RouterNames.intro.name);
+                                        context.goNamed(
+                                          RouterNames.intro.name,
+                                        );
                                       },
                                       child: Text(
                                         'Create workout',
@@ -185,7 +206,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                       mainAxisAlignment: .spaceAround,
                       children: [
                         Text(
-                          'e:${state.exercises.length} w: ${state.workouts.length} u: ${state.unsavedExercises.length}',
+                          'WN:${state.unsavedWorkoutName} W:${state.savedWorkouts.length} ES:${state.savedExercisesNames.length} EU:${state.unsavedExercises.length}',
                         ),
                         Text(
                           "Don't waste time - create your workout here!",
@@ -198,7 +219,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                           onPressed: () => showDialog(
                             context: context,
                             builder: (context) {
-                              return WorkoutDailog(_rebuildView);
+                              return WorkoutDailog(_rebuild);
                             },
                           ),
                           child: Text(
@@ -212,10 +233,14 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                   ),
                 );
               }
+            } else if (state is NotebookLoading) {
+              return CircularProgressIndicator();
+            } else {
+              return Text('Error or Initial state');
             }
-            // TODO add shimmer widget
-            return Text('Error or other state');
           },
+
+          // TODO add shimmer widget
         ),
       ),
     );

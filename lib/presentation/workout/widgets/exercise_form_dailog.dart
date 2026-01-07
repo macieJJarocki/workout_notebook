@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
-import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
-import 'package:workout_notebook/presentation/workout/widgets/app_form_field.dart';
-import 'package:workout_notebook/presentation/workout/widgets/app_outlined_button.dart';
+import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
+import 'package:workout_notebook/presentation/widgets/app_form_field.dart';
+import 'package:workout_notebook/presentation/widgets/app_outlined_button.dart';
 import 'package:workout_notebook/utils/app_form_validator.dart';
 
 class ExerciseFormDailog extends StatefulWidget {
@@ -132,23 +132,24 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
             ),
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                context.read<WorkoutBloc>().add(
+                context.read<NotebookBloc>().add(
                   widget.exercise == null
-                      ? WorkoutExerciseCreated(
+                      ? NotebookExerciseCreated(
                           name: nameController.text,
                           weight: weightController.text,
                           repetitions: repetitionsController.text,
                           sets: setsController.text,
                         )
-                      : WorkoutExerciseEdited(
-                          id: widget.exercise!.id,
-                          modyfiedExerciseData: {
-                            'name': nameController.text,
-                            'isCompleted': widget.exercise?.isCompleted,
-                            'weight': weightController.text,
-                            'repetitions': repetitionsController.text,
-                            'sets': setsController.text,
-                          },
+                      : NotebookExerciseEdited(
+                          exercise: widget.exercise!.copyWith(
+                            name: nameController.text,
+                            // TODO ???
+                            weight: double.tryParse(weightController.text),
+                            repetitions: int.tryParse(
+                              repetitionsController.text,
+                            ),
+                            sets: int.tryParse(setsController.text),
+                          ),
                         ),
                 );
                 context.pop();

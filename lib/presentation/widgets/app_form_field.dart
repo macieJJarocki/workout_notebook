@@ -10,6 +10,7 @@ class AppFormField extends StatelessWidget {
   final FocusNode? nextFocusNode;
   final Color? backgroundColor;
   final EdgeInsetsGeometry? padding;
+  final Function()? onChange;
 
   const AppFormField({
     super.key,
@@ -21,6 +22,7 @@ class AppFormField extends StatelessWidget {
     this.keyboardType,
     this.nextFocusNode,
     this.backgroundColor,
+    this.onChange,
   });
 
   @override
@@ -35,6 +37,9 @@ class AppFormField extends StatelessWidget {
         keyboardType: keyboardType,
         onChanged: (value) {
           controller.text = value;
+          if (onChange != null) {
+            onChange!();
+          }
         },
         onFieldSubmitted: (newValue) {
           FocusScope.of(context).requestFocus(nextFocusNode);

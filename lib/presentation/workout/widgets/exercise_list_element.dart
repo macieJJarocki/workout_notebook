@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
-import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
+import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_delete_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_data_element.dart';
@@ -83,24 +83,16 @@ class ExerciseListElement extends StatelessWidget {
                   ),
                 ],
               ),
-              BlocBuilder<WorkoutBloc, WorkoutState>(
+              BlocBuilder<NotebookBloc, NotebookState>(
                 builder: (context, state) {
                   return ListTile(
                     title: Text('Exercise done?'),
                     trailing: Checkbox(
                       value: exercise.isCompleted,
                       onChanged: (value) {
-                        context.read<WorkoutBloc>().add(
-                          WorkoutExerciseEdited(
-                            id: exercise.id,
-                            // TO use copyWith in the future
-                            modyfiedExerciseData: {
-                              'name': exercise.name,
-                              'weight': exercise.weight.toString(),
-                              'repetitions': exercise.repetitions.toString(),
-                              'sets': exercise.sets.toString(),
-                              'isCompleted': value,
-                            },
+                        context.read<NotebookBloc>().add(
+                          NotebookExerciseEdited(
+                            exercise: exercise.copyWith(isCompleted: value),
                           ),
                         );
                       },

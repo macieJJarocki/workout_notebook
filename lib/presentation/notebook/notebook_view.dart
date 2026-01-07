@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_ce/hive.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:workout_notebook/data/repository/local_db_repository.dart';
 import 'package:workout_notebook/data/services/local_db_service.dart';
-import 'package:workout_notebook/presentation/workout/bloc/workout_bloc.dart';
+import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/utils/app_router.dart';
+import 'package:workout_notebook/utils/enums/hive_enums.dart';
 
 class WorkoutView extends StatelessWidget {
   const WorkoutView({
@@ -16,17 +17,23 @@ class WorkoutView extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
-          create: (context) => LocalDbService(Hive),
+          create: (context) => LocalDBService(Hive),
         ),
         RepositoryProvider(
-          create: (context) =>
-              LocalDbRepository(context.read<LocalDbService>()),
+          create: (context) => LocalDBRepository(
+            context.read<LocalDBService>(),
+          ),
         ),
       ],
       child: BlocProvider(
-        create: (context) => WorkoutBloc(
-          repository: context.read<LocalDbRepository>(),
-        )..add(WorkoutDataRequested()),
+        create: (context) =>
+            NotebookBloc(
+              repository: context.read<LocalDBRepository>(),
+            )..add(
+              NotebookDataRequested(
+                boxes: DataBoxKeys.values,
+              ),
+            ),
         child: MaterialApp.router(
           routerConfig: AppRouter().router,
           title: 'Workout Notebook',

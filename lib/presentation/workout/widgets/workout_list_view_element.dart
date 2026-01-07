@@ -6,15 +6,18 @@ class WorkoutListViewElement extends StatelessWidget {
   const WorkoutListViewElement({
     super.key,
     this.workout,
+    this.onLongPress,
     required this.onTap,
   });
   final Workout? workout;
   final void Function() onTap;
+  final void Function()? onLongPress;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Container(
         margin: .all(4),
         width: AppTheme.deviceWidth(context) * 0.85,
@@ -25,9 +28,7 @@ class WorkoutListViewElement extends StatelessWidget {
           mainAxisAlignment: .center,
           crossAxisAlignment: .center,
           children: workout != null
-              ? [
-                  Text(workout!.name),
-                ]
+              ? [Text(workout!.name)]
               : [Text('Add workout')],
         ),
       ),

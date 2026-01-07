@@ -58,4 +58,9 @@ class Exercise extends Model {
       sets: sets ?? this.sets,
     );
   }
+
+  @override
+  String toString() {
+    return toMap().toString();
+  }
 }

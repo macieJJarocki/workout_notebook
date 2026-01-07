@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_ce/hive.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:workout_notebook/presentation/workout_view.dart';
+import 'package:workout_notebook/hive/hive_registrar.g.dart';
+import 'package:workout_notebook/presentation/notebook/notebook_view.dart';
 import 'package:workout_notebook/utils/custom_bloc_observer.dart';
 
 /*
@@ -22,7 +23,9 @@ void main() async {
   // init local db
   WidgetsFlutterBinding.ensureInitialized();
   final localPath = await getApplicationDocumentsDirectory();
-  Hive.init(localPath.path);
+  Hive
+    ..init(localPath.path)
+    ..registerAdapters();
 
   runApp(const WorkoutView());
 }
