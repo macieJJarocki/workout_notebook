@@ -20,6 +20,12 @@ class NotebookWorkoutNameRequested extends NotebookEvent {
   NotebookWorkoutNameRequested(this.name);
 }
 
+class NotebookWorkoutDeleted extends NotebookEvent {
+  final int workoutId;
+
+  NotebookWorkoutDeleted({required this.workoutId});
+}
+
 class NotebookExerciseCreated extends NotebookEvent {
   final String name;
   final String weight;
