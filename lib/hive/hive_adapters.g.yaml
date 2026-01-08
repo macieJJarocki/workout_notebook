@@ -35,5 +35,5 @@ types:
         index: 3
       isCompleted:
         index: 4
-      dateTime:
+      assignedDates:
         index: 5

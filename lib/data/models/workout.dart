@@ -7,14 +7,15 @@ class Workout extends Model {
   final String name;
   final List<Exercise> exercises;
   final bool isCompleted;
-  final DateTime? dateTime;
+  // TODO change name
+  final List<DateTime> assignedDates;
 
   Workout({
     required this.uuid,
     required this.name,
     required this.exercises,
     required this.isCompleted,
-    this.dateTime,
+    required this.assignedDates,
     this.comment,
   }) : super(uuid, comment);
 
@@ -26,9 +27,8 @@ class Workout extends Model {
           .map<Exercise>((e) => Exercise.fromMap(Map<String, dynamic>.from(e)))
           .toList(),
       isCompleted: map['isCompleted'],
-      dateTime: map['dateTime'] == null
-          ? null
-          : DateTime.tryParse(map['dateTime']),
+      // TODO can be null ?
+      assignedDates: List<DateTime>.from(map['assignedDates']),
     );
   }
 
@@ -39,7 +39,7 @@ class Workout extends Model {
       'name': name,
       'exercises': exercises.map((e) => e.toMap()).toList(),
       'isCompleted': isCompleted,
-      'dateTime': dateTime,
+      'dateTime': assignedDates,
     };
   }
 
@@ -48,14 +48,19 @@ class Workout extends Model {
     String? name,
     bool? isCompleted,
     List<Exercise>? exercises,
-    DateTime? dateTime,
+    List<DateTime>? assignedDates,
   }) {
     return Workout(
       uuid: uuid,
       name: name ?? this.name,
       isCompleted: isCompleted ?? this.isCompleted,
       exercises: exercises ?? this.exercises,
-      dateTime: dateTime ?? this.dateTime,
+      assignedDates: assignedDates ?? this.assignedDates,
     );
+  }
+
+  @override
+  String toString() {
+    return toMap().toString();
   }
 }

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
-import 'package:workout_notebook/presentation/workout/widgets/workouts_calendar.dart';
-import 'package:workout_notebook/presentation/workout/widgets/workouts_list_view.dart';
+import 'package:workout_notebook/presentation/notebook/widgets/workout_calendar.dart';
+import 'package:workout_notebook/presentation/notebook/widgets/workout_list_view.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 
-class WorkoutIntro extends StatelessWidget {
-  const WorkoutIntro({super.key});
+class NotebookHomeScreen extends StatelessWidget {
+  const NotebookHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

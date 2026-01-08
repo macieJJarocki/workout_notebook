@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
-import 'package:workout_notebook/data/models/model.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/data/repository/local_db_repository.dart';
 import 'package:workout_notebook/utils/enums/hive_enums.dart';
@@ -24,6 +21,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     on<NotebookExerciseEdited>(_onNotebookExerciseEdited);
     on<NotebookExerciseDeleted>(_onNotebookExerciseDeleted);
     on<NotebookWorkoutDeleted>(_onNotebookWorkoutDeleted);
+    on<NotebookWorkoutDateAssigned>(_onNotebookWorkoutDateAssigned);
   }
 
   void _onNotebookDataRequested(
@@ -76,8 +74,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     try {
       final notebookState = state as NotebookSuccess;
       final exercise = Exercise(
-        // TODO fix method
-        uuid: _getUniqModelId(),
+        uuid: _getUuid(),
         isCompleted: false,
         name: event.name,
         weight: double.tryParse(event.weight) as double,
@@ -187,11 +184,11 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     try {
       final notebookState = state as NotebookSuccess;
       final Workout workout = Workout(
-        // TODO fix method
-        uuid: _getUniqModelId(),
+        uuid: _getUuid(),
         name: event.name,
         exercises: notebookState.unsavedExercises,
         isCompleted: false,
+        assignedDates: [],
       );
 
       await _repository.write(DataBoxKeys.workouts, {
@@ -248,10 +245,35 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
       emit(NotebookFailure(e.toString()));
     }
   }
+
+  void _onNotebookWorkoutDateAssigned(
+    NotebookWorkoutDateAssigned event,
+    Emitter<NotebookState> emit,
+  ) async {
+    try {
+      final notebookState = state as NotebookSuccess;
+      final workoutIdx = notebookState.savedWorkouts.indexWhere(
+        (e) => e.uuid == event.uuid,
+      );
+      final workout = notebookState.savedWorkouts[workoutIdx];
+      notebookState.savedWorkouts.removeAt(workoutIdx);
+      notebookState.savedWorkouts.insert(
+        workoutIdx,
+        workout.copyWith(assignedDates: [...workout.assignedDates, event.date]),
+      );
+
+      await _repository.write(DataBoxKeys.workouts, {
+        AppBoxKeys.saved.name: notebookState.savedWorkouts,
+        AppBoxKeys.unsaved.name: notebookState.unsavedWorkoutName,
+      });
+
+      emit(notebookState.copyWith(savedWorkouts: notebookState.savedWorkouts));
+    } catch (e) {
+      emit(NotebookFailure(e.toString()));
+    }
+  }
 }
 
-//  TODO Fix id for the model
-// TODO in future change to return uuid
-String _getUniqModelId() {
+String _getUuid() {
   return Uuid().v4();
 }

@@ -73,7 +73,7 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
       name: fields[2] as String,
       exercises: (fields[3] as List).cast<Exercise>(),
       isCompleted: fields[4] as bool,
-      dateTime: fields[5] as DateTime?,
+      assignedDates: (fields[5] as List).cast<DateTime>(),
       comment: fields[1] as String?,
     );
   }
@@ -93,7 +93,7 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
       ..writeByte(4)
       ..write(obj.isCompleted)
       ..writeByte(5)
-      ..write(obj.dateTime);
+      ..write(obj.assignedDates);
   }
 
   @override

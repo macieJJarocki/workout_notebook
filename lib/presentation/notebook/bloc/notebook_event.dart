@@ -50,3 +50,10 @@ class NotebookExerciseDeleted extends NotebookEvent {
   final String uuid;
   NotebookExerciseDeleted({this.workout, required this.uuid});
 }
+
+class NotebookWorkoutDateAssigned extends NotebookEvent {
+  final String uuid;
+  final DateTime date;
+
+  NotebookWorkoutDateAssigned({required this.uuid, required this.date});
+}

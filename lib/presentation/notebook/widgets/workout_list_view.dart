@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
-import 'package:workout_notebook/presentation/workout/widgets/workout_list_view_element.dart';
+import 'package:workout_notebook/presentation/notebook/widgets/workout_list_view_element.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 import 'package:workout_notebook/utils/widgets/app_dailog.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
@@ -21,7 +21,7 @@ class WorkoutsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: height,
       child: ListView.builder(
         itemCount: itemCount + 1,
