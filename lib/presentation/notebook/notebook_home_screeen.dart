@@ -4,6 +4,7 @@ import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/presentation/notebook/widgets/workout_calendar.dart';
 import 'package:workout_notebook/presentation/notebook/widgets/workout_list_view.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
+import 'package:workout_notebook/utils/date_service.dart';
 
 class NotebookHomeScreen extends StatelessWidget {
   const NotebookHomeScreen({super.key});
@@ -23,6 +24,7 @@ class NotebookHomeScreen extends StatelessWidget {
                 children: [
                   WorkoutsCalendar(
                     height: height * 0.45,
+                    service: DateService(dateNow: DateTime.now()),
                   ),
                   WorkoutsListView(
                     height: height * 0.3,
