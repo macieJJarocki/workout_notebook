@@ -6,6 +6,7 @@ import 'package:workout_notebook/data/services/local_db_service.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/utils/app_router.dart';
 import 'package:workout_notebook/utils/enums/hive_enums.dart';
+import 'package:workout_notebook/l10n/app_localizations.dart';
 
 class WorkoutView extends StatelessWidget {
   const WorkoutView({
@@ -35,6 +36,8 @@ class WorkoutView extends StatelessWidget {
               ),
             ),
         child: MaterialApp.router(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           routerConfig: AppRouter().router,
           title: 'Workout Notebook',
           theme: ThemeData(

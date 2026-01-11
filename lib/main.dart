@@ -12,6 +12,7 @@ TODO in the app:
   - implement Result for error handling
   - unit/widget/integrations tests
   - icons licence 
+  - create settings bloc
 
 TODO fix:
   - unit tests

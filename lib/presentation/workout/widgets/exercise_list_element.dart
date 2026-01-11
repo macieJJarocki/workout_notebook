@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
+import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_data_element.dart';
@@ -23,7 +24,7 @@ class ExerciseListElement extends StatelessWidget {
         showDialog(
           context: context,
           builder: (context) => AppDailog(
-            title: 'Are you sure, you want to delete this exercise?',
+            title: AppLocalizations.of(context)!.dailog_delete_exercise,
             actions: [
               AppOutlinedButton(
                 padding: EdgeInsetsGeometry.zero,
@@ -35,7 +36,7 @@ class ExerciseListElement extends StatelessWidget {
                   context.pop();
                 },
                 child: Text(
-                  'Delete',
+                  AppLocalizations.of(context)!.button_delete,
                   style: TextStyle(fontSize: 20),
                   textAlign: .center,
                 ),
@@ -48,7 +49,7 @@ class ExerciseListElement extends StatelessWidget {
         context: context,
         builder: (context) => ExerciseFormDailog(
           exercise: exercise,
-          title: 'Adjust the exercise to suit your preferences.',
+          title: AppLocalizations.of(context)!.dailog_edit_exercise,
         ),
       ),
       child: Card(
@@ -71,7 +72,7 @@ class ExerciseListElement extends StatelessWidget {
                 ),
               ),
               Text(
-                'Exercise',
+                AppLocalizations.of(context)!.string_exercise,
                 style: TextStyle(
                   color: Colors.blueGrey.shade600,
                   fontSize: 12,
@@ -86,17 +87,17 @@ class ExerciseListElement extends StatelessWidget {
                 mainAxisAlignment: .spaceBetween,
                 children: [
                   ExerciseDataElement(
-                    fieldName: 'Weight',
+                    fieldName: AppLocalizations.of(context)!.string_weight,
                     fieldValue: exercise.weight,
                     iconPath: 'lib/utils/icons/weight1.png',
                   ),
                   ExerciseDataElement(
-                    fieldName: 'Reps',
+                    fieldName: AppLocalizations.of(context)!.string_repetitions,
                     fieldValue: exercise.repetitions,
                     iconPath: 'lib/utils/icons/rep2.png',
                   ),
                   ExerciseDataElement(
-                    fieldName: 'Sets',
+                    fieldName: AppLocalizations.of(context)!.string_sets,
                     fieldValue: exercise.sets,
                     iconPath: 'lib/utils/icons/sets.png',
                   ),
@@ -105,7 +106,9 @@ class ExerciseListElement extends StatelessWidget {
               BlocBuilder<NotebookBloc, NotebookState>(
                 builder: (context, state) {
                   return ListTile(
-                    title: Text('Exercise done?'),
+                    title: Text(
+                      AppLocalizations.of(context)!.string_exercise_done,
+                    ),
                     trailing: Checkbox(
                       value: exercise.isCompleted,
                       onChanged: (value) {

@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/widgets/workout_calendar_element.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/utils/date_service.dart';
@@ -38,13 +41,14 @@ class _WorkoutsCalendarState extends State<WorkoutsCalendar> {
               },
               icon: Icon(Icons.arrow_back_ios),
             ),
+
             title: Text(
-              'Plan your trening',
+              AppLocalizations.of(context)!.plan_your_trening,
               style: TextStyle(fontSize: 20, fontWeight: .bold),
               textAlign: .center,
             ),
             subtitle: Text(
-              widget.service.toString(),
+              widget.service.dateAsString(locale: 'pl'),
               textAlign: .center,
               style: TextStyle(fontStyle: .italic),
             ),
@@ -67,7 +71,6 @@ class _WorkoutsCalendarState extends State<WorkoutsCalendar> {
               physics: NeverScrollableScrollPhysics(),
               itemCount: widget.service.daysInMonth(),
               itemBuilder: (context, index) {
-                print(index);
                 return CalendarElement(
                   date: DateTime(
                     widget.service.date.year,

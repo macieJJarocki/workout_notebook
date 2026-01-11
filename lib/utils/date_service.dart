@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 // TODO
 // restrict date must be lower than the DateTime.now().month,
@@ -16,8 +17,8 @@ class DateService {
     return DateUtils.getDaysInMonth(date.year, month ?? date.month);
   }
 
-  @override
-  String toString() {
-    return '${date.day}-${date.month}-${date.year}';
-  }
+
+// TODO Add Local to the settings bloc
+  String dateAsString({String? locale}) =>
+      DateFormat.yMMMM(locale).format(date).toString();
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workout_notebook/data/models/workout.dart';
+import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 
 class WorkoutListViewElement extends StatelessWidget {
@@ -27,9 +28,11 @@ class WorkoutListViewElement extends StatelessWidget {
         child: Column(
           mainAxisAlignment: .center,
           crossAxisAlignment: .center,
-          children: workout != null
-              ? [Text(workout.toString())]
-              : [Text('Add workout')],
+          children: [
+            workout != null
+                ? Text(workout.toString())
+                : Text(AppLocalizations.of(context)!.string_add_workout),
+          ],
         ),
       ),
     );

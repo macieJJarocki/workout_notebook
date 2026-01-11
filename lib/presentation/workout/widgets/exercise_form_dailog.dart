@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
+import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/utils/widgets/app_form_field.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
@@ -85,7 +86,7 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
                   controller: nameController,
                   padding: .symmetric(horizontal: 8, vertical: 4),
                   focusNode: nameFocusNode,
-                  name: 'name',
+                  name: AppLocalizations.of(context)!.string_name,
                   validator: AppFormValidator.validateNameField,
                   nextFocusNode: weightFocusNode,
                   backgroundColor: Colors.blueGrey.shade200,
@@ -94,7 +95,7 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
                   controller: weightController,
                   padding: .symmetric(horizontal: 8, vertical: 4),
                   focusNode: weightFocusNode,
-                  name: 'weight',
+                  name: AppLocalizations.of(context)!.string_weight,
                   validator: AppFormValidator.validateWeightField,
                   nextFocusNode: repetitionsFocusNode,
                   keyboardType: TextInputType.number,
@@ -104,7 +105,7 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
                   controller: repetitionsController,
                   padding: .symmetric(horizontal: 8, vertical: 4),
                   focusNode: repetitionsFocusNode,
-                  name: 'repetitions',
+                  name: AppLocalizations.of(context)!.string_repetitions,
                   validator: AppFormValidator.validateRepetitionsField,
                   nextFocusNode: setsFocusNode,
                   keyboardType: TextInputType.phone,
@@ -114,7 +115,7 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
                   controller: setsController,
                   padding: .symmetric(horizontal: 8, vertical: 4),
                   focusNode: setsFocusNode,
-                  name: 'sets',
+                  name: AppLocalizations.of(context)!.string_sets,
                   validator: AppFormValidator.validateSetsField,
                   keyboardType: TextInputType.number,
                   backgroundColor: Colors.blueGrey.shade200,
@@ -126,7 +127,9 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
             padding: EdgeInsetsGeometry.symmetric(vertical: 4),
             backgrounColor: Colors.blueGrey.shade200,
             child: Text(
-              widget.exercise == null ? 'Create' : 'Edit',
+              widget.exercise == null
+                  ? AppLocalizations.of(context)!.button_create
+                  : AppLocalizations.of(context)!.button_edit,
               style: TextStyle(fontSize: 20),
               textAlign: .center,
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
@@ -27,14 +28,16 @@ class _CalendarElementState extends State<CalendarElement> {
         context: context,
         builder: (context) => workouts.isNotEmpty
             ? AppDailog(
-                title: 'Choose workout',
+                title: AppLocalizations.of(
+                  context,
+                )!.dailog_choose_workout,
                 content: Column(
                   mainAxisSize: .min,
                   children: [
                     Container(
                       color: Colors.blueGrey.shade200,
                       child: DropdownMenu(
-                        label: Text('workouts'),
+                        label: Text(AppLocalizations.of(context)!.string_workouts),
                         dropdownMenuEntries: List.from(
                           workouts.map(
                             (e) => DropdownMenuEntry(
@@ -79,7 +82,9 @@ class _CalendarElementState extends State<CalendarElement> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              'Assign workout!',
+                              AppLocalizations.of(
+                                context,
+                              )!.snack_bar_assign_workout,
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: .bold,
@@ -107,14 +112,16 @@ class _CalendarElementState extends State<CalendarElement> {
                       }
                     },
                     child: Text(
-                      'Save',
+                      AppLocalizations.of(context)!.button_save,
                       style: TextStyle(fontSize: 20),
                     ),
                   ),
                 ],
               )
             : AppDailog(
-                title: 'First create workout',
+                title: AppLocalizations.of(
+                  context,
+                )!.dailog_first_create_workout,
                 actions: [
                   AppOutlinedButton(
                     backgrounColor: Colors.blueGrey.shade200,
@@ -122,7 +129,10 @@ class _CalendarElementState extends State<CalendarElement> {
                     onPressed: () {
                       context.goNamed(RouterNames.creator.name);
                     },
-                    child: Text('Add workout', style: TextStyle(fontSize: 20)),
+                    child: Text(
+                      AppLocalizations.of(context)!.button_add,
+                      style: TextStyle(fontSize: 20),
+                    ),
                   ),
                 ],
               ),

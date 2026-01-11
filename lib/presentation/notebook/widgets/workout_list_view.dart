@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/data/models/workout.dart';
+import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/presentation/notebook/widgets/workout_list_view_element.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
@@ -35,7 +36,7 @@ class WorkoutsListView extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (context) => AppDailog(
-                    title: 'Are you sure, you want to delete this workout?',
+                    title: AppLocalizations.of(context)!.dailog_delete_workout,
                     actions: [
                       AppOutlinedButton(
                         padding: EdgeInsetsGeometry.zero,
@@ -49,7 +50,7 @@ class WorkoutsListView extends StatelessWidget {
                           context.pop();
                         },
                         child: Text(
-                          'Delete',
+                          AppLocalizations.of(context)!.button_delete,
                           style: TextStyle(fontSize: 20),
                           textAlign: .center,
                         ),

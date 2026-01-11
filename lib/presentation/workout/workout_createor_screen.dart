@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/utils/widgets/app_dailog.dart';
 import 'package:workout_notebook/utils/widgets/app_form_field.dart';
@@ -52,7 +53,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          'Workout Creator',
+          AppLocalizations.of(context)!.string_workout_creator,
           style: TextStyle(fontWeight: .bold, fontSize: 30),
         ),
         centerTitle: true,
@@ -83,7 +84,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                           '''WN:${state.unsavedWorkoutName} W:${state.savedWorkouts.length} ES:${state.savedExercisesNames.length} EU:${state.unsavedExercises.length}''',
                         ),
                         AppFormField(
-                          name: 'name',
+                          name: AppLocalizations.of(context)!.string_name,
                           focusNode: null,
                           validator: AppFormValidator.validateNameField,
                           controller: nameController,
@@ -147,7 +148,9 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                               context: context,
                                               builder: (context) {
                                                 return ExerciseFormDailog(
-                                                  title: 'Create new Exercise',
+                                                  title: AppLocalizations.of(
+                                                    context,
+                                                  )!.dailog_create_exercise,
                                                 );
                                               },
                                             );
@@ -173,12 +176,12 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                             name: nameController.text,
                                           ),
                                         );
-                                        context.goNamed(
-                                          RouterNames.intro.name,
-                                        );
+                                        context.goNamed(RouterNames.intro.name);
                                       },
                                       child: Text(
-                                        'Create workout',
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.button_create_workout,
                                         style: TextStyle(fontSize: 20),
                                         textAlign: .center,
                                       ),
@@ -206,7 +209,9 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                           'WN:${state.unsavedWorkoutName} W:${state.savedWorkouts.length} ES:${state.savedExercisesNames.length} EU:${state.unsavedExercises.length}',
                         ),
                         Text(
-                          "Don't waste time - create your workout here!",
+                          AppLocalizations.of(
+                            context,
+                          )!.string_dont_waste_time_etc,
                           textAlign: .center,
                           style: TextStyle(fontSize: 26, fontWeight: .bold),
                         ),
@@ -217,12 +222,16 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                             showDialog(
                               context: context,
                               builder: (context) => AppDailog(
-                                title: 'Enter workout name',
+                                title: AppLocalizations.of(
+                                  context,
+                                )!.dailog_create_workout,
                                 content: Column(
                                   mainAxisSize: .min,
                                   children: [
                                     AppFormField(
-                                      name: 'name',
+                                      name: AppLocalizations.of(
+                                        context,
+                                      )!.string_name,
                                       validator:
                                           AppFormValidator.validateNameField,
                                       controller: nameController,
@@ -244,7 +253,9 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                       context.pop();
                                     },
                                     child: Text(
-                                      'Create',
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.button_create,
                                       style: TextStyle(fontSize: 20),
                                     ),
                                   ),
@@ -253,7 +264,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                             );
                           },
                           child: Text(
-                            'Create',
+                            AppLocalizations.of(context)!.button_create,
                             style: TextStyle(fontSize: 20),
                             textAlign: .center,
                           ),
