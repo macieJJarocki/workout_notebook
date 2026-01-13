@@ -27,7 +27,7 @@ class NotebookHomeScreen extends StatelessWidget {
                   Text('Platform local name: ${Platform.localeName}'),
                   WorkoutsCalendar(
                     height: height * 0.45,
-                    service: DateService(dateNow: DateTime.now()),
+                    dateService: DateService(dateNow: DateTime.now()),
                   ),
 
                   WorkoutsListView(

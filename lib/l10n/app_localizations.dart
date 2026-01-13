@@ -167,6 +167,12 @@ abstract class AppLocalizations {
   /// **'Workout Creator'**
   String get string_workout_creator;
 
+  /// No description provided for @string_workout_done.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout done?'**
+  String get string_workout_done;
+
   /// No description provided for @string_exercise_done.
   ///
   /// In en, this message translates to:

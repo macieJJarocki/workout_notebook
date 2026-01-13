@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-// TODO
-// restrict date must be lower than the DateTime.now().month,
-// but bear in mind that there must be some kind of the checker
-// to verify if there is workout has been assigned to the calendar on that date
-// DateService({required DateTime dateNow})
+// TODO Place this file in the data layer?
+
 class DateService {
   DateService({required DateTime dateNow})
     : date = DateTime(dateNow.year, dateNow.month);
@@ -17,8 +14,11 @@ class DateService {
     return DateUtils.getDaysInMonth(date.year, month ?? date.month);
   }
 
-
-// TODO Add Local to the settings bloc
-  String dateAsString({String? locale}) =>
-      DateFormat.yMMMM(locale).format(date).toString();
+  // TODO Add Local to the settings bloc
+  // Return [this.date] or [date] as String formated with provided pattern and locale.
+  String dateAsString({
+    required String pattern,
+    required String locale,
+    DateTime? date,
+  }) => DateFormat(pattern, locale).format(date ?? this.date);
 }

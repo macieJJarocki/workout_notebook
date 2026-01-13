@@ -45,6 +45,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get string_workout_creator => 'Workout Creator';
 
   @override
+  String get string_workout_done => 'Workout done?';
+
+  @override
   String get string_exercise_done => 'Exercise done?';
 
   @override

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/widgets/workout_calendar_element.dart';
@@ -10,10 +8,10 @@ class WorkoutsCalendar extends StatefulWidget {
   const WorkoutsCalendar({
     super.key,
     required this.height,
-    required this.service,
+    required this.dateService,
   });
   final double height;
-  final DateService service;
+  final DateService dateService;
 
   @override
   State<WorkoutsCalendar> createState() => _WorkoutsCalendarState();
@@ -34,8 +32,8 @@ class _WorkoutsCalendarState extends State<WorkoutsCalendar> {
           ListTile(
             leading: IconButton(
               onPressed: () {
-                widget.service.date = widget.service.date.copyWith(
-                  month: widget.service.date.month - 1,
+                widget.dateService.date = widget.dateService.date.copyWith(
+                  month: widget.dateService.date.month - 1,
                 );
                 setState(() {});
               },
@@ -48,14 +46,15 @@ class _WorkoutsCalendarState extends State<WorkoutsCalendar> {
               textAlign: .center,
             ),
             subtitle: Text(
-              widget.service.dateAsString(locale: 'pl'),
+              //TODO  inject locale
+              widget.dateService.dateAsString(pattern: "yMMMM", locale: 'pl'),
               textAlign: .center,
               style: TextStyle(fontStyle: .italic),
             ),
             trailing: IconButton(
               onPressed: () {
-                widget.service.date = widget.service.date.copyWith(
-                  month: widget.service.date.month + 1,
+                widget.dateService.date = widget.dateService.date.copyWith(
+                  month: widget.dateService.date.month + 1,
                 );
                 setState(() {});
               },
@@ -69,12 +68,13 @@ class _WorkoutsCalendarState extends State<WorkoutsCalendar> {
                 crossAxisCount: 7,
               ),
               physics: NeverScrollableScrollPhysics(),
-              itemCount: widget.service.daysInMonth(),
+              itemCount: widget.dateService.daysInMonth(),
               itemBuilder: (context, index) {
                 return CalendarElement(
+                  dateService: widget.dateService,
                   date: DateTime(
-                    widget.service.date.year,
-                    widget.service.date.month,
+                    widget.dateService.date.year,
+                    widget.dateService.date.month,
                     index + 1,
                   ),
                 );

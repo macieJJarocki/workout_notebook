@@ -14,6 +14,13 @@ class NotebookWorkoutCreated extends NotebookEvent {
   NotebookWorkoutCreated({required this.name});
 }
 
+class NotebookWorkoutDateAssigned extends NotebookEvent {
+  final String uuid;
+  final DateTime date;
+
+  NotebookWorkoutDateAssigned({required this.uuid, required this.date});
+}
+
 class NotebookWorkoutNameRequested extends NotebookEvent {
   final String name;
 
@@ -24,6 +31,12 @@ class NotebookWorkoutDeleted extends NotebookEvent {
   final String uuid;
 
   NotebookWorkoutDeleted({required this.uuid});
+}
+
+class NotebookWorkoutEdited extends NotebookEvent {
+  final Workout workout;
+
+  NotebookWorkoutEdited({required this.workout});
 }
 
 class NotebookExerciseCreated extends NotebookEvent {
@@ -49,11 +62,4 @@ class NotebookExerciseDeleted extends NotebookEvent {
   final Workout? workout;
   final String uuid;
   NotebookExerciseDeleted({this.workout, required this.uuid});
-}
-
-class NotebookWorkoutDateAssigned extends NotebookEvent {
-  final String uuid;
-  final DateTime date;
-
-  NotebookWorkoutDateAssigned({required this.uuid, required this.date});
 }

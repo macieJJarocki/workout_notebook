@@ -45,6 +45,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get string_workout_creator => 'Kreator Treningu';
 
   @override
+  String get string_workout_done => 'Treninig zakończony?';
+
+  @override
   String get string_exercise_done => 'Ćwiczenie ukończone?';
 
   @override

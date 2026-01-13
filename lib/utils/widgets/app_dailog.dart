@@ -22,12 +22,12 @@ class AppDailog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      contentPadding: .all(8),
+      titlePadding: .only(top: 8, left: 8, right: 8),
+      actionsPadding: .only(bottom: 8, left: 8, right: 8),
       backgroundColor: Colors.blueGrey.shade100,
       alignment: .center,
-      title: Text(
-        title,
-        textAlign: .center,
-      ),
+      title: Text(title, textAlign: .center),
       content: content,
       actions: actions,
     );

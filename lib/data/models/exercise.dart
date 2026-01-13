@@ -8,7 +8,7 @@ class Exercise extends Model {
   final double weight;
   final int repetitions;
   final int sets;
-  
+
   Exercise({
     required this.uuid,
     required this.isCompleted,
@@ -33,7 +33,7 @@ class Exercise extends Model {
   @override
   Map<String, dynamic> toMap() {
     return {
-      'id': uuid,
+      'uuid': uuid,
       'isCompleted': isCompleted,
       'name': name,
       'weight': weight,

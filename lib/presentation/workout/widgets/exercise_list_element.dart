@@ -109,7 +109,7 @@ class ExerciseListElement extends StatelessWidget {
                     title: Text(
                       AppLocalizations.of(context)!.string_exercise_done,
                     ),
-                    trailing: Checkbox(
+                    trailing: Checkbox.adaptive(
                       value: exercise.isCompleted,
                       onChanged: (value) {
                         context.read<NotebookBloc>().add(

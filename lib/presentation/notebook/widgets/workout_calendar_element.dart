@@ -4,14 +4,19 @@ import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
+import 'package:workout_notebook/utils/date_service.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 import 'package:workout_notebook/utils/widgets/app_dailog.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
 
 class CalendarElement extends StatefulWidget {
-  const CalendarElement({super.key, required this.date});
+  const CalendarElement({
+    super.key,
+    required this.date,
+    required this.dateService,
+  });
   final DateTime date;
-
+  final DateService dateService;
   @override
   State<CalendarElement> createState() => _CalendarElementState();
 }
@@ -22,7 +27,17 @@ class _CalendarElementState extends State<CalendarElement> {
   @override
   Widget build(BuildContext context) {
     final workouts =
-        (context.read<NotebookBloc>().state as NotebookSuccess).savedWorkouts;
+        (context.watch<NotebookBloc>().state as NotebookSuccess).savedWorkouts;
+
+    final bool isDateAssigned = workouts.any(
+      (element) => element.assignedDates.contains(widget.date),
+    );
+
+    final workoutsWithDate = workouts
+        .where(
+          (element) => element.assignedDates.contains(widget.date),
+        )
+        .toList();
     return GestureDetector(
       onTap: () => showDialog(
         context: context,
@@ -33,11 +48,102 @@ class _CalendarElementState extends State<CalendarElement> {
                 )!.dailog_choose_workout,
                 content: Column(
                   mainAxisSize: .min,
+                  mainAxisAlignment: .spaceBetween,
                   children: [
+                    // TODO inject locale
+                    Text(
+                      widget.dateService.dateAsString(
+                        pattern: 'MMMMEEEEd',
+                        locale: 'pl',
+                        date: widget.date,
+                      ),
+                    ),
+                    isDateAssigned
+                        ? Container(
+                            margin: .only(top: 8),
+                            height: AppTheme.deviceHeight(context) * 0.3,
+                            decoration: AppTheme.boxDecoration(
+                              backgrounColor: Colors.blueGrey.shade200,
+                            ),
+                            child: ListView.builder(
+                              itemCount: workoutsWithDate.length,
+                              itemBuilder: (context, index) {
+                                return BlocBuilder<NotebookBloc, NotebookState>(
+                                  builder: (context, state) {
+                                    return Container(
+                                      margin: .only(
+                                        top: 8,
+                                        right: 8,
+                                        left: 8,
+                                      ),
+                                      decoration: AppTheme.boxDecoration(
+                                        backgrounColor:
+                                            Colors.blueGrey.shade100,
+                                      ),
+                                      child: GestureDetector(
+                                        onLongPress: () {
+                                          workouts[index].assignedDates.remove(
+                                            widget.date,
+                                          );
+                                          context.read<NotebookBloc>().add(
+                                            NotebookWorkoutEdited(
+                                              workout: workouts[index],
+                                            ),
+                                          );
+                                          context.pop();
+                                        },
+                                        child: ListTile(
+                                          contentPadding: .zero,
+                                          title: Row(
+                                            mainAxisAlignment: .spaceAround,
+                                            children: [
+                                              Text(
+                                                '${AppLocalizations.of(context)!.string_name}: ${workoutsWithDate[index].name}',
+                                                textAlign: .center,
+                                              ),
+                                            ],
+                                          ),
+                                          subtitle: Row(
+                                            mainAxisAlignment: .center,
+                                            children: [
+                                              Text(
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.string_workout_done,
+                                              ),
+                                              Checkbox.adaptive(
+                                                value:
+                                                    workouts[index].isCompleted,
+                                                onChanged: (value) => context
+                                                    .read<NotebookBloc>()
+                                                    .add(
+                                                      NotebookWorkoutEdited(
+                                                        workout: workouts[index]
+                                                            .copyWith(
+                                                              isCompleted:
+                                                                  value,
+                                                            ),
+                                                      ),
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          )
+                        : SizedBox(),
                     Container(
+                      margin: .only(top: 8),
                       color: Colors.blueGrey.shade200,
                       child: DropdownMenu(
-                        label: Text(AppLocalizations.of(context)!.string_workouts),
+                        label: Text(
+                          AppLocalizations.of(context)!.string_workouts,
+                        ),
                         dropdownMenuEntries: List.from(
                           workouts.map(
                             (e) => DropdownMenuEntry(
@@ -69,11 +175,7 @@ class _CalendarElementState extends State<CalendarElement> {
                         context.read<NotebookBloc>().add(
                           NotebookWorkoutDateAssigned(
                             uuid: uuid,
-                            date: DateTime(
-                              widget.date.year,
-                              widget.date.month,
-                              widget.date.day,
-                            ),
+                            date: widget.date,
                           ),
                         );
                         context.pop();
@@ -99,12 +201,8 @@ class _CalendarElementState extends State<CalendarElement> {
                                 color: Colors.black,
                               ),
                               borderRadius: BorderRadiusGeometry.only(
-                                topLeft: Radius.circular(
-                                  20,
-                                ),
-                                topRight: Radius.circular(
-                                  20,
-                                ),
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
                               ),
                             ),
                           ),
@@ -140,7 +238,9 @@ class _CalendarElementState extends State<CalendarElement> {
       child: Container(
         margin: _getMargin(widget.date.day),
         decoration: AppTheme.boxDecoration(
-          backgrounColor: Colors.blueGrey.shade100,
+          backgrounColor: isDateAssigned
+              ? Colors.green
+              : Colors.blueGrey.shade50,
         ),
         child: Center(
           child: Text(
