@@ -42,13 +42,15 @@ class LocalDBService {
 
   final Map<String, dynamic> _defaultValue = {
     DataBoxKeys.workouts.name: {
-      AppBoxKeys.saved.name: <Workout>[],
-      AppBoxKeys.unsaved.name: '',
+      AppWorkoutKeys.saved.name: <Workout>[],
+      AppWorkoutKeys.unsaved.name: '',
     },
     DataBoxKeys.exercises.name: {
-      AppBoxKeys.saved.name: <String>[],
-      AppBoxKeys.unsaved.name: <Exercise>[],
+      AppWorkoutKeys.saved.name: <String>[],
+      AppWorkoutKeys.unsaved.name: <Exercise>[],
     },
-    DataBoxKeys.other.name: {},
+    DataBoxKeys.other.name: {
+      AppOtherKeys.dateWorkoutsAsssigned.name: <String, List<Workout>>{},
+    },
   };
 }

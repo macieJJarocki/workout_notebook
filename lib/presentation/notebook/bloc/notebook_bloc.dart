@@ -22,8 +22,12 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     on<NotebookExerciseDeleted>(_onNotebookExerciseDeleted);
     on<NotebookWorkoutDeleted>(_onNotebookWorkoutDeleted);
     on<NotebookWorkoutEdited>(_onNotebookWorkoutEdited);
-    on<NotebookWorkoutDateAssigned>(_onNotebookWorkoutDateAssigned);
+    on<NotebookWorkoutsPlanDateAssigned>(_onNotebookWorkoutsPlanDateAssigned);
+    on<NotebookWorkoutsPlanDeleted>(_onNotebookWorkoutsPlanDeleted);
+    on<NotebookWorkoutsPlanEdited>(_onNotebookWorkoutsPlanEdited);
   }
+
+  // TODO refactor NotebookBloc to unify method for DateBoxKeys !!!!!!!!!!!!
 
   void _onNotebookDataRequested(
     NotebookDataRequested event,
@@ -32,15 +36,21 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     try {
       final exerciseData = await _repository.read(DataBoxKeys.exercises);
       final workoutData = await _repository.read(DataBoxKeys.workouts);
+      final otherData = await _repository.read(DataBoxKeys.other);
       emit(
         NotebookSuccess(
-          savedWorkouts: List<Workout>.from(workoutData[AppBoxKeys.saved.name]),
-          unsavedWorkoutName: workoutData[AppBoxKeys.unsaved.name],
-          savedExercisesNames:
-              exerciseData[AppBoxKeys.saved.name] as List<String>,
-          unsavedExercises: List<Exercise>.from(
-            exerciseData[AppBoxKeys.unsaved.name],
+          savedWorkouts: List<Workout>.from(
+            workoutData[AppWorkoutKeys.saved.name],
           ),
+          unsavedWorkoutName: workoutData[AppWorkoutKeys.unsaved.name],
+          savedExercisesNames:
+              exerciseData[AppWorkoutKeys.saved.name] as List<String>,
+          unsavedExercises: List<Exercise>.from(
+            exerciseData[AppWorkoutKeys.unsaved.name],
+          ),
+          workoutsAssigned: Map<String, dynamic>.from(
+            otherData[AppOtherKeys.dateWorkoutsAsssigned.name],
+          ).map((key, value) => MapEntry(key, List<Workout>.from(value))),
         ),
       );
     } catch (e) {
@@ -57,8 +67,8 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     try {
       final notebookState = state as NotebookSuccess;
       await _repository.write(DataBoxKeys.workouts, {
-        AppBoxKeys.saved.name: notebookState.savedWorkouts,
-        AppBoxKeys.unsaved.name: event.name,
+        AppWorkoutKeys.saved.name: notebookState.savedWorkouts,
+        AppWorkoutKeys.unsaved.name: event.name,
       });
       emit(
         notebookState.copyWith(unsavedWorkoutName: event.name),
@@ -84,8 +94,11 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
       );
 
       await _repository.write(DataBoxKeys.exercises, {
-        AppBoxKeys.saved.name: notebookState.savedExercisesNames,
-        AppBoxKeys.unsaved.name: [...notebookState.unsavedExercises, exercise],
+        AppWorkoutKeys.saved.name: notebookState.savedExercisesNames,
+        AppWorkoutKeys.unsaved.name: [
+          ...notebookState.unsavedExercises,
+          exercise,
+        ],
       });
       emit(
         notebookState.copyWith(
@@ -110,8 +123,8 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
       notebookState.unsavedExercises.insert(idx, event.exercise);
 
       await _repository.write(DataBoxKeys.exercises, {
-        AppBoxKeys.saved.name: notebookState.savedExercisesNames,
-        AppBoxKeys.unsaved.name: notebookState.unsavedExercises,
+        AppWorkoutKeys.saved.name: notebookState.savedExercisesNames,
+        AppWorkoutKeys.unsaved.name: notebookState.unsavedExercises,
       });
       emit(
         notebookState.copyWith(
@@ -151,8 +164,8 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
 
           key = DataBoxKeys.workouts;
           await _repository.write(key, {
-            AppBoxKeys.saved.name: workouts,
-            AppBoxKeys.unsaved.name: notebookState.unsavedWorkoutName,
+            AppWorkoutKeys.saved.name: workouts,
+            AppWorkoutKeys.unsaved.name: notebookState.unsavedWorkoutName,
           });
           emit(
             notebookState.copyWith(savedWorkouts: workouts),
@@ -164,8 +177,8 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
           key = DataBoxKeys.exercises;
           exercises.removeAt(exerciseIdx);
           await _repository.write(key, {
-            AppBoxKeys.saved.name: notebookState.savedExercisesNames,
-            AppBoxKeys.unsaved.name: exercises,
+            AppWorkoutKeys.saved.name: notebookState.savedExercisesNames,
+            AppWorkoutKeys.unsaved.name: exercises,
           });
           emit(
             notebookState.copyWith(
@@ -193,19 +206,22 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
       );
 
       await _repository.write(DataBoxKeys.workouts, {
-        AppBoxKeys.saved.name: [...notebookState.savedWorkouts, workout],
-        AppBoxKeys.unsaved.name: '',
+        AppWorkoutKeys.saved.name: [...notebookState.savedWorkouts, workout],
+        AppWorkoutKeys.unsaved.name: '',
       });
       await _repository.write(DataBoxKeys.exercises, {
-        AppBoxKeys.saved.name: [...notebookState.savedWorkouts, workout].fold(
-          <String>[],
-          (previousValue, element) {
-            element.exercises.map((e) => previousValue.add(e.name)).toList();
+        AppWorkoutKeys.saved.name: [...notebookState.savedWorkouts, workout]
+            .fold(
+              <String>[],
+              (previousValue, element) {
+                element.exercises
+                    .map((e) => previousValue.add(e.name))
+                    .toList();
 
-            return previousValue;
-          },
-        ),
-        AppBoxKeys.unsaved.name: [],
+                return previousValue;
+              },
+            ),
+        AppWorkoutKeys.unsaved.name: [],
       });
       emit(
         notebookState.copyWith(
@@ -236,8 +252,8 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
       notebookState.savedWorkouts.insert(idx, event.workout);
 
       await _repository.write(DataBoxKeys.workouts, {
-        AppBoxKeys.saved.name: notebookState.savedWorkouts,
-        AppBoxKeys.unsaved.name: notebookState.unsavedWorkoutName,
+        AppWorkoutKeys.saved.name: notebookState.savedWorkouts,
+        AppWorkoutKeys.unsaved.name: notebookState.unsavedWorkoutName,
       });
       emit(notebookState.copyWith(savedWorkouts: notebookState.savedWorkouts));
     } catch (e) {
@@ -257,8 +273,8 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
       );
       notebookState.savedWorkouts.removeAt(workoutIdx);
       await _repository.write(DataBoxKeys.workouts, {
-        AppBoxKeys.saved.name: notebookState.savedWorkouts,
-        AppBoxKeys.unsaved.name: notebookState.unsavedWorkoutName,
+        AppWorkoutKeys.saved.name: notebookState.savedWorkouts,
+        AppWorkoutKeys.unsaved.name: notebookState.unsavedWorkoutName,
       });
 
       emit(
@@ -269,39 +285,94 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     }
   }
 
-  void _onNotebookWorkoutDateAssigned(
-    NotebookWorkoutDateAssigned event,
+  void _onNotebookWorkoutsPlanDateAssigned(
+    NotebookWorkoutsPlanDateAssigned event,
     Emitter<NotebookState> emit,
   ) async {
     try {
       final notebookState = state as NotebookSuccess;
-      final workoutIdx = notebookState.savedWorkouts.indexWhere(
-        (e) => e.uuid == event.uuid,
-      );
-      if (!notebookState.savedWorkouts[workoutIdx].assignedDates.contains(
-        event.date,
-      )) {
-        final workout = notebookState.savedWorkouts[workoutIdx];
-        notebookState.savedWorkouts.removeAt(workoutIdx);
-        notebookState.savedWorkouts.insert(
-          workoutIdx,
-          workout.copyWith(
-            assignedDates: [...workout.assignedDates, event.date],
-          ),
-        );
+      final Map<String, List<Workout>> workoutsAssigned =
+          notebookState.workoutsAssigned;
 
-        await _repository.write(DataBoxKeys.workouts, {
-          AppBoxKeys.saved.name: notebookState.savedWorkouts,
-          AppBoxKeys.unsaved.name: notebookState.unsavedWorkoutName,
-        });
-        emit(
-          notebookState.copyWith(savedWorkouts: notebookState.savedWorkouts),
-        );
+      var workout =
+          notebookState.savedWorkouts[notebookState.savedWorkouts.indexWhere(
+            (e) => e.uuid == event.workout.uuid,
+          )];
+
+      final String date = event.date.toString();
+
+      if (!(workoutsAssigned.containsKey(date))) {
+        workout = workout.copyWith(uuid: _getUuid());
+        workoutsAssigned[date] = [workout];
       } else {
-        emit(
-          notebookState.copyWith(savedWorkouts: notebookState.savedWorkouts),
-        );
+        switch (workoutsAssigned[date]!.any(
+          (element) => element.name == event.workout.name,
+        )) {
+          case false:
+            workout = workout.copyWith(uuid: _getUuid());
+            workoutsAssigned[date]!.add(workout);
+          case true:
+        }
       }
+      await _repository.write(DataBoxKeys.other, {
+        AppOtherKeys.dateWorkoutsAsssigned.name: workoutsAssigned,
+      });
+      emit(notebookState.copyWith(workoutsAssigned: workoutsAssigned));
+    } catch (e) {
+      emit(NotebookFailure(e.toString()));
+    }
+  }
+
+  void _onNotebookWorkoutsPlanDeleted(
+    NotebookWorkoutsPlanDeleted event,
+    Emitter<NotebookState> emit,
+  ) async {
+    try {
+      final notebookState = state as NotebookSuccess;
+      final workouts = notebookState.workoutsAssigned[event.date.toString()];
+      final int idx = workouts!.indexWhere((w) => w.uuid == event.workout.uuid);
+
+      workouts.removeAt(idx);
+
+      notebookState.workoutsAssigned[event.date.toString()] = workouts;
+
+      await _repository.write(DataBoxKeys.other, {
+        AppOtherKeys.dateWorkoutsAsssigned.name: notebookState.workoutsAssigned,
+      });
+
+      emit(
+        notebookState.copyWith(
+          workoutsAssigned: notebookState.workoutsAssigned,
+        ),
+      );
+    } catch (e) {
+      emit(NotebookFailure(e.toString()));
+    }
+  }
+
+  void _onNotebookWorkoutsPlanEdited(
+    NotebookWorkoutsPlanEdited event,
+    Emitter<NotebookState> emit,
+  ) async {
+    try {
+      final notebookState = state as NotebookSuccess;
+      final workouts = notebookState.workoutsAssigned[event.date.toString()];
+      final int idx = workouts!.indexWhere((w) => w.uuid == event.workout.uuid);
+
+      workouts.removeAt(idx);
+      workouts.insert(idx, event.workout);
+
+      notebookState.workoutsAssigned[event.date.toString()] = workouts;
+
+      await _repository.write(DataBoxKeys.other, {
+        AppOtherKeys.dateWorkoutsAsssigned.name: notebookState.workoutsAssigned,
+      });
+
+      emit(
+        notebookState.copyWith(
+          workoutsAssigned: notebookState.workoutsAssigned,
+        ),
+      );
     } catch (e) {
       emit(NotebookFailure(e.toString()));
     }

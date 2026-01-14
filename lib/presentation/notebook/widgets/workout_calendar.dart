@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/widgets/workout_calendar_element.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
-import 'package:workout_notebook/utils/date_service.dart';
+import 'package:workout_notebook/data/services/date_service.dart';
 
 class WorkoutsCalendar extends StatefulWidget {
   const WorkoutsCalendar({

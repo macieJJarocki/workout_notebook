@@ -6,7 +6,7 @@ import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/presentation/notebook/widgets/workout_calendar.dart';
 import 'package:workout_notebook/presentation/notebook/widgets/workout_list_view.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
-import 'package:workout_notebook/utils/date_service.dart';
+import 'package:workout_notebook/data/services/date_service.dart';
 
 class NotebookHomeScreen extends StatelessWidget {
   const NotebookHomeScreen({super.key});
@@ -24,12 +24,12 @@ class NotebookHomeScreen extends StatelessWidget {
               return Column(
                 mainAxisAlignment: .spaceEvenly,
                 children: [
-                  Text('Platform local name: ${Platform.localeName}'),
+                  // Text('Platform local name: ${Platform.localeName}'),
+                  Text('${state.workoutsAssigned}'),
                   WorkoutsCalendar(
                     height: height * 0.45,
                     dateService: DateService(dateNow: DateTime.now()),
                   ),
-
                   WorkoutsListView(
                     height: height * 0.3,
                     itemCount: state.savedWorkouts.length,

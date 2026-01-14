@@ -7,7 +7,7 @@ class Workout extends Model {
   final String name;
   final List<Exercise> exercises;
   final bool isCompleted;
-  // TODO change name
+  // TODO remove
   final List<DateTime> assignedDates;
 
   Workout({
@@ -45,13 +45,14 @@ class Workout extends Model {
 
   @override
   Workout copyWith({
+    String? uuid,
     String? name,
     bool? isCompleted,
     List<Exercise>? exercises,
     List<DateTime>? assignedDates,
   }) {
     return Workout(
-      uuid: uuid,
+      uuid: uuid ?? this.uuid,
       name: name ?? this.name,
       isCompleted: isCompleted ?? this.isCompleted,
       exercises: exercises ?? this.exercises,
@@ -61,6 +62,6 @@ class Workout extends Model {
 
   @override
   String toString() {
-    return toMap().toString();
+    return 'Workout(name: $name, uuid: $uuid)';
   }
 }

@@ -30,7 +30,9 @@ class WorkoutListViewElement extends StatelessWidget {
           crossAxisAlignment: .center,
           children: [
             workout != null
-                ? Text(workout.toString())
+                ? Text(
+                    '${workout.toString()}, exercisesLenght: ${workout!.exercises.length}',
+                  )
                 : Text(AppLocalizations.of(context)!.string_add_workout),
           ],
         ),

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
-import 'package:workout_notebook/utils/date_service.dart';
+import 'package:workout_notebook/data/services/date_service.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 import 'package:workout_notebook/utils/widgets/app_dailog.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
@@ -15,29 +16,31 @@ class CalendarElement extends StatefulWidget {
     required this.date,
     required this.dateService,
   });
+
   final DateTime date;
   final DateService dateService;
+
   @override
   State<CalendarElement> createState() => _CalendarElementState();
 }
 
 class _CalendarElementState extends State<CalendarElement> {
-  String uuid = '';
-
   @override
   Widget build(BuildContext context) {
+    late final Workout? dropdownMenuSecection;
+    final String dateAsString = widget.date.toString();
+
+    final workoutsAssigned =
+        (context.watch<NotebookBloc>().state as NotebookSuccess)
+            .workoutsAssigned;
+
     final workouts =
         (context.watch<NotebookBloc>().state as NotebookSuccess).savedWorkouts;
 
-    final bool isDateAssigned = workouts.any(
-      (element) => element.assignedDates.contains(widget.date),
-    );
-
-    final workoutsWithDate = workouts
-        .where(
-          (element) => element.assignedDates.contains(widget.date),
-        )
+    final List<DropdownMenuEntry> dropdownMenuItems = workouts
+        .map((e) => DropdownMenuEntry(value: e, label: e.name))
         .toList();
+
     return GestureDetector(
       onTap: () => showDialog(
         context: context,
@@ -58,7 +61,7 @@ class _CalendarElementState extends State<CalendarElement> {
                         date: widget.date,
                       ),
                     ),
-                    isDateAssigned
+                    workoutsAssigned.containsKey(dateAsString)
                         ? Container(
                             margin: .only(top: 8),
                             height: AppTheme.deviceHeight(context) * 0.3,
@@ -66,28 +69,26 @@ class _CalendarElementState extends State<CalendarElement> {
                               backgrounColor: Colors.blueGrey.shade200,
                             ),
                             child: ListView.builder(
-                              itemCount: workoutsWithDate.length,
+                              itemCount: workoutsAssigned[dateAsString]!.length,
                               itemBuilder: (context, index) {
                                 return BlocBuilder<NotebookBloc, NotebookState>(
                                   builder: (context, state) {
+                                    final workout =
+                                        workoutsAssigned[dateAsString]![index];
+
                                     return Container(
-                                      margin: .only(
-                                        top: 8,
-                                        right: 8,
-                                        left: 8,
-                                      ),
+                                      margin: .only(top: 8, right: 8, left: 8),
                                       decoration: AppTheme.boxDecoration(
                                         backgrounColor:
                                             Colors.blueGrey.shade100,
                                       ),
                                       child: GestureDetector(
                                         onLongPress: () {
-                                          workouts[index].assignedDates.remove(
-                                            widget.date,
-                                          );
+                                          print('good');
                                           context.read<NotebookBloc>().add(
-                                            NotebookWorkoutEdited(
-                                              workout: workouts[index],
+                                            NotebookWorkoutsPlanDeleted(
+                                              date: widget.date,
+                                              workout: workout,
                                             ),
                                           );
                                           context.pop();
@@ -98,7 +99,7 @@ class _CalendarElementState extends State<CalendarElement> {
                                             mainAxisAlignment: .spaceAround,
                                             children: [
                                               Text(
-                                                '${AppLocalizations.of(context)!.string_name}: ${workoutsWithDate[index].name}',
+                                                '${AppLocalizations.of(context)!.string_name}: ${workout.name}',
                                                 textAlign: .center,
                                               ),
                                             ],
@@ -112,19 +113,17 @@ class _CalendarElementState extends State<CalendarElement> {
                                                 )!.string_workout_done,
                                               ),
                                               Checkbox.adaptive(
-                                                value:
-                                                    workouts[index].isCompleted,
-                                                onChanged: (value) => context
-                                                    .read<NotebookBloc>()
-                                                    .add(
-                                                      NotebookWorkoutEdited(
-                                                        workout: workouts[index]
-                                                            .copyWith(
-                                                              isCompleted:
-                                                                  value,
-                                                            ),
+                                                value: workout.isCompleted,
+                                                onChanged: (value) {
+                                                  context.read<NotebookBloc>().add(
+                                                    NotebookWorkoutsPlanEdited(
+                                                      date: widget.date,
+                                                      workout: workout.copyWith(
+                                                        isCompleted: value,
                                                       ),
                                                     ),
+                                                  );
+                                                },
                                               ),
                                             ],
                                           ),
@@ -144,14 +143,7 @@ class _CalendarElementState extends State<CalendarElement> {
                         label: Text(
                           AppLocalizations.of(context)!.string_workouts,
                         ),
-                        dropdownMenuEntries: List.from(
-                          workouts.map(
-                            (e) => DropdownMenuEntry(
-                              value: e.uuid,
-                              label: e.name,
-                            ),
-                          ),
-                        ),
+                        dropdownMenuEntries: dropdownMenuItems,
                         menuStyle: MenuStyle(
                           backgroundColor: WidgetStatePropertyAll(
                             Colors.blueGrey.shade200,
@@ -159,7 +151,7 @@ class _CalendarElementState extends State<CalendarElement> {
                         ),
                         onSelected: (value) {
                           setState(() {
-                            uuid = value as String;
+                            dropdownMenuSecection = value;
                           });
                         },
                       ),
@@ -171,10 +163,10 @@ class _CalendarElementState extends State<CalendarElement> {
                     backgrounColor: Colors.blueGrey.shade200,
                     padding: .zero,
                     onPressed: () {
-                      if (uuid.isNotEmpty) {
+                      if (dropdownMenuSecection != null) {
                         context.read<NotebookBloc>().add(
-                          NotebookWorkoutDateAssigned(
-                            uuid: uuid,
+                          NotebookWorkoutsPlanDateAssigned(
+                            workout: dropdownMenuSecection!,
                             date: widget.date,
                           ),
                         );
@@ -238,13 +230,13 @@ class _CalendarElementState extends State<CalendarElement> {
       child: Container(
         margin: _getMargin(widget.date.day),
         decoration: AppTheme.boxDecoration(
-          backgrounColor: isDateAssigned
+          backgrounColor: workoutsAssigned.containsKey(dateAsString)
               ? Colors.green
               : Colors.blueGrey.shade50,
         ),
         child: Center(
           child: Text(
-            (widget.date.day).toString(),
+            '${widget.date.day}',
             style: TextStyle(fontWeight: .bold),
           ),
         ),

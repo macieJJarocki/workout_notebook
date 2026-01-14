@@ -2,4 +2,6 @@ enum Appdata { data }
 
 enum DataBoxKeys { workouts, exercises, other }
 
-enum AppBoxKeys { saved, unsaved }
+enum AppWorkoutKeys { saved, unsaved }
+
+enum AppOtherKeys { dateWorkoutsAsssigned }
