@@ -20,6 +20,7 @@ class WorkoutsCalendar extends StatefulWidget {
 class _WorkoutsCalendarState extends State<WorkoutsCalendar> {
   @override
   Widget build(BuildContext context) {
+    final DateTime dateTime = widget.dateService.date;
     return Container(
       height: widget.height,
       margin: .all(4),
@@ -32,14 +33,16 @@ class _WorkoutsCalendarState extends State<WorkoutsCalendar> {
           ListTile(
             leading: IconButton(
               onPressed: () {
-                widget.dateService.date = widget.dateService.date.copyWith(
-                  month: widget.dateService.date.month - 1,
-                );
-                setState(() {});
+                // Restrict base on the workouts assigned in the
+                if (dateTime.month > DateTime.now().month) {
+                  widget.dateService.date = dateTime.copyWith(
+                    month: dateTime.month - 1,
+                  );
+                  setState(() {});
+                }
               },
               icon: Icon(Icons.arrow_back_ios),
             ),
-
             title: Text(
               AppLocalizations.of(context)!.plan_your_trening,
               style: TextStyle(fontSize: 20, fontWeight: .bold),

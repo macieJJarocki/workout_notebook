@@ -84,7 +84,6 @@ class _CalendarElementState extends State<CalendarElement> {
                                       ),
                                       child: GestureDetector(
                                         onLongPress: () {
-                                          print('good');
                                           context.read<NotebookBloc>().add(
                                             NotebookWorkoutsPlanDeleted(
                                               date: widget.date,
@@ -230,9 +229,7 @@ class _CalendarElementState extends State<CalendarElement> {
       child: Container(
         margin: _getMargin(widget.date.day),
         decoration: AppTheme.boxDecoration(
-          backgrounColor: workoutsAssigned.containsKey(dateAsString)
-              ? Colors.green
-              : Colors.blueGrey.shade50,
+          backgrounColor: getColor(workoutsAssigned[dateAsString]),
         ),
         child: Center(
           child: Text(
@@ -252,4 +249,17 @@ EdgeInsetsGeometry _getMargin(int index) {
     return .only(top: 2, bottom: 2, left: 2, right: 6);
   }
   return .all(2);
+}
+
+Color getColor(List<Workout>? workouts) {
+  switch (workouts.runtimeType != Null) {
+    case true:
+      if (workouts!.every((element) => element.isCompleted)) {
+        return Colors.green;
+      } else {
+        return Colors.lightGreen;
+      }
+    case false:
+      return Colors.blueGrey.shade100;
+  }
 }

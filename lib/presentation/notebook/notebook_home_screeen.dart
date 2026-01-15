@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
@@ -25,7 +23,6 @@ class NotebookHomeScreen extends StatelessWidget {
                 mainAxisAlignment: .spaceEvenly,
                 children: [
                   // Text('Platform local name: ${Platform.localeName}'),
-                  Text('${state.workoutsAssigned}'),
                   WorkoutsCalendar(
                     height: height * 0.45,
                     dateService: DateService(dateNow: DateTime.now()),
