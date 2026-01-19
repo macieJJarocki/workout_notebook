@@ -11,23 +11,23 @@ import 'package:workout_notebook/utils/widgets/app_dailog.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
 
 class CalendarElement extends StatefulWidget {
-  const CalendarElement({
+  CalendarElement({
     super.key,
     required this.date,
-    required this.dateService,
   });
 
   final DateTime date;
-  final DateService dateService;
+  final DateService dateService = DateService(dateNow: DateTime.now());
 
   @override
   State<CalendarElement> createState() => _CalendarElementState();
 }
 
 class _CalendarElementState extends State<CalendarElement> {
+  Workout? dropdownMenuSecection;
+
   @override
   Widget build(BuildContext context) {
-    late final Workout? dropdownMenuSecection;
     final String dateAsString = widget.date.toString();
 
     final workoutsAssigned =
@@ -85,13 +85,17 @@ class _CalendarElementState extends State<CalendarElement> {
                                       child: GestureDetector(
                                         onLongPress: () {
                                           context.read<NotebookBloc>().add(
-                                            NotebookWorkoutsPlanDeleted(
+                                            NotebookPlanWorkoutDeleted(
                                               date: widget.date,
                                               workout: workout,
                                             ),
                                           );
                                           context.pop();
                                         },
+                                        onTap: () => context.goNamed(
+                                          RouterNames.creator.name,
+                                          extra: [workout, widget.date],
+                                        ),
                                         child: ListTile(
                                           contentPadding: .zero,
                                           title: Row(
@@ -114,14 +118,18 @@ class _CalendarElementState extends State<CalendarElement> {
                                               Checkbox.adaptive(
                                                 value: workout.isCompleted,
                                                 onChanged: (value) {
-                                                  context.read<NotebookBloc>().add(
-                                                    NotebookWorkoutsPlanEdited(
-                                                      date: widget.date,
-                                                      workout: workout.copyWith(
-                                                        isCompleted: value,
-                                                      ),
-                                                    ),
-                                                  );
+                                                  context
+                                                      .read<NotebookBloc>()
+                                                      .add(
+                                                        NotebookPlanWorkoutEdited(
+                                                          date: widget.date,
+                                                          workout: workout
+                                                              .copyWith(
+                                                                isCompleted:
+                                                                    value,
+                                                              ),
+                                                        ),
+                                                      );
                                                 },
                                               ),
                                             ],
@@ -229,7 +237,7 @@ class _CalendarElementState extends State<CalendarElement> {
       child: Container(
         margin: _getMargin(widget.date.day),
         decoration: AppTheme.boxDecoration(
-          backgrounColor: getColor(workoutsAssigned[dateAsString]),
+          backgrounColor: _getColor(workoutsAssigned[dateAsString]),
         ),
         child: Center(
           child: Text(
@@ -251,13 +259,15 @@ EdgeInsetsGeometry _getMargin(int index) {
   return .all(2);
 }
 
-Color getColor(List<Workout>? workouts) {
+Color _getColor(List<Workout>? workouts) {
   switch (workouts.runtimeType != Null) {
     case true:
-      if (workouts!.every((element) => element.isCompleted)) {
+      if (workouts!.every((e) => e.isCompleted)) {
         return Colors.green;
+      } else if (workouts.any((e) => e.isCompleted)) {
+        return Colors.orange;
       } else {
-        return Colors.lightGreen;
+        return Colors.blueGrey.shade100;
       }
     case false:
       return Colors.blueGrey.shade100;

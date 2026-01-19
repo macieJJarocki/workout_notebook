@@ -2,14 +2,6 @@ import 'package:workout_notebook/data/models/model.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
 
 class Workout extends Model {
-  final String uuid;
-  final String? comment;
-  final String name;
-  final List<Exercise> exercises;
-  final bool isCompleted;
-  // TODO remove
-  final List<DateTime> assignedDates;
-
   Workout({
     required this.uuid,
     required this.name,
@@ -17,7 +9,15 @@ class Workout extends Model {
     required this.isCompleted,
     required this.assignedDates,
     this.comment,
-  }) : super(uuid, comment);
+  }) : super(uuid, comment, name);
+
+  final String uuid;
+  final String? comment;
+  final String name;
+  final List<Exercise> exercises;
+  final bool isCompleted;
+  // TODO remove
+  final List<DateTime> assignedDates;
 
   factory Workout.fromMap(Map<String, dynamic> map) {
     return Workout(

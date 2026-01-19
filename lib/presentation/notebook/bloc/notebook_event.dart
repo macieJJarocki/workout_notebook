@@ -44,15 +44,15 @@ class NotebookWorkoutEdited extends NotebookEvent {
 
 class NotebookExerciseCreated extends NotebookEvent {
   final String name;
-  final String weight;
-  final String repetitions;
-  final String sets;
+  final String? weight;
+  final String? repetitions;
+  final String? sets;
 
   NotebookExerciseCreated({
     required this.name,
-    required this.weight,
-    required this.repetitions,
-    required this.sets,
+    this.weight,
+    this.repetitions,
+    this.sets,
   });
 }
 
@@ -67,15 +67,32 @@ class NotebookExerciseDeleted extends NotebookEvent {
   NotebookExerciseDeleted({this.workout, required this.uuid});
 }
 
-class NotebookWorkoutsPlanDeleted extends NotebookEvent {
-  NotebookWorkoutsPlanDeleted({required this.date, required this.workout});
+class NotebookPlanWorkoutDeleted extends NotebookEvent {
+  NotebookPlanWorkoutDeleted({required this.date, required this.workout});
 
   final DateTime date;
   final Workout workout;
 }
 
-class NotebookWorkoutsPlanEdited extends NotebookEvent {
-  NotebookWorkoutsPlanEdited({required this.workout, required this.date});
+class NotebookPlanWorkoutEdited extends NotebookEvent {
+  NotebookPlanWorkoutEdited({required this.workout, required this.date});
   final DateTime date;
   final Workout workout;
+}
+
+class NotebookPlanExerciseAdded extends NotebookEvent {
+  NotebookPlanExerciseAdded({
+    required this.date,
+    required this.name,
+    required this.weight,
+    required this.repetitions,
+    required this.sets,
+    required this.workout,
+  });
+  final DateTime date;
+  final Workout workout;
+  final String name;
+  final String weight;
+  final String repetitions;
+  final String sets;
 }

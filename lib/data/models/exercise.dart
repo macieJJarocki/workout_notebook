@@ -1,23 +1,23 @@
 import 'package:workout_notebook/data/models/model.dart';
 
 class Exercise extends Model {
-  final String uuid;
-  final String? comment;
-  final bool isCompleted;
-  final String name;
-  final double weight;
-  final int repetitions;
-  final int sets;
-
   Exercise({
     required this.uuid,
-    required this.isCompleted,
     required this.name,
-    required this.weight,
-    required this.repetitions,
-    required this.sets,
+    required this.isCompleted,
+    this.weight,
+    this.repetitions,
+    this.sets,
     this.comment,
-  }) : super(uuid, comment);
+  }) : super(uuid, comment, name);
+
+  final String uuid;
+  final String? comment;
+  final String name;
+  final bool isCompleted;
+  final double? weight;
+  final int? repetitions;
+  final int? sets;
 
   factory Exercise.fromMap(Map<String, dynamic> map) {
     return Exercise(

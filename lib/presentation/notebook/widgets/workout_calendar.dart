@@ -74,7 +74,6 @@ class _WorkoutsCalendarState extends State<WorkoutsCalendar> {
               itemCount: widget.dateService.daysInMonth(),
               itemBuilder: (context, index) {
                 return CalendarElement(
-                  dateService: widget.dateService,
                   date: DateTime(
                     widget.dateService.date.year,
                     widget.dateService.date.month,

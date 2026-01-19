@@ -3,32 +3,33 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
-import 'package:workout_notebook/utils/widgets/app_dailog.dart';
+import 'package:workout_notebook/utils/widgets/app_one_field_dailog.dart';
 import 'package:workout_notebook/utils/widgets/app_form_field.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
-import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_list_element.dart';
 import 'package:workout_notebook/utils/app_form_validator.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 
-class WorkoutCreator extends StatefulWidget {
-  const WorkoutCreator({this.workoutName, super.key});
+class CreateWorkoutScreen extends StatefulWidget {
+  const CreateWorkoutScreen({this.workoutName, super.key});
   final String? workoutName;
 
   @override
-  State<WorkoutCreator> createState() => _WorkoutCreatorState();
+  State<CreateWorkoutScreen> createState() => _CreateWorkoutScreenState();
 }
 
-class _WorkoutCreatorState extends State<WorkoutCreator> {
+class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
   final TextEditingController nameController = TextEditingController();
   final FocusNode nameFocusNode = FocusNode();
+  final FocusNode exerciseNameFocusNode = FocusNode();
   bool isSupersetMode = false;
 
   @override
   void dispose() {
     nameController.dispose();
     nameFocusNode.dispose();
+    exerciseNameFocusNode.dispose();
     super.dispose();
   }
 
@@ -80,9 +81,6 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                     child: Column(
                       mainAxisAlignment: .spaceBetween,
                       children: [
-                        Text(
-                          '''WN:${state.unsavedWorkoutName} W:${state.savedWorkouts.length} ES:${state.savedExercisesNames.length} EU:${state.unsavedExercises.length}''',
-                        ),
                         AppFormField(
                           name: AppLocalizations.of(context)!.string_name,
                           focusNode: null,
@@ -110,6 +108,7 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                         state.unsavedExercises.length,
                                         (int index) {
                                           return ExerciseListElement(
+                                            isNewWorkout: true,
                                             exercise:
                                                 state.unsavedExercises[index],
                                           );
@@ -147,10 +146,18 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                                             showDialog(
                                               context: context,
                                               builder: (context) {
-                                                return ExerciseFormDailog(
+                                                return AppOneFieldDailog(
                                                   title: AppLocalizations.of(
                                                     context,
                                                   )!.dailog_create_exercise,
+                                                  onPressed: (String name) =>
+                                                      context
+                                                          .read<NotebookBloc>()
+                                                          .add(
+                                                            NotebookExerciseCreated(
+                                                              name: name,
+                                                            ),
+                                                          ),
                                                 );
                                               },
                                             );
@@ -206,9 +213,6 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                       mainAxisAlignment: .spaceAround,
                       children: [
                         Text(
-                          'WN:${state.unsavedWorkoutName} W:${state.savedWorkouts.length} ES:${state.savedExercisesNames.length} EU:${state.unsavedExercises.length}',
-                        ),
-                        Text(
                           AppLocalizations.of(
                             context,
                           )!.string_dont_waste_time_etc,
@@ -221,45 +225,14 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                           onPressed: () {
                             showDialog(
                               context: context,
-                              builder: (context) => AppDailog(
+                              builder: (context) => AppOneFieldDailog(
+                                onPressed: (String name) =>
+                                    context.read<NotebookBloc>().add(
+                                      NotebookWorkoutNameRequested(name),
+                                    ),
                                 title: AppLocalizations.of(
                                   context,
                                 )!.dailog_create_workout,
-                                content: Column(
-                                  mainAxisSize: .min,
-                                  children: [
-                                    AppFormField(
-                                      name: AppLocalizations.of(
-                                        context,
-                                      )!.string_name,
-                                      validator:
-                                          AppFormValidator.validateNameField,
-                                      controller: nameController,
-                                      focusNode: nameFocusNode,
-                                      backgroundColor: Colors.blueGrey.shade200,
-                                    ),
-                                  ],
-                                ),
-                                actions: [
-                                  AppOutlinedButton(
-                                    backgrounColor: Colors.blueGrey.shade200,
-                                    padding: .zero,
-                                    onPressed: () {
-                                      context.read<NotebookBloc>().add(
-                                        NotebookWorkoutNameRequested(
-                                          nameController.text,
-                                        ),
-                                      );
-                                      context.pop();
-                                    },
-                                    child: Text(
-                                      AppLocalizations.of(
-                                        context,
-                                      )!.button_create,
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                  ),
-                                ],
                               ),
                             );
                           },
@@ -275,12 +248,11 @@ class _WorkoutCreatorState extends State<WorkoutCreator> {
                 );
               }
             } else if (state is NotebookLoading) {
-              return CircularProgressIndicator();
+              return CircularProgressIndicator.adaptive();
             } else {
               return Text('Error or Initial state');
             }
           },
-          // TODO add shimmer widget
         ),
       ),
     );

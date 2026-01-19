@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:workout_notebook/presentation/workout/workout_createor_screen.dart';
+import 'package:workout_notebook/data/models/workout.dart';
+import 'package:workout_notebook/presentation/workout/create_workout_screen.dart';
 import 'package:workout_notebook/presentation/notebook/notebook_home_screeen.dart';
 import 'package:workout_notebook/presentation/notebook/notebook_view.dart';
+import 'package:workout_notebook/presentation/workout/edit_workout_screen.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 
 class AppRouter {
@@ -19,7 +21,12 @@ class AppRouter {
       GoRoute(
         path: '/creator',
         name: RouterNames.creator.name,
-        builder: (context, state) => WorkoutCreator(),
+        builder: (context, state) => state.extra is List
+            ? EditWorkoutScreen(
+                workout: (state.extra as List)[0],
+                date: (state.extra as List)[1],
+              )
+            : CreateWorkoutScreen(),
       ),
       GoRoute(
         path: '/',

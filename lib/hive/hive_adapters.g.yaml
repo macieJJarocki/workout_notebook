@@ -11,9 +11,9 @@ types:
         index: 0
       comment:
         index: 1
-      isCompleted:
-        index: 2
       name:
+        index: 2
+      isCompleted:
         index: 3
       weight:
         index: 4

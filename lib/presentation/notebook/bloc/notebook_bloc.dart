@@ -23,8 +23,9 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     on<NotebookWorkoutDeleted>(_onNotebookWorkoutDeleted);
     on<NotebookWorkoutEdited>(_onNotebookWorkoutEdited);
     on<NotebookWorkoutsPlanDateAssigned>(_onNotebookWorkoutsPlanDateAssigned);
-    on<NotebookWorkoutsPlanDeleted>(_onNotebookWorkoutsPlanDeleted);
-    on<NotebookWorkoutsPlanEdited>(_onNotebookWorkoutsPlanEdited);
+    on<NotebookPlanWorkoutDeleted>(_onNotebookWorkoutsPlanDeleted);
+    on<NotebookPlanWorkoutEdited>(_onNotebookWorkoutsPlanEdited);
+    on<NotebookPlanExerciseAdded>(_onNotebookPlanExerciseAdded);
   }
 
   // TODO refactor NotebookBloc to unify method for DateBoxKeys !!!!!!!!!!!!
@@ -88,9 +89,13 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
         uuid: _getUuid(),
         isCompleted: false,
         name: event.name,
-        weight: double.tryParse(event.weight) as double,
-        repetitions: int.tryParse(event.repetitions) as int,
-        sets: int.tryParse(event.sets) as int,
+        weight: event.weight != null
+            ? double.tryParse(event.weight as String)
+            : null,
+        repetitions: event.repetitions != null
+            ? int.tryParse(event.repetitions as String)
+            : null,
+        sets: event.sets != null ? int.tryParse(event.sets as String) : null,
       );
 
       await _repository.write(DataBoxKeys.exercises, {
@@ -217,7 +222,6 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
                 element.exercises
                     .map((e) => previousValue.add(e.name))
                     .toList();
-
                 return previousValue;
               },
             ),
@@ -324,7 +328,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
   }
 
   void _onNotebookWorkoutsPlanDeleted(
-    NotebookWorkoutsPlanDeleted event,
+    NotebookPlanWorkoutDeleted event,
     Emitter<NotebookState> emit,
   ) async {
     try {
@@ -351,7 +355,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
   }
 
   void _onNotebookWorkoutsPlanEdited(
-    NotebookWorkoutsPlanEdited event,
+    NotebookPlanWorkoutEdited event,
     Emitter<NotebookState> emit,
   ) async {
     try {
@@ -363,8 +367,52 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
       workouts.insert(idx, event.workout);
 
       notebookState.workoutsAssigned[event.date.toString()] = workouts;
-
       await _repository.write(DataBoxKeys.other, {
+        AppOtherKeys.dateWorkoutsAsssigned.name: notebookState.workoutsAssigned,
+      });
+      emit(
+        notebookState.copyWith(
+          workoutsAssigned: notebookState.workoutsAssigned,
+        ),
+      );
+    } catch (e) {
+      emit(NotebookFailure(e.toString()));
+    }
+  }
+
+  void _onNotebookPlanExerciseAdded(
+    NotebookPlanExerciseAdded event,
+    Emitter<NotebookState> emit,
+  ) async {
+    try {
+      final notebookState = state as NotebookSuccess;
+
+      final newExercise = Exercise(
+        uuid: _getUuid(),
+        name: event.name,
+        weight: double.tryParse(event.weight),
+        repetitions: int.tryParse(event.repetitions),
+        sets: int.tryParse(event.sets),
+        isCompleted: false,
+      );
+
+      final editedWorkouts = notebookState
+          .workoutsAssigned[event.date.toString()]!
+          .map(
+            (e) {
+              if (e.uuid == event.workout.uuid) {
+                return event.workout.copyWith(
+                  exercises: [...event.workout.exercises, newExercise],
+                );
+              }
+              return e;
+            },
+          )
+          .toList();
+
+      notebookState.workoutsAssigned[event.date.toString()] = editedWorkouts;
+
+      _repository.write(DataBoxKeys.other, {
         AppOtherKeys.dateWorkoutsAsssigned.name: notebookState.workoutsAssigned,
       });
 

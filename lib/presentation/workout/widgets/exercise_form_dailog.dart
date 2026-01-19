@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
+import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/utils/widgets/app_form_field.dart';
@@ -9,13 +11,20 @@ import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
 import 'package:workout_notebook/utils/app_form_validator.dart';
 
 class ExerciseFormDailog extends StatefulWidget {
-  final Exercise? exercise;
-  final String title;
   const ExerciseFormDailog({
     super.key,
     this.exercise,
+    this.workout,
+    this.date,
+    required this.isNewExercise,
     required this.title,
   });
+  final Exercise? exercise;
+  final String title;
+  final Workout? workout;
+  final DateTime? date;
+
+  final bool isNewExercise;
 
   @override
   State<ExerciseFormDailog> createState() => _ExerciseFormDailogState();
@@ -35,20 +44,26 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
   @override
   void initState() {
     super.initState();
-
+    // TODO in future init controllers wit assignedWorkouts[date][index], where index is the index of the workout that needs to be edited
     nameFocusNode = FocusNode();
     weightFocusNode = FocusNode();
     repetitionsFocusNode = FocusNode();
     setsFocusNode = FocusNode();
     nameController = TextEditingController(text: widget.exercise?.name);
     weightController = TextEditingController(
-      text: widget.exercise?.weight.toString(),
+      text: widget.exercise?.weight != null
+          ? widget.exercise?.weight.toString()
+          : '',
     );
     repetitionsController = TextEditingController(
-      text: widget.exercise?.repetitions.toString(),
+      text: widget.exercise?.weight != null
+          ? widget.exercise?.repetitions.toString()
+          : '',
     );
     setsController = TextEditingController(
-      text: widget.exercise?.sets.toString(),
+      text: widget.exercise?.weight != null
+          ? widget.exercise?.sets.toString()
+          : '',
     );
   }
 
@@ -135,26 +150,42 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
             ),
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                context.read<NotebookBloc>().add(
-                  widget.exercise == null
-                      ? NotebookExerciseCreated(
+                if (widget.isNewExercise) {
+                  context.read<NotebookBloc>().add(
+                    NotebookPlanExerciseAdded(
+                      workout: widget.workout!,
+                      date: widget.date!,
+                      name: nameController.text,
+                      weight: weightController.text,
+                      repetitions: repetitionsController.text,
+                      sets: setsController.text,
+                    ),
+                  );
+                } else {
+                  final exercises = widget.workout!.exercises;
+                  final editedExercises = exercises.map(
+                    (e) {
+                      if (e.uuid == widget.exercise!.uuid) {
+                        return widget.exercise!.copyWith(
                           name: nameController.text,
-                          weight: weightController.text,
-                          repetitions: repetitionsController.text,
-                          sets: setsController.text,
-                        )
-                      : NotebookExerciseEdited(
-                          exercise: widget.exercise!.copyWith(
-                            name: nameController.text,
-                            // TODO ???
-                            weight: double.tryParse(weightController.text),
-                            repetitions: int.tryParse(
-                              repetitionsController.text,
-                            ),
-                            sets: int.tryParse(setsController.text),
-                          ),
-                        ),
-                );
+                          weight: double.tryParse(weightController.text),
+                          repetitions: int.tryParse(repetitionsController.text),
+                          sets: int.tryParse(setsController.text),
+                        );
+                      }
+                      return e;
+                    },
+                  ).toList();
+
+                  context.read<NotebookBloc>().add(
+                    NotebookPlanWorkoutEdited(
+                      workout: widget.workout!.copyWith(
+                        exercises: editedExercises,
+                      ),
+                      date: widget.date as DateTime,
+                    ),
+                  );
+                }
                 context.pop();
               }
             },

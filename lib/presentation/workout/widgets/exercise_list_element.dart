@@ -2,20 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
+import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
+import 'package:workout_notebook/utils/widgets/app_one_field_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_data_element.dart';
 import 'package:workout_notebook/utils/widgets/app_dailog.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
 
 class ExerciseListElement extends StatelessWidget {
-  final Exercise exercise;
-
   const ExerciseListElement({
     super.key,
+    this.workout,
+    this.date,
     required this.exercise,
+    required this.isNewWorkout,
   });
+  final Exercise exercise;
+  final bool isNewWorkout;
+  final Workout? workout;
+  final DateTime? date;
 
   @override
   Widget build(BuildContext context) {
@@ -47,84 +54,121 @@ class ExerciseListElement extends StatelessWidget {
       },
       onTap: () => showDialog(
         context: context,
-        builder: (context) => ExerciseFormDailog(
-          exercise: exercise,
-          title: AppLocalizations.of(context)!.dailog_edit_exercise,
-        ),
+        builder: (context) => isNewWorkout
+            // called in CreateWorkoutScreen
+            ? AppOneFieldDailog(
+                title: AppLocalizations.of(context)!.dailog_edit_exercise,
+                model: exercise,
+                onPressed: (String name) => context.read<NotebookBloc>().add(
+                  NotebookExerciseEdited(
+                    exercise: exercise.copyWith(name: name),
+                  ),
+                ),
+              )
+            // called in EditWorkoutScreen
+            : ExerciseFormDailog(
+                isNewExercise: false,
+                exercise: exercise,
+                workout: workout,
+                date: date,
+                title: AppLocalizations.of(context)!.dailog_edit_exercise,
+              ),
       ),
-      child: Card(
-        color: exercise.isCompleted
-            ? Colors.lightGreen
-            : Colors.blueGrey.shade200,
-        child: ListTile(
-          isThreeLine: true,
-          contentPadding: .symmetric(horizontal: 4),
-          title: Column(
-            children: [
-              Text(
-                '${exercise.name} id${exercise.uuid}',
+      child: BlocBuilder<NotebookBloc, NotebookState>(
+        builder: (context, state) {
+          if (state is NotebookSuccess) {
+            return Card(
+              color: exercise.isCompleted
+                  ? Colors.lightGreen
+                  : Colors.blueGrey.shade200,
+              child: ListTile(
+                isThreeLine: !isNewWorkout,
+                contentPadding: .symmetric(horizontal: 4),
+                title: Column(
+                  children: [
+                    Text(
+                      exercise.name,
+                      textAlign: .center,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: .bold,
+                        fontSize: 20,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Text(
+                      AppLocalizations.of(context)!.string_exercise,
+                      style: TextStyle(
+                        color: Colors.blueGrey.shade600,
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                ),
+                subtitle: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: .spaceBetween,
+                      children: [
+                        ExerciseDataElement(
+                          fieldName: AppLocalizations.of(
+                            context,
+                          )!.string_weight,
+                          fieldValue: exercise.weight,
+                          iconPath: 'lib/utils/icons/weight1.png',
+                          isNewWorkout: isNewWorkout,
+                        ),
+                        ExerciseDataElement(
+                          fieldName: AppLocalizations.of(
+                            context,
+                          )!.string_repetitions,
+                          fieldValue: exercise.repetitions,
+                          iconPath: 'lib/utils/icons/rep2.png',
+                          isNewWorkout: isNewWorkout,
+                        ),
+                        ExerciseDataElement(
+                          fieldName: AppLocalizations.of(context)!.string_sets,
+                          fieldValue: exercise.sets,
+                          iconPath: 'lib/utils/icons/sets.png',
+                          isNewWorkout: isNewWorkout,
+                        ),
+                      ],
+                    ),
+                    !isNewWorkout
+                        ? ListTile(
+                            title: Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.string_exercise_done,
+                            ),
+                            trailing: Checkbox.adaptive(
+                              value: exercise.isCompleted,
+                              onChanged: (value) {
+                                context.read<NotebookBloc>().add(
+                                  NotebookPlanWorkoutEdited(
+                                    workout: workout!,
+                                    date: date!,
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        : SizedBox(),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            return Container(
+              color: Colors.blueGrey.shade200,
+              child: Text(
+                'Mock Exercise List Element',
                 textAlign: .center,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: .bold,
-                  fontSize: 20,
-                  overflow: TextOverflow.ellipsis,
-                ),
               ),
-              Text(
-                AppLocalizations.of(context)!.string_exercise,
-                style: TextStyle(
-                  color: Colors.blueGrey.shade600,
-                  fontSize: 12,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ],
-          ),
-          subtitle: Column(
-            children: [
-              Row(
-                mainAxisAlignment: .spaceBetween,
-                children: [
-                  ExerciseDataElement(
-                    fieldName: AppLocalizations.of(context)!.string_weight,
-                    fieldValue: exercise.weight,
-                    iconPath: 'lib/utils/icons/weight1.png',
-                  ),
-                  ExerciseDataElement(
-                    fieldName: AppLocalizations.of(context)!.string_repetitions,
-                    fieldValue: exercise.repetitions,
-                    iconPath: 'lib/utils/icons/rep2.png',
-                  ),
-                  ExerciseDataElement(
-                    fieldName: AppLocalizations.of(context)!.string_sets,
-                    fieldValue: exercise.sets,
-                    iconPath: 'lib/utils/icons/sets.png',
-                  ),
-                ],
-              ),
-              BlocBuilder<NotebookBloc, NotebookState>(
-                builder: (context, state) {
-                  return ListTile(
-                    title: Text(
-                      AppLocalizations.of(context)!.string_exercise_done,
-                    ),
-                    trailing: Checkbox.adaptive(
-                      value: exercise.isCompleted,
-                      onChanged: (value) {
-                        context.read<NotebookBloc>().add(
-                          NotebookExerciseEdited(
-                            exercise: exercise.copyWith(isCompleted: value),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
+            );
+          }
+        },
       ),
     );
   }

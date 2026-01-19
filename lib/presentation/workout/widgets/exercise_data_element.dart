@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 
 class ExerciseDataElement extends StatelessWidget {
-  final String fieldName;
-  final dynamic fieldValue;
-  final String iconPath;
   const ExerciseDataElement({
     super.key,
     required this.fieldName,
     required this.fieldValue,
     required this.iconPath,
+    required this.isNewWorkout,
   });
+
+  final String fieldName;
+  final dynamic fieldValue;
+  final String iconPath;
+  final bool isNewWorkout;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +23,7 @@ class ExerciseDataElement extends StatelessWidget {
       child: Card(
         color: Colors.blueGrey.shade100,
         child: Column(
-          mainAxisAlignment: .spaceAround,
+          mainAxisAlignment: .spaceEvenly,
           children: [
             Padding(
               padding: .only(top: 2),
@@ -38,14 +41,16 @@ class ExerciseDataElement extends StatelessWidget {
                 ),
               ),
             ),
-            Text(
-              fieldValue.toString(),
-              style: TextStyle(
-                fontWeight: .bold,
-                overflow: .ellipsis,
-                fontSize: 16,
-              ),
-            ),
+            fieldValue == null
+                ? SizedBox()
+                : Text(
+                    fieldValue.toString(),
+                    style: TextStyle(
+                      fontWeight: .bold,
+                      overflow: .ellipsis,
+                      fontSize: 16,
+                    ),
+                  ),
             Text(
               fieldName,
               style: TextStyle(

@@ -18,11 +18,11 @@ class ExerciseAdapter extends TypeAdapter<Exercise> {
     };
     return Exercise(
       uuid: fields[0] as String,
-      isCompleted: fields[2] as bool,
-      name: fields[3] as String,
-      weight: (fields[4] as num).toDouble(),
-      repetitions: (fields[5] as num).toInt(),
-      sets: (fields[6] as num).toInt(),
+      name: fields[2] as String,
+      isCompleted: fields[3] as bool,
+      weight: (fields[4] as num?)?.toDouble(),
+      repetitions: (fields[5] as num?)?.toInt(),
+      sets: (fields[6] as num?)?.toInt(),
       comment: fields[1] as String?,
     );
   }
@@ -36,9 +36,9 @@ class ExerciseAdapter extends TypeAdapter<Exercise> {
       ..writeByte(1)
       ..write(obj.comment)
       ..writeByte(2)
-      ..write(obj.isCompleted)
-      ..writeByte(3)
       ..write(obj.name)
+      ..writeByte(3)
+      ..write(obj.isCompleted)
       ..writeByte(4)
       ..write(obj.weight)
       ..writeByte(5)
