@@ -33,7 +33,6 @@ class _WorkoutsCalendarState extends State<WorkoutsCalendar> {
           ListTile(
             leading: IconButton(
               onPressed: () {
-                // Restrict base on the workouts assigned in the
                 if (dateTime.month > DateTime.now().month) {
                   widget.dateService.date = dateTime.copyWith(
                     month: dateTime.month - 1,

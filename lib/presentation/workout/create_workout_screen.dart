@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
+import 'package:workout_notebook/utils/enums/hive_enums.dart';
 import 'package:workout_notebook/utils/widgets/app_one_field_dailog.dart';
 import 'package:workout_notebook/utils/widgets/app_form_field.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
@@ -12,8 +13,8 @@ import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 
 class CreateWorkoutScreen extends StatefulWidget {
-  const CreateWorkoutScreen({this.workoutName, super.key});
-  final String? workoutName;
+  CreateWorkoutScreen({this.workoutName, super.key});
+  String? workoutName;
 
   @override
   State<CreateWorkoutScreen> createState() => _CreateWorkoutScreenState();
@@ -87,9 +88,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                           validator: AppFormValidator.validateNameField,
                           controller: nameController,
                           onChange: () {
-                            context.read<NotebookBloc>().add(
-                              NotebookWorkoutNameRequested(nameController.text),
-                            );
+                            widget.workoutName = nameController.text;
                           },
                           padding: .symmetric(horizontal: 8),
                           backgroundColor: Colors.blueGrey.shade100,
@@ -101,20 +100,30 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                               color: Colors.blueGrey.shade100,
                               child: Stack(
                                 children: [
-                                  SingleChildScrollView(
-                                    child: Column(
-                                      mainAxisSize: .max,
-                                      children: List.generate(
-                                        state.unsavedExercises.length,
-                                        (int index) {
-                                          return ExerciseListElement(
-                                            isNewWorkout: true,
-                                            exercise:
-                                                state.unsavedExercises[index],
-                                          );
-                                        },
-                                      ),
-                                    ),
+                                  BlocBuilder<NotebookBloc, NotebookState>(
+                                    builder: (context, state) {
+                                      if (state is NotebookSuccess) {
+                                        return SingleChildScrollView(
+                                          child: Column(
+                                            mainAxisSize: .max,
+                                            children: List.generate(
+                                              state.unsavedExercises.length,
+                                              (int index) {
+                                                return ExerciseListElement(
+                                                  isNewWorkout: true,
+                                                  exercise: state
+                                                      .unsavedExercises[index],
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      // TODO shimmer widget
+                                      return Text(
+                                        'State other than NotebookSuccess',
+                                      );
+                                    },
                                   ),
                                   Align(
                                     alignment: .bottomRight,
@@ -154,8 +163,10 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                                                       context
                                                           .read<NotebookBloc>()
                                                           .add(
-                                                            NotebookExerciseCreated(
+                                                            NotebookEntityCreated(
                                                               name: name,
+                                                              key: DataBoxKeys
+                                                                  .exercises,
                                                             ),
                                                           ),
                                                 );
@@ -179,8 +190,9 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                                       padding: .all(8),
                                       onPressed: () {
                                         context.read<NotebookBloc>().add(
-                                          NotebookWorkoutCreated(
+                                          NotebookEntityCreated(
                                             name: nameController.text,
+                                            key: DataBoxKeys.workouts,
                                           ),
                                         );
                                         context.goNamed(RouterNames.intro.name);

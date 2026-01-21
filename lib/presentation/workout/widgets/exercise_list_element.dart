@@ -16,6 +16,7 @@ class ExerciseListElement extends StatelessWidget {
     super.key,
     this.workout,
     this.date,
+    this.index,
     required this.exercise,
     required this.isNewWorkout,
   });
@@ -23,6 +24,7 @@ class ExerciseListElement extends StatelessWidget {
   final bool isNewWorkout;
   final Workout? workout;
   final DateTime? date;
+  final int? index;
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +39,20 @@ class ExerciseListElement extends StatelessWidget {
                 padding: EdgeInsetsGeometry.zero,
                 backgrounColor: Colors.blueGrey.shade200,
                 onPressed: () {
-                  context.read<NotebookBloc>().add(
-                    NotebookExerciseDeleted(uuid: exercise.uuid),
-                  );
+                  if (workout != null) {
+                    context.read<NotebookBloc>().add(
+                      NotebookEntityEdited(
+                        model: workout!,
+                        date: date,
+                        exerciseIdx: index,
+                      ),
+                    );
+                  } else {
+                    context.read<NotebookBloc>().add(
+                      NotebookEntityDeleted(model: exercise),
+                    );
+                  }
+
                   context.pop();
                 },
                 child: Text(
@@ -60,9 +73,7 @@ class ExerciseListElement extends StatelessWidget {
                 title: AppLocalizations.of(context)!.dailog_edit_exercise,
                 model: exercise,
                 onPressed: (String name) => context.read<NotebookBloc>().add(
-                  NotebookExerciseEdited(
-                    exercise: exercise.copyWith(name: name),
-                  ),
+                  NotebookEntityEdited(model: exercise.copyWith(name: name)),
                 ),
               )
             // called in EditWorkoutScreen
@@ -144,14 +155,13 @@ class ExerciseListElement extends StatelessWidget {
                             ),
                             trailing: Checkbox.adaptive(
                               value: exercise.isCompleted,
-                              onChanged: (value) {
-                                context.read<NotebookBloc>().add(
-                                  NotebookPlanWorkoutEdited(
-                                    workout: workout!,
-                                    date: date!,
+                              onChanged: (value) =>
+                                  context.read<NotebookBloc>().add(
+                                    NotebookEntityEdited(
+                                      model: workout!,
+                                      date: date!,
+                                    ),
                                   ),
-                                );
-                              },
                             ),
                           )
                         : SizedBox(),

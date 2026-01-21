@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/presentation/workout/create_workout_screen.dart';
 import 'package:workout_notebook/presentation/notebook/notebook_home_screeen.dart';
 import 'package:workout_notebook/presentation/notebook/notebook_view.dart';

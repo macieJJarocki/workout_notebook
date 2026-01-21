@@ -8,6 +8,7 @@ import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dail
 import 'package:workout_notebook/presentation/workout/widgets/exercise_list_element.dart';
 import 'package:workout_notebook/utils/app_form_validator.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
+import 'package:workout_notebook/utils/enums/hive_enums.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 import 'package:workout_notebook/utils/widgets/app_form_field.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
@@ -18,6 +19,7 @@ class EditWorkoutScreen extends StatefulWidget {
     required this.workout,
     required this.date,
   });
+
   final Workout workout;
   final DateTime date;
 
@@ -60,26 +62,18 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
             child: Column(
               mainAxisAlignment: .spaceBetween,
               children: [
-                Text(
-                  '${(context.read<NotebookBloc>().state as NotebookSuccess).workoutsAssigned[widget.date.toString()]!.firstWhere(
-                    (e) => e.uuid == widget.workout.uuid,
-                  ).exercises}',
-                ),
+                // Text(
+                //   '${(context.read<NotebookBloc>().state as NotebookSuccess).workoutsAssigned[widget.date.toString()]!.firstWhere(
+                //     (e) => e.uuid == widget.workout.uuid,
+                //   ).exercises}',
+                // ),
                 AppFormField(
                   name: AppLocalizations.of(context)!.string_name,
                   focusNode: null,
                   validator: AppFormValidator.validateNameField,
                   controller: nameController,
-                  onChange: () {
-                    context.read<NotebookBloc>().add(
-                      NotebookPlanWorkoutEdited(
-                        workout: widget.workout.copyWith(
-                          name: nameController.text,
-                        ),
-                        date: widget.date,
-                      ),
-                    );
-                  },
+                  onChange: () =>
+                      widget.workout.copyWith(name: nameController.text),
                   padding: .symmetric(horizontal: 8),
                   backgroundColor: Colors.blueGrey.shade100,
                 ),
@@ -93,6 +87,11 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
                           BlocBuilder<NotebookBloc, NotebookState>(
                             builder: (context, state) {
                               if (state is NotebookSuccess) {
+                                final workout = state
+                                    .workoutsAssigned[widget.date.toString()]!
+                                    .firstWhere(
+                                      (e) => e.uuid == widget.workout.uuid,
+                                    );
                                 return SingleChildScrollView(
                                   child: Column(
                                     mainAxisSize: .max,
@@ -101,10 +100,10 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
                                       (int index) {
                                         return ExerciseListElement(
                                           isNewWorkout: false,
-                                          exercise:
-                                              widget.workout.exercises[index],
-                                          workout: widget.workout,
+                                          exercise: workout.exercises[index],
+                                          workout: workout,
                                           date: widget.date,
+                                          index: index,
                                         );
                                       },
                                     ),
@@ -172,8 +171,9 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
                               padding: .all(8),
                               onPressed: () {
                                 context.read<NotebookBloc>().add(
-                                  NotebookWorkoutCreated(
-                                    name: nameController.text,
+                                  NotebookEntityEdited(
+                                    model: widget.workout,
+                                    date: widget.date,
                                   ),
                                 );
                                 context.goNamed(RouterNames.intro.name);

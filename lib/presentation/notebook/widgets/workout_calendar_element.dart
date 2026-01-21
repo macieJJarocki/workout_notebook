@@ -6,6 +6,7 @@ import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/data/services/date_service.dart';
+import 'package:workout_notebook/utils/enums/hive_enums.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 import 'package:workout_notebook/utils/widgets/app_dailog.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
@@ -75,7 +76,6 @@ class _CalendarElementState extends State<CalendarElement> {
                                   builder: (context, state) {
                                     final workout =
                                         workoutsAssigned[dateAsString]![index];
-
                                     return Container(
                                       margin: .only(top: 8, right: 8, left: 8),
                                       decoration: AppTheme.boxDecoration(
@@ -85,9 +85,9 @@ class _CalendarElementState extends State<CalendarElement> {
                                       child: GestureDetector(
                                         onLongPress: () {
                                           context.read<NotebookBloc>().add(
-                                            NotebookPlanWorkoutDeleted(
+                                            NotebookEntityDeleted(
+                                              model: workout,
                                               date: widget.date,
-                                              workout: workout,
                                             ),
                                           );
                                           context.pop();
@@ -117,20 +117,16 @@ class _CalendarElementState extends State<CalendarElement> {
                                               ),
                                               Checkbox.adaptive(
                                                 value: workout.isCompleted,
-                                                onChanged: (value) {
-                                                  context
-                                                      .read<NotebookBloc>()
-                                                      .add(
-                                                        NotebookPlanWorkoutEdited(
-                                                          date: widget.date,
-                                                          workout: workout
-                                                              .copyWith(
-                                                                isCompleted:
-                                                                    value,
-                                                              ),
+                                                onChanged: (value) => context
+                                                    .read<NotebookBloc>()
+                                                    .add(
+                                                      NotebookEntityEdited(
+                                                        date: widget.date,
+                                                        model: workout.copyWith(
+                                                          isCompleted: value,
                                                         ),
-                                                      );
-                                                },
+                                                      ),
+                                                    ),
                                               ),
                                             ],
                                           ),
@@ -172,9 +168,12 @@ class _CalendarElementState extends State<CalendarElement> {
                     onPressed: () {
                       if (dropdownMenuSecection != null) {
                         context.read<NotebookBloc>().add(
-                          NotebookWorkoutsPlanDateAssigned(
-                            workout: dropdownMenuSecection!,
+                          NotebookEntityCreated(
+                            key: DataBoxKeys.other,
+                            workout: dropdownMenuSecection,
                             date: widget.date,
+                            // TODO this looks bad(name is not needed)
+                            name: '',
                           ),
                         );
                         context.pop();
@@ -259,13 +258,15 @@ EdgeInsetsGeometry _getMargin(int index) {
   return .all(2);
 }
 
-Color _getColor(List<Workout>? workouts) {
-  switch (workouts.runtimeType != Null) {
+Color _getColor(List<Workout>? workoutsAssigned) {
+  // TODO fix this mess
+  // When list of workouts is empty and specyfic day contatins assigned workouts it still display day as workout not completed/completed
+  switch (workoutsAssigned.runtimeType != Null) {
     case true:
-      if (workouts!.every((e) => e.isCompleted)) {
+      if (workoutsAssigned!.every((e) => e.isCompleted)) {
         return Colors.green;
-      } else if (workouts.any((e) => e.isCompleted)) {
-        return Colors.orange;
+      } else if (workoutsAssigned.any((e) => e.isCompleted)) {
+        return Colors.green.shade300;
       } else {
         return Colors.blueGrey.shade100;
       }

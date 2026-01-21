@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:uuid/uuid.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
@@ -176,13 +175,12 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
                       return e;
                     },
                   ).toList();
-
                   context.read<NotebookBloc>().add(
-                    NotebookPlanWorkoutEdited(
-                      workout: widget.workout!.copyWith(
+                    NotebookEntityEdited(
+                      date: widget.date as DateTime,
+                      model: widget.workout!.copyWith(
                         exercises: editedExercises,
                       ),
-                      date: widget.date as DateTime,
                     ),
                   );
                 }

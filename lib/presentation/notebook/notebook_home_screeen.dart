@@ -23,6 +23,7 @@ class NotebookHomeScreen extends StatelessWidget {
                 mainAxisAlignment: .spaceEvenly,
                 children: [
                   // Text('Platform local name: ${Platform.localeName}'),
+                  Text(state.savedExercisesNames.toString()),
                   WorkoutsCalendar(
                     height: height * 0.45,
                     dateService: DateService(dateNow: DateTime.now()),
@@ -30,7 +31,6 @@ class NotebookHomeScreen extends StatelessWidget {
                   WorkoutsListView(
                     height: height * 0.3,
                     itemCount: state.savedWorkouts.length,
-                    workouts: state.savedWorkouts,
                   ),
                 ],
               );
