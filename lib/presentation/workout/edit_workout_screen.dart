@@ -8,7 +8,6 @@ import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dail
 import 'package:workout_notebook/presentation/workout/widgets/exercise_list_element.dart';
 import 'package:workout_notebook/utils/app_form_validator.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
-import 'package:workout_notebook/utils/enums/hive_enums.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 import 'package:workout_notebook/utils/widgets/app_form_field.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';

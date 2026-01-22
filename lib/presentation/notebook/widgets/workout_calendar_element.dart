@@ -236,7 +236,7 @@ class _CalendarElementState extends State<CalendarElement> {
       child: Container(
         margin: _getMargin(widget.date.day),
         decoration: AppTheme.boxDecoration(
-          backgrounColor: _getColor(workoutsAssigned[dateAsString]),
+          backgrounColor: _getColor2(workoutsAssigned, widget.date),
         ),
         child: Center(
           child: Text(
@@ -258,19 +258,19 @@ EdgeInsetsGeometry _getMargin(int index) {
   return .all(2);
 }
 
-Color _getColor(List<Workout>? workoutsAssigned) {
-  // TODO fix this mess
-  // When list of workouts is empty and specyfic day contatins assigned workouts it still display day as workout not completed/completed
-  switch (workoutsAssigned.runtimeType != Null) {
+Color _getColor2(Map<String, List<Workout>> workoutAssigned, DateTime date) {
+  late Color color;
+  switch (workoutAssigned.containsKey(date.toString())) {
     case true:
-      if (workoutsAssigned!.every((e) => e.isCompleted)) {
-        return Colors.green;
-      } else if (workoutsAssigned.any((e) => e.isCompleted)) {
-        return Colors.green.shade300;
+      if ((workoutAssigned[date.toString()] as List<Workout>).every(
+        (e) => e.isCompleted,
+      )) {
+        color = Colors.green;
       } else {
-        return Colors.blueGrey.shade100;
+        color = Colors.orangeAccent;
       }
     case false:
-      return Colors.blueGrey.shade100;
+      color = Colors.blueGrey.shade100;
   }
+  return color;
 }
