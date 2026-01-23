@@ -20,13 +20,14 @@ TODO fix:
  */
 
 void main() async {
+  // App observer
   Bloc.observer = AppBlocsObserver();
-  // init local db
   WidgetsFlutterBinding.ensureInitialized();
+  // Hive init
   final localPath = await getApplicationDocumentsDirectory();
   Hive
     ..init(localPath.path)
     ..registerAdapters();
 
-  runApp(const WorkoutView());
+  runApp(const NotebookView());
 }

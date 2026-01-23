@@ -43,7 +43,7 @@ class _WorkoutsCalendarState extends State<WorkoutsCalendar> {
               icon: Icon(Icons.arrow_back_ios),
             ),
             title: Text(
-              AppLocalizations.of(context)!.plan_your_trening,
+              AppLocalizations.of(context)!.plan_your_workout,
               style: TextStyle(fontSize: 20, fontWeight: .bold),
               textAlign: .center,
             ),

@@ -93,7 +93,7 @@ class _CalendarElementState extends State<CalendarElement> {
                                           context.pop();
                                         },
                                         onTap: () => context.goNamed(
-                                          RouterNames.creator.name,
+                                          RouterNames.edit.name,
                                           extra: [workout, widget.date],
                                         ),
                                         child: ListTile(
@@ -104,29 +104,6 @@ class _CalendarElementState extends State<CalendarElement> {
                                               Text(
                                                 '${AppLocalizations.of(context)!.string_name}: ${workout.name}',
                                                 textAlign: .center,
-                                              ),
-                                            ],
-                                          ),
-                                          subtitle: Row(
-                                            mainAxisAlignment: .center,
-                                            children: [
-                                              Text(
-                                                AppLocalizations.of(
-                                                  context,
-                                                )!.string_workout_done,
-                                              ),
-                                              Checkbox.adaptive(
-                                                value: workout.isCompleted,
-                                                onChanged: (value) => context
-                                                    .read<NotebookBloc>()
-                                                    .add(
-                                                      NotebookEntityEdited(
-                                                        date: widget.date,
-                                                        model: workout.copyWith(
-                                                          isCompleted: value,
-                                                        ),
-                                                      ),
-                                                    ),
                                               ),
                                             ],
                                           ),
@@ -223,7 +200,7 @@ class _CalendarElementState extends State<CalendarElement> {
                     backgrounColor: Colors.blueGrey.shade200,
                     padding: .zero,
                     onPressed: () {
-                      context.goNamed(RouterNames.creator.name);
+                      context.goNamed(RouterNames.create.name);
                     },
                     child: Text(
                       AppLocalizations.of(context)!.button_add,
@@ -236,7 +213,7 @@ class _CalendarElementState extends State<CalendarElement> {
       child: Container(
         margin: _getMargin(widget.date.day),
         decoration: AppTheme.boxDecoration(
-          backgrounColor: _getColor2(workoutsAssigned, widget.date),
+          backgrounColor: _getColor(workoutsAssigned, widget.date),
         ),
         child: Center(
           child: Text(
@@ -258,7 +235,7 @@ EdgeInsetsGeometry _getMargin(int index) {
   return .all(2);
 }
 
-Color _getColor2(Map<String, List<Workout>> workoutAssigned, DateTime date) {
+Color _getColor(Map<String, List<Workout>> workoutAssigned, DateTime date) {
   late Color color;
   switch (workoutAssigned.containsKey(date.toString())) {
     case true:

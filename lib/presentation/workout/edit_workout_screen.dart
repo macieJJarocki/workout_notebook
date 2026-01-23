@@ -48,7 +48,7 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
         ),
         centerTitle: true,
         leading: IconButton(
-          onPressed: () => context.goNamed(RouterNames.intro.name),
+          onPressed: () => context.goNamed(RouterNames.workout.name),
           icon: Icon(Icons.arrow_back_ios),
         ),
       ),
@@ -175,7 +175,7 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
                                     date: widget.date,
                                   ),
                                 );
-                                context.goNamed(RouterNames.intro.name);
+                                context.goNamed(RouterNames.workout.name);
                               },
                               child: Text(
                                 AppLocalizations.of(
@@ -189,6 +189,21 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
                         ],
                       ),
                     ),
+                  ),
+                ),
+                AppOutlinedButton(
+                  width: width * 0.8,
+                  backgrounColor: Colors.blueGrey.shade100,
+                  padding: .all(8),
+                  onPressed: () {
+                    context.goNamed(
+                      RouterNames.active.name,
+                      extra: [widget.workout.uuid, widget.date],
+                    );
+                  },
+                  child: Text(
+                    AppLocalizations.of(context)!.button_start_workout,
+                    textAlign: .center,
                   ),
                 ),
               ],

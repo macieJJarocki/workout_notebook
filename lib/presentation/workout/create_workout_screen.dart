@@ -60,7 +60,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
         ),
         centerTitle: true,
         leading: IconButton(
-          onPressed: () => context.goNamed(RouterNames.intro.name),
+          onPressed: () => context.goNamed(RouterNames.workout.name),
           icon: Icon(Icons.arrow_back_ios),
         ),
       ),
@@ -195,7 +195,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                                             key: DataBoxKeys.workouts,
                                           ),
                                         );
-                                        context.goNamed(RouterNames.intro.name);
+                                        context.goNamed(RouterNames.workout.name);
                                       },
                                       child: Text(
                                         AppLocalizations.of(

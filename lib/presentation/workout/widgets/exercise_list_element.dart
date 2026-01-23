@@ -146,25 +146,6 @@ class ExerciseListElement extends StatelessWidget {
                         ),
                       ],
                     ),
-                    !isNewWorkout
-                        ? ListTile(
-                            title: Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.string_exercise_done,
-                            ),
-                            trailing: Checkbox.adaptive(
-                              value: exercise.isCompleted,
-                              onChanged: (value) =>
-                                  context.read<NotebookBloc>().add(
-                                    NotebookEntityEdited(
-                                      model: workout!,
-                                      date: date!,
-                                    ),
-                                  ),
-                            ),
-                          )
-                        : SizedBox(),
                   ],
                 ),
               ),

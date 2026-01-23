@@ -9,7 +9,7 @@ class AppLocalizationsPl extends AppLocalizations {
   AppLocalizationsPl([String locale = 'pl']) : super(locale);
 
   @override
-  String get plan_your_trening => 'Zaplanuj swój trening';
+  String get plan_your_workout => 'Zaplanuj swój trening';
 
   @override
   String get dailog_choose_workout => 'Wybierz trening';
@@ -45,6 +45,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get string_workout_creator => 'Kreator Treningu';
 
   @override
+  String get string_workout_active => 'Powodzenia!';
+
+  @override
   String get string_workout_done => 'Treninig zakończony?';
 
   @override
@@ -76,6 +79,12 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get button_add => 'Dodaj';
+
+  @override
+  String get button_end => 'Zakończ';
+
+  @override
+  String get button_start_workout => 'Reozpocznij trening';
 
   @override
   String get button_create => 'Stwórz';

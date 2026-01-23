@@ -95,11 +95,11 @@ abstract class AppLocalizations {
     Locale('pl')
   ];
 
-  /// No description provided for @plan_your_trening.
+  /// No description provided for @plan_your_workout.
   ///
   /// In en, this message translates to:
-  /// **'Plan your trening'**
-  String get plan_your_trening;
+  /// **'Plan your workout'**
+  String get plan_your_workout;
 
   /// No description provided for @dailog_choose_workout.
   ///
@@ -167,6 +167,12 @@ abstract class AppLocalizations {
   /// **'Workout Creator'**
   String get string_workout_creator;
 
+  /// No description provided for @string_workout_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Good luck!'**
+  String get string_workout_active;
+
   /// No description provided for @string_workout_done.
   ///
   /// In en, this message translates to:
@@ -232,6 +238,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add'**
   String get button_add;
+
+  /// No description provided for @button_end.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get button_end;
+
+  /// No description provided for @button_start_workout.
+  ///
+  /// In en, this message translates to:
+  /// **'Start workout'**
+  String get button_start_workout;
 
   /// No description provided for @button_create.
   ///

@@ -8,10 +8,8 @@ import 'package:workout_notebook/utils/app_router.dart';
 import 'package:workout_notebook/utils/enums/hive_enums.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 
-class WorkoutView extends StatelessWidget {
-  const WorkoutView({
-    super.key,
-  });
+class NotebookView extends StatelessWidget {
+  const NotebookView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +37,7 @@ class WorkoutView extends StatelessWidget {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           routerConfig: AppRouter().router,
-          title: 'Workout Notebook',
+          title: 'Workouts Notebook',
           theme: ThemeData(
             scaffoldBackgroundColor: Colors.blueGrey.shade100,
             appBarTheme: AppBarTheme(

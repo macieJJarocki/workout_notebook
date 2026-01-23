@@ -1,6 +1,6 @@
 {
     "@@locale": "en",
-    "plan_your_trening": "Plan your trening",
+    "plan_your_workout": "Plan your workout",
     "dailog_choose_workout": "Choose workout",
     "dailog_first_create_workout": "First create workout",
     "dailog_delete_workout": "Are you sure, you want to delete this workout?",
@@ -12,6 +12,7 @@
     "string_workouts": "workouts",
     "string_dont_waste_time_etc": "Don't waste time - create your workout here!",
     "string_workout_creator": "Workout Creator",
+    "string_workout_active": "Good luck!",
     "string_workout_done": "Workout done?",
     "string_exercise_done": "Exercise done?",
     "string_exercise": "Exercise",
@@ -23,6 +24,8 @@
     "button_edit": "Edit",
     "button_delete": "Delete",
     "button_add": "Add",
+    "button_end": "End",
+    "button_start_workout": "Start workout",
     "button_create": "Create",
     "button_create_workout": "Create workout",
     "snack_bar_assign_workout": "Assign workout!"
