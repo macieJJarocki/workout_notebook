@@ -8,6 +8,8 @@
     "dailog_create_exercise": "Create exercise",
     "dailog_delete_exercise": "Are you sure, you want to delete this exercise?",
     "dailog_edit_exercise": "Adjust the exercise to suit your preferences.",
+    "dailog_workout_done": "Are you sure you want to finish this workout?",
+    "string_workout_not_completed": "The workout contains incomplete exercises. Are you sure you want to finish the workout",
     "string_add_workout": "Add workouts",
     "string_workouts": "workouts",
     "string_dont_waste_time_etc": "Don't waste time - create your workout here!",
@@ -28,5 +30,6 @@
     "button_start_workout": "Start workout",
     "button_create": "Create",
     "button_create_workout": "Create workout",
-    "snack_bar_assign_workout": "Assign workout!"
+    "snack_bar_assign_workout": "Assign workout!",
+    "snack_bar_set_exercises_data": "Set data to the exercises!"
 }

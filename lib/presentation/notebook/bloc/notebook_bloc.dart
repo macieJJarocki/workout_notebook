@@ -284,6 +284,10 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
       if (event.date != null) {
         notebookState.workoutsAssigned[event.date.toString()] =
             list as List<Workout>;
+        if (list.isEmpty) {
+          // Remove key[date] if list of the assigned workouts is empty
+          notebookState.workoutsAssigned.remove(event.date.toString());
+        }
       }
       await _repository.write(key, payload);
       emit(notebookState);

@@ -8,6 +8,8 @@
     "dailog_create_exercise": "Stwórz ćwiczenie",
     "dailog_delete_exercise": "Jesteś pewny/a, że chcesz usunśc to ćwiczenie",
     "dailog_edit_exercise": "Dostosuj ćwiczenie do twoich preferencji",
+    "dailog_workout_done": "Jesteś pewien, że chcesz zakończyc ten trening?",
+    "string_workout_not_completed": "Trening posiada niezakonczone ćwiczenia. Jesteś pewien, że chcesz zakonczyć trening?",
     "string_add_workout": "Dodaj trening",
     "string_workouts": "treningi",
     "string_dont_waste_time_etc": "Nie marnuj czasu - stwórz swój trening tutaj",
@@ -25,8 +27,9 @@
     "button_delete": "Usuń",
     "button_add": "Dodaj",
     "button_end": "Zakończ",
-    "button_start_workout": "Reozpocznij trening",
+    "button_start_workout": "Rozpocznij trening",
     "button_create": "Stwórz",
     "button_create_workout": "Stwórz trening",
-    "snack_bar_assign_workout": "Przypisz trening!"
+    "snack_bar_assign_workout": "Przypisz trening!",
+    "snack_bar_set_exercises_data": "Ustaw wartości dla cwiczeń!"
 }

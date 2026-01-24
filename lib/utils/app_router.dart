@@ -26,14 +26,14 @@ class AppRouter {
             path: 'edit',
             name: RouterNames.edit.name,
             builder: (context, state) => EditWorkoutScreen(
-              workout: (state.extra as List)[0],
+              uuid: (state.extra as List)[0],
               date: (state.extra as List)[1],
             ),
           ),
           GoRoute(
             path: 'active',
             name: RouterNames.active.name,
-            builder: (context, state) => ActiveWorkout(
+            builder: (context, state) => ActiveWorkoutScreen(
               uuid: (state.extra as List)[0],
               date: (state.extra as List)[1],
             ),

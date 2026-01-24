@@ -62,6 +62,6 @@ class Workout extends Model {
 
   @override
   String toString() {
-    return 'Workout(name: $name, uuid: $uuid)';
+    return 'Workout(name: $name, uuid: $uuid, isComplteted: $isCompleted)';
   }
 }

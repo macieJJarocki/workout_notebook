@@ -83,14 +83,13 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Center(child: Text(widget.title)),
+      title: Text(widget.title, textAlign: .center),
       backgroundColor: Colors.blueGrey.shade100,
-      contentPadding: .all(4),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusGeometry.circular(8),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
+      content: ListView(
+        shrinkWrap: true,
         children: [
           Form(
             key: _formKey,
@@ -137,59 +136,61 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
               ],
             ),
           ),
-          AppOutlinedButton(
-            padding: EdgeInsetsGeometry.symmetric(vertical: 4),
-            backgrounColor: Colors.blueGrey.shade200,
-            child: Text(
-              widget.exercise == null
-                  ? AppLocalizations.of(context)!.button_create
-                  : AppLocalizations.of(context)!.button_edit,
-              style: TextStyle(fontSize: 20),
-              textAlign: .center,
-            ),
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                if (widget.isNewExercise) {
-                  context.read<NotebookBloc>().add(
-                    NotebookPlanExerciseAdded(
-                      workout: widget.workout!,
-                      date: widget.date!,
-                      name: nameController.text,
-                      weight: weightController.text,
-                      repetitions: repetitionsController.text,
-                      sets: setsController.text,
-                    ),
-                  );
-                } else {
-                  final exercises = widget.workout!.exercises;
-                  final editedExercises = exercises.map(
-                    (e) {
-                      if (e.uuid == widget.exercise!.uuid) {
-                        return widget.exercise!.copyWith(
-                          name: nameController.text,
-                          weight: double.tryParse(weightController.text),
-                          repetitions: int.tryParse(repetitionsController.text),
-                          sets: int.tryParse(setsController.text),
-                        );
-                      }
-                      return e;
-                    },
-                  ).toList();
-                  context.read<NotebookBloc>().add(
-                    NotebookEntityEdited(
-                      date: widget.date as DateTime,
-                      model: widget.workout!.copyWith(
-                        exercises: editedExercises,
-                      ),
-                    ),
-                  );
-                }
-                context.pop();
-              }
-            },
-          ),
         ],
       ),
+      actions: [
+        AppOutlinedButton(
+          padding: EdgeInsetsGeometry.symmetric(vertical: 4),
+          backgrounColor: Colors.blueGrey.shade200,
+          child: Text(
+            widget.exercise == null
+                ? AppLocalizations.of(context)!.button_create
+                : AppLocalizations.of(context)!.button_edit,
+            style: TextStyle(fontSize: 20),
+            textAlign: .center,
+          ),
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              if (widget.isNewExercise) {
+                context.read<NotebookBloc>().add(
+                  NotebookPlanExerciseAdded(
+                    workout: widget.workout!,
+                    date: widget.date!,
+                    name: nameController.text,
+                    weight: weightController.text,
+                    repetitions: repetitionsController.text,
+                    sets: setsController.text,
+                  ),
+                );
+              } else {
+                final exercises = widget.workout!.exercises;
+                final editedExercises = exercises.map(
+                  (e) {
+                    if (e.uuid == widget.exercise!.uuid) {
+                      return widget.exercise!.copyWith(
+                        name: nameController.text,
+                        weight: double.tryParse(weightController.text),
+                        repetitions: int.tryParse(repetitionsController.text),
+                        sets: int.tryParse(setsController.text),
+                      );
+                    }
+                    return e;
+                  },
+                ).toList();
+                context.read<NotebookBloc>().add(
+                  NotebookEntityEdited(
+                    date: widget.date as DateTime,
+                    model: widget.workout!.copyWith(
+                      exercises: editedExercises,
+                    ),
+                  ),
+                );
+              }
+              context.pop();
+            }
+          },
+        ),
+      ],
     );
   }
 }

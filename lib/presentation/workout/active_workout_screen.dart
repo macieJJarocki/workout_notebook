@@ -6,10 +6,15 @@ import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_data_element.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
+import 'package:workout_notebook/utils/widgets/app_dailog.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
 
-class ActiveWorkout extends StatelessWidget {
-  const ActiveWorkout({super.key, required this.date, required this.uuid});
+class ActiveWorkoutScreen extends StatelessWidget {
+  const ActiveWorkoutScreen({
+    super.key,
+    required this.date,
+    required this.uuid,
+  });
   final DateTime date;
   final String uuid;
 
@@ -32,133 +37,206 @@ class ActiveWorkout extends StatelessWidget {
       ),
       body: Center(
         child: SizedBox(
-          height: height * 0.8,
+          height: height * 0.85,
           width: width * 0.95,
-          child: Column(
-            mainAxisAlignment: .spaceBetween,
-            children: [
-              BlocBuilder<NotebookBloc, NotebookState>(
-                builder: (context, state) {
-                  if (state is NotebookSuccess) {
-                    final workout = state.workoutsAssigned[date.toString()]!
-                        .firstWhere((e) => e.uuid == uuid);
-                    final exercises = workout.exercises;
-                    return Expanded(
-                      child: ListView.builder(
-                        itemCount: exercises.length,
-                        itemBuilder: (context, index) {
-                          final exercise = exercises[index];
-                          return Card(
-                            color: Colors.blueGrey.shade200,
-                            child: ListTile(
-                              contentPadding: .symmetric(horizontal: 8),
-                              title: Text(
-                                exercise.name,
-                                textAlign: .center,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: .bold,
-                                ),
-                              ),
-                              subtitle: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: .spaceBetween,
-                                    children: [
-                                      ExerciseDataElement(
-                                        fieldName: AppLocalizations.of(
-                                          context,
-                                        )!.string_weight,
-                                        fieldValue: exercise.weight,
-                                        iconPath: 'lib/utils/icons/weight1.png',
-                                        isNewWorkout: false,
-                                      ),
-                                      ExerciseDataElement(
-                                        fieldName: AppLocalizations.of(
-                                          context,
-                                        )!.string_repetitions,
-                                        fieldValue: exercise.repetitions,
-                                        iconPath: 'lib/utils/icons/rep2.png',
-                                        isNewWorkout: false,
-                                      ),
-                                      ExerciseDataElement(
-                                        fieldName: AppLocalizations.of(
-                                          context,
-                                        )!.string_sets,
-                                        fieldValue: exercise.sets,
-                                        iconPath: 'lib/utils/icons/sets.png',
-                                        isNewWorkout: false,
-                                      ),
-                                    ],
+          child: Card(
+            color: Colors.blueGrey.shade200,
+            child: BlocBuilder<NotebookBloc, NotebookState>(
+              builder: (context, state) {
+                if (state is NotebookSuccess) {
+                  final workout = state.workoutsAssigned[date.toString()]!
+                      .firstWhere((e) => e.uuid == uuid);
+                  final exercises = workout.exercises;
+                  return Column(
+                    mainAxisAlignment: .spaceBetween,
+                    children: [
+                      SizedBox(
+                        height: height * 0.7,
+                        width: width * 0.9,
+                        child: ListView.builder(
+                          itemCount: exercises.length,
+                          itemBuilder: (context, index) {
+                            final exercise = exercises[index];
+                            return Card(
+                              color: Colors.blueGrey.shade100,
+                              child: ListTile(
+                                contentPadding: .symmetric(horizontal: 8),
+                                title: Text(
+                                  exercise.name,
+                                  textAlign: .center,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: .bold,
                                   ),
-                                  Padding(
-                                    padding: .only(right: width * 0.2),
-                                    child: Row(
-                                      mainAxisAlignment: .spaceBetween,
+                                ),
+                                subtitle: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: .spaceEvenly,
                                       children: [
-                                        Text(
-                                          AppLocalizations.of(
+                                        ExerciseDataElement(
+                                          fieldName: AppLocalizations.of(
                                             context,
-                                          )!.string_exercise_done,
+                                          )!.string_weight,
+                                          fieldValue: exercise.weight,
+                                          color: Colors.blueGrey.shade200,
+                                          iconPath:
+                                              'lib/utils/icons/weight1.png',
+                                          isNewWorkout: false,
                                         ),
-                                        Checkbox.adaptive(
-                                          value: workout
-                                              .exercises[index]
-                                              .isCompleted,
-                                          onChanged: (value) {
-                                            final exercisesEdited = workout
-                                                .exercises
-                                                .map(
-                                                  (e) {
-                                                    if (workout
-                                                            .exercises[index]
-                                                            .uuid ==
-                                                        e.uuid) {
-                                                      e = e.copyWith(
-                                                        isCompleted: value,
-                                                      );
-                                                    }
-                                                    return e;
-                                                  },
-                                                )
-                                                .toList();
-                                            context.read<NotebookBloc>().add(
-                                              NotebookEntityEdited(
-                                                date: date,
-                                                model: workout.copyWith(
-                                                  exercises: exercisesEdited,
-                                                ),
-                                              ),
-                                            );
-                                          },
+                                        ExerciseDataElement(
+                                          fieldName: AppLocalizations.of(
+                                            context,
+                                          )!.string_repetitions,
+                                          fieldValue: exercise.repetitions,
+                                          iconPath: 'lib/utils/icons/rep2.png',
+                                          isNewWorkout: false,
+                                          color: Colors.blueGrey.shade200,
+                                        ),
+                                        ExerciseDataElement(
+                                          fieldName: AppLocalizations.of(
+                                            context,
+                                          )!.string_sets,
+                                          fieldValue: exercise.sets,
+                                          iconPath: 'lib/utils/icons/sets.png',
+                                          isNewWorkout: false,
+                                          color: Colors.blueGrey.shade200,
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                    Padding(
+                                      padding: .only(
+                                        left: 5,
+                                        right: width * 0.1,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: .spaceBetween,
+                                        children: [
+                                          Text(
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.string_exercise_done,
+                                          ),
+                                          Checkbox.adaptive(
+                                            value: workout
+                                                .exercises[index]
+                                                .isCompleted,
+                                            onChanged: (value) {
+                                              final exercisesEdited = workout
+                                                  .exercises
+                                                  .map(
+                                                    (e) {
+                                                      if (workout
+                                                              .exercises[index]
+                                                              .uuid ==
+                                                          e.uuid) {
+                                                        e = e.copyWith(
+                                                          isCompleted: value,
+                                                        );
+                                                      }
+                                                      return e;
+                                                    },
+                                                  )
+                                                  .toList();
+
+                                              context.read<NotebookBloc>().add(
+                                                NotebookEntityEdited(
+                                                  date: date,
+                                                  model: workout.copyWith(
+                                                    exercises: exercisesEdited,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      AppOutlinedButton(
+                        width: width * 0.8,
+                        backgrounColor: Colors.blueGrey.shade200,
+                        padding: .all(8),
+                        onPressed: () {
+                          if (exercises.every(
+                            (element) => element.isCompleted == true,
+                          )) {
+                            context.goNamed(RouterNames.workout.name);
+                            context.read<NotebookBloc>().add(
+                              NotebookEntityEdited(
+                                date: date,
+                                model: workout.copyWith(
+                                  isCompleted: true,
+                                ),
+                              ),
+                            );
+                          }
+                          showDialog(
+                            context: context,
+                            builder: (context) => AppDailog(
+                              title: AppLocalizations.of(
+                                context,
+                              )!.dailog_workout_done,
+                              content: Text(
+                                textAlign: .center,
+                                AppLocalizations.of(
+                                  context,
+                                )!.string_workout_not_completed,
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              actions: [
+                                AppOutlinedButton(
+                                  backgrounColor: Colors.blueGrey.shade200,
+                                  padding: .zero,
+                                  onPressed: () {
+                                    context.read<NotebookBloc>().add(
+                                      NotebookEntityEdited(
+                                        date: date,
+                                        model: workout.copyWith(
+                                          isCompleted: true,
+                                        ),
+                                      ),
+                                    );
+                                    context.goNamed(
+                                      RouterNames.workout.name,
+                                    );
+                                  },
+                                  child: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.button_end,
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         },
+                        child: Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.button_end,
+                          textAlign: .center,
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
-                    );
-                  }
-                  return SizedBox();
-                },
-              ),
-              AppOutlinedButton(
-                width: width * 0.8,
-                backgrounColor: Colors.blueGrey.shade200,
-                padding: .all(8),
-                onPressed: () {
-                  context.goNamed(RouterNames.workout.name);
-                },
-                child: Text(
-                  AppLocalizations.of(context)!.button_end,
-                  textAlign: .center,
-                ),
-              ),
-            ],
+                    ],
+                  );
+                }
+                // TODO shimmer widget
+                return SizedBox();
+              },
+            ),
           ),
         ),
       ),

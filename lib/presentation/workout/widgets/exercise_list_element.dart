@@ -129,6 +129,7 @@ class ExerciseListElement extends StatelessWidget {
                           fieldValue: exercise.weight,
                           iconPath: 'lib/utils/icons/weight1.png',
                           isNewWorkout: isNewWorkout,
+                          color: Colors.blueGrey.shade100,
                         ),
                         ExerciseDataElement(
                           fieldName: AppLocalizations.of(
@@ -137,12 +138,14 @@ class ExerciseListElement extends StatelessWidget {
                           fieldValue: exercise.repetitions,
                           iconPath: 'lib/utils/icons/rep2.png',
                           isNewWorkout: isNewWorkout,
+                          color: Colors.blueGrey.shade100,
                         ),
                         ExerciseDataElement(
                           fieldName: AppLocalizations.of(context)!.string_sets,
                           fieldValue: exercise.sets,
                           iconPath: 'lib/utils/icons/sets.png',
                           isNewWorkout: isNewWorkout,
+                          color: Colors.blueGrey.shade100,
                         ),
                       ],
                     ),

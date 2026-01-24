@@ -6,6 +6,7 @@ import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/data/services/date_service.dart';
+import 'package:workout_notebook/utils/consts.dart';
 import 'package:workout_notebook/utils/enums/hive_enums.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 import 'package:workout_notebook/utils/widgets/app_dailog.dart';
@@ -45,7 +46,8 @@ class _CalendarElementState extends State<CalendarElement> {
     return GestureDetector(
       onTap: () => showDialog(
         context: context,
-        builder: (context) => workouts.isNotEmpty
+        builder: (context) =>
+            workouts.isNotEmpty || workoutsAssigned[dateAsString]!.isNotEmpty
             ? AppDailog(
                 title: AppLocalizations.of(
                   context,
@@ -92,20 +94,21 @@ class _CalendarElementState extends State<CalendarElement> {
                                           );
                                           context.pop();
                                         },
-                                        onTap: () => context.goNamed(
-                                          RouterNames.edit.name,
-                                          extra: [workout, widget.date],
-                                        ),
+                                        onTap: () {
+                                          context.goNamed(
+                                            RouterNames.edit.name,
+                                            extra: [workout.uuid, widget.date],
+                                          );
+                                          context.pop();
+                                        },
                                         child: ListTile(
                                           contentPadding: .zero,
-                                          title: Row(
-                                            mainAxisAlignment: .spaceAround,
-                                            children: [
-                                              Text(
-                                                '${AppLocalizations.of(context)!.string_name}: ${workout.name}',
-                                                textAlign: .center,
-                                              ),
-                                            ],
+                                          title: Text(
+                                            workout.name,
+                                            textAlign: .center,
+                                            style: TextStyle(
+                                              overflow: .ellipsis,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -170,7 +173,7 @@ class _CalendarElementState extends State<CalendarElement> {
                               textAlign: .center,
                             ),
                             backgroundColor: Colors.white,
-                            duration: Duration(seconds: 1),
+                            duration: snackBarsDuration,
                             shape: RoundedRectangleBorder(
                               side: BorderSide(
                                 color: Colors.black,

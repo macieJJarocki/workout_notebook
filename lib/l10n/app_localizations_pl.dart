@@ -33,6 +33,12 @@ class AppLocalizationsPl extends AppLocalizations {
   String get dailog_edit_exercise => 'Dostosuj ćwiczenie do twoich preferencji';
 
   @override
+  String get dailog_workout_done => 'Jesteś pewien, że chcesz zakończyc ten trening?';
+
+  @override
+  String get string_workout_not_completed => 'Trening posiada niezakonczone ćwiczenia. Jesteś pewien, że chcesz zakonczyć trening?';
+
+  @override
   String get string_add_workout => 'Dodaj trening';
 
   @override
@@ -84,7 +90,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get button_end => 'Zakończ';
 
   @override
-  String get button_start_workout => 'Reozpocznij trening';
+  String get button_start_workout => 'Rozpocznij trening';
 
   @override
   String get button_create => 'Stwórz';
@@ -94,4 +100,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get snack_bar_assign_workout => 'Przypisz trening!';
+
+  @override
+  String get snack_bar_set_exercises_data => 'Ustaw wartości dla cwiczeń!';
 }

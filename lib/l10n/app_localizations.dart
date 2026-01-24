@@ -143,6 +143,18 @@ abstract class AppLocalizations {
   /// **'Adjust the exercise to suit your preferences.'**
   String get dailog_edit_exercise;
 
+  /// No description provided for @dailog_workout_done.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to finish this workout?'**
+  String get dailog_workout_done;
+
+  /// No description provided for @string_workout_not_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'The workout contains incomplete exercises. Are you sure you want to finish the workout'**
+  String get string_workout_not_completed;
+
   /// No description provided for @string_add_workout.
   ///
   /// In en, this message translates to:
@@ -268,6 +280,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Assign workout!'**
   String get snack_bar_assign_workout;
+
+  /// No description provided for @snack_bar_set_exercises_data.
+  ///
+  /// In en, this message translates to:
+  /// **'Set data to the exercises!'**
+  String get snack_bar_set_exercises_data;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

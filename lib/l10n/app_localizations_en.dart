@@ -33,6 +33,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailog_edit_exercise => 'Adjust the exercise to suit your preferences.';
 
   @override
+  String get dailog_workout_done => 'Are you sure you want to finish this workout?';
+
+  @override
+  String get string_workout_not_completed => 'The workout contains incomplete exercises. Are you sure you want to finish the workout';
+
+  @override
   String get string_add_workout => 'Add workouts';
 
   @override
@@ -94,4 +100,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get snack_bar_assign_workout => 'Assign workout!';
+
+  @override
+  String get snack_bar_set_exercises_data => 'Set data to the exercises!';
 }
