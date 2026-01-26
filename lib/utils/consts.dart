@@ -1,1 +1,1 @@
-const Duration snackBarsDuration = Duration(seconds: 1);
+const Duration snackBarDuration = Duration(seconds: 1, microseconds: 500);

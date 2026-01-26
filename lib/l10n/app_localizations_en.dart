@@ -102,5 +102,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get snack_bar_assign_workout => 'Assign workout!';
 
   @override
-  String get snack_bar_set_exercises_data => 'Set data to the exercises!';
+  String get snack_bar_empty_exercise => 'Before you start training, fill in the missing exercise data. ';
 }

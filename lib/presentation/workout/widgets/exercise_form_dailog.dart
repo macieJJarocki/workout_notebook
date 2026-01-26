@@ -88,12 +88,16 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusGeometry.circular(8),
       ),
+      contentPadding: .zero,
+      actionsPadding: .zero,
+      titlePadding: .zero,
       content: ListView(
         shrinkWrap: true,
         children: [
           Form(
             key: _formKey,
             child: Column(
+              mainAxisSize: .min,
               children: [
                 AppFormField(
                   controller: nameController,

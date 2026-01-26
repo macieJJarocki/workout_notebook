@@ -281,11 +281,11 @@ abstract class AppLocalizations {
   /// **'Assign workout!'**
   String get snack_bar_assign_workout;
 
-  /// No description provided for @snack_bar_set_exercises_data.
+  /// No description provided for @snack_bar_empty_exercise.
   ///
   /// In en, this message translates to:
-  /// **'Set data to the exercises!'**
-  String get snack_bar_set_exercises_data;
+  /// **'Before you start training, fill in the missing exercise data. '**
+  String get snack_bar_empty_exercise;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

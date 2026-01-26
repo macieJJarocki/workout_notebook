@@ -31,5 +31,5 @@
     "button_create": "Create",
     "button_create_workout": "Create workout",
     "snack_bar_assign_workout": "Assign workout!",
-    "snack_bar_set_exercises_data": "Set data to the exercises!"
+    "snack_bar_empty_exercise": "Before you start training, fill in the missing exercise data. "
 }

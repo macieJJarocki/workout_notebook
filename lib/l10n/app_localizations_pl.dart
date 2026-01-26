@@ -102,5 +102,5 @@ class AppLocalizationsPl extends AppLocalizations {
   String get snack_bar_assign_workout => 'Przypisz trening!';
 
   @override
-  String get snack_bar_set_exercises_data => 'Ustaw wartości dla cwiczeń!';
+  String get snack_bar_empty_exercise => 'Zanim rozpoczniesz trening upewnij się, że wszystkie ćwiczenia posiadają niezbęde informace!';
 }

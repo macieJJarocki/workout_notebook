@@ -11,6 +11,7 @@ import 'package:workout_notebook/utils/enums/hive_enums.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 import 'package:workout_notebook/utils/widgets/app_dailog.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
+import 'package:workout_notebook/utils/widgets/app_snack_bar.dart';
 
 class CalendarElement extends StatefulWidget {
   CalendarElement({
@@ -44,179 +45,182 @@ class _CalendarElementState extends State<CalendarElement> {
         .toList();
 
     return GestureDetector(
-      onTap: () => showDialog(
-        context: context,
-        builder: (context) =>
-            workouts.isNotEmpty || workoutsAssigned[dateAsString]!.isNotEmpty
-            ? AppDailog(
-                title: AppLocalizations.of(
-                  context,
-                )!.dailog_choose_workout,
-                content: Column(
-                  mainAxisSize: .min,
-                  mainAxisAlignment: .spaceBetween,
-                  children: [
-                    // TODO inject locale
-                    Text(
-                      widget.dateService.dateAsString(
-                        pattern: 'MMMMEEEEd',
-                        locale: 'pl',
-                        date: widget.date,
-                      ),
-                    ),
-                    workoutsAssigned.containsKey(dateAsString)
-                        ? Container(
-                            margin: .only(top: 8),
-                            height: AppTheme.deviceHeight(context) * 0.3,
-                            decoration: AppTheme.boxDecoration(
-                              backgrounColor: Colors.blueGrey.shade200,
+      onTap: () => widget.dateService.compareDates(widget.date)
+          ? showDialog(
+              context: context,
+              builder: (context) {
+                return workouts.isNotEmpty ||
+                        workoutsAssigned[dateAsString]!.isNotEmpty
+                    ? AppDailog(
+                        title: AppLocalizations.of(
+                          context,
+                        )!.dailog_choose_workout,
+                        content: Column(
+                          mainAxisSize: .min,
+                          mainAxisAlignment: .spaceBetween,
+                          children: [
+                            // TODO inject locale
+                            Text(
+                              widget.dateService.dateAsString(
+                                pattern: 'MMMMEEEEd',
+                                locale: 'pl',
+                                date: widget.date,
+                              ),
                             ),
-                            child: ListView.builder(
-                              itemCount: workoutsAssigned[dateAsString]!.length,
-                              itemBuilder: (context, index) {
-                                return BlocBuilder<NotebookBloc, NotebookState>(
-                                  builder: (context, state) {
-                                    final workout =
-                                        workoutsAssigned[dateAsString]![index];
-                                    return Container(
-                                      margin: .only(top: 8, right: 8, left: 8),
-                                      decoration: AppTheme.boxDecoration(
-                                        backgrounColor:
-                                            Colors.blueGrey.shade100,
-                                      ),
-                                      child: GestureDetector(
-                                        onLongPress: () {
-                                          context.read<NotebookBloc>().add(
-                                            NotebookEntityDeleted(
-                                              model: workout,
-                                              date: widget.date,
-                                            ),
-                                          );
-                                          context.pop();
-                                        },
-                                        onTap: () {
-                                          context.goNamed(
-                                            RouterNames.edit.name,
-                                            extra: [workout.uuid, widget.date],
-                                          );
-                                          context.pop();
-                                        },
-                                        child: ListTile(
-                                          contentPadding: .zero,
-                                          title: Text(
-                                            workout.name,
-                                            textAlign: .center,
-                                            style: TextStyle(
-                                              overflow: .ellipsis,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
+                            workoutsAssigned.containsKey(dateAsString)
+                                ? Container(
+                                    margin: .only(top: 8),
+                                    height:
+                                        AppTheme.deviceHeight(context) * 0.3,
+                                    decoration: AppTheme.boxDecoration(
+                                      backgrounColor: Colors.blueGrey.shade200,
+                                    ),
+                                    child: ListView.builder(
+                                      itemCount: workoutsAssigned[dateAsString]!
+                                          .length,
+                                      itemBuilder: (context, index) {
+                                        return BlocBuilder<
+                                          NotebookBloc,
+                                          NotebookState
+                                        >(
+                                          builder: (context, state) {
+                                            final workout =
+                                                workoutsAssigned[dateAsString]![index];
+                                            return Container(
+                                              margin: .only(
+                                                top: 8,
+                                                right: 8,
+                                                left: 8,
+                                              ),
+                                              decoration:
+                                                  AppTheme.boxDecoration(
+                                                    backgrounColor: Colors
+                                                        .blueGrey
+                                                        .shade100,
+                                                  ),
+                                              child: GestureDetector(
+                                                onLongPress: () {
+                                                  context
+                                                      .read<NotebookBloc>()
+                                                      .add(
+                                                        NotebookEntityDeleted(
+                                                          model: workout,
+                                                          date: widget.date,
+                                                        ),
+                                                      );
+                                                  context.pop();
+                                                },
+                                                onTap: () {
+                                                  context.goNamed(
+                                                    RouterNames.edit.name,
+                                                    extra: [
+                                                      workout.uuid,
+                                                      widget.date,
+                                                    ],
+                                                  );
+                                                  context.pop();
+                                                },
+                                                child: ListTile(
+                                                  contentPadding: .zero,
+                                                  title: Text(
+                                                    workout.name,
+                                                    textAlign: .center,
+                                                    style: TextStyle(
+                                                      overflow: .ellipsis,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : SizedBox(),
+                            Container(
+                              margin: .only(top: 8),
+                              color: Colors.blueGrey.shade200,
+                              child: DropdownMenu(
+                                label: Text(
+                                  AppLocalizations.of(context)!.string_workouts,
+                                ),
+                                dropdownMenuEntries: dropdownMenuItems,
+                                menuStyle: MenuStyle(
+                                  backgroundColor: WidgetStatePropertyAll(
+                                    Colors.blueGrey.shade200,
+                                  ),
+                                ),
+                                onSelected: (value) {
+                                  setState(() {
+                                    dropdownMenuSecection = value;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          AppOutlinedButton(
+                            backgrounColor: Colors.blueGrey.shade200,
+                            padding: .zero,
+                            onPressed: () {
+                              if (dropdownMenuSecection != null) {
+                                context.read<NotebookBloc>().add(
+                                  NotebookEntityCreated(
+                                    key: DataBoxKeys.other,
+                                    workout: dropdownMenuSecection,
+                                    date: widget.date,
+                                    // TODO this looks bad(name is not needed)
+                                    name: '',
+                                  ),
                                 );
-                              },
-                            ),
-                          )
-                        : SizedBox(),
-                    Container(
-                      margin: .only(top: 8),
-                      color: Colors.blueGrey.shade200,
-                      child: DropdownMenu(
-                        label: Text(
-                          AppLocalizations.of(context)!.string_workouts,
-                        ),
-                        dropdownMenuEntries: dropdownMenuItems,
-                        menuStyle: MenuStyle(
-                          backgroundColor: WidgetStatePropertyAll(
-                            Colors.blueGrey.shade200,
-                          ),
-                        ),
-                        onSelected: (value) {
-                          setState(() {
-                            dropdownMenuSecection = value;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                actions: [
-                  AppOutlinedButton(
-                    backgrounColor: Colors.blueGrey.shade200,
-                    padding: .zero,
-                    onPressed: () {
-                      if (dropdownMenuSecection != null) {
-                        context.read<NotebookBloc>().add(
-                          NotebookEntityCreated(
-                            key: DataBoxKeys.other,
-                            workout: dropdownMenuSecection,
-                            date: widget.date,
-                            // TODO this looks bad(name is not needed)
-                            name: '',
-                          ),
-                        );
-                        context.pop();
-                      } else {
-                        context.pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.snack_bar_assign_workout,
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: .bold,
-                                color: Colors.black,
-                              ),
-                              textAlign: .center,
-                            ),
-                            backgroundColor: Colors.white,
-                            duration: snackBarsDuration,
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                color: Colors.black,
-                              ),
-                              borderRadius: BorderRadiusGeometry.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20),
-                              ),
+                                context.pop();
+                              } else {
+                                context.pop();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  AppSnackBar.build(
+                                    message: AppLocalizations.of(
+                                      context,
+                                    )!.snack_bar_assign_workout,
+                                  ),
+                                );
+                              }
+                            },
+                            child: Text(
+                              AppLocalizations.of(context)!.button_save,
+                              style: TextStyle(fontSize: 20),
                             ),
                           ),
-                        );
-                      }
-                    },
-                    child: Text(
-                      AppLocalizations.of(context)!.button_save,
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ],
-              )
-            : AppDailog(
-                title: AppLocalizations.of(
-                  context,
-                )!.dailog_first_create_workout,
-                actions: [
-                  AppOutlinedButton(
-                    backgrounColor: Colors.blueGrey.shade200,
-                    padding: .zero,
-                    onPressed: () {
-                      context.goNamed(RouterNames.create.name);
-                    },
-                    child: Text(
-                      AppLocalizations.of(context)!.button_add,
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ],
-              ),
-      ),
+                        ],
+                      )
+                    : AppDailog(
+                        title: AppLocalizations.of(
+                          context,
+                        )!.dailog_first_create_workout,
+                        actions: [
+                          AppOutlinedButton(
+                            backgrounColor: Colors.blueGrey.shade200,
+                            padding: .zero,
+                            onPressed: () {
+                              context.goNamed(RouterNames.create.name);
+                            },
+                            child: Text(
+                              AppLocalizations.of(context)!.button_add,
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          ),
+                        ],
+                      );
+              },
+            )
+          : null,
       child: Container(
         margin: _getMargin(widget.date.day),
         decoration: AppTheme.boxDecoration(
-          backgrounColor: _getColor(workoutsAssigned, widget.date),
+          backgrounColor: widget.dateService.compareDates(widget.date)
+              ? _getColor(workoutsAssigned, widget.date)
+              : Colors.grey.shade400,
         ),
         child: Center(
           child: Text(

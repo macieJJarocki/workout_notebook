@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-// TODO Place this file in the data layer?
-
 class DateService {
   DateService({required DateTime dateNow})
     : date = DateTime(dateNow.year, dateNow.month);
@@ -21,4 +19,15 @@ class DateService {
     required String locale,
     DateTime? date,
   }) => DateFormat(pattern, locale).format(date ?? this.date);
+
+  // Return true if [other] represent date creted in the same day[DateTime.now()] or after return true else return false.
+  bool compareDates(DateTime other) {
+    final now = DateTime.now();
+    if (other.month == now.month) {
+      if (other.day < now.day) {
+        return false;
+      }
+    }
+    return true;
+  }
 }

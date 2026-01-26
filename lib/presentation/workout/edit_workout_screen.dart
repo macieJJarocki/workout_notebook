@@ -5,6 +5,7 @@ import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
+import 'package:workout_notebook/utils/widgets/app_snack_bar.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_list_element.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
@@ -135,30 +136,6 @@ class EditWorkoutScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                Align(
-                                  alignment: AlignmentGeometry.bottomCenter,
-                                  child: AppOutlinedButton(
-                                    width: width * 0.8,
-                                    backgrounColor: Colors.blueGrey.shade100,
-                                    padding: .all(8),
-                                    onPressed: () {
-                                      context.read<NotebookBloc>().add(
-                                        NotebookEntityEdited(
-                                          model: workout,
-                                          date: date,
-                                        ),
-                                      );
-                                      context.goNamed(RouterNames.workout.name);
-                                    },
-                                    child: Text(
-                                      AppLocalizations.of(
-                                        context,
-                                      )!.button_edit,
-                                      style: TextStyle(fontSize: 20),
-                                      textAlign: .center,
-                                    ),
-                                  ),
-                                ),
                               ],
                             ),
                           ),
@@ -169,35 +146,16 @@ class EditWorkoutScreen extends StatelessWidget {
                         backgrounColor: Colors.blueGrey.shade100,
                         padding: .all(8),
                         onPressed: () {
-                          _workoutCanStart(workout.exercises)
+                          _workoutCanEditOrStart(workout.exercises)
                               ? context.goNamed(
                                   RouterNames.active.name,
                                   extra: [workout.uuid, date],
                                 )
                               : ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      AppLocalizations.of(
-                                        context,
-                                      )!.snack_bar_set_exercises_data,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: .bold,
-                                        color: Colors.black,
-                                      ),
-                                      textAlign: .center,
-                                    ),
-                                    backgroundColor: Colors.white,
-                                    duration: snackBarsDuration,
-                                    shape: RoundedRectangleBorder(
-                                      side: BorderSide(
-                                        color: Colors.black,
-                                      ),
-                                      borderRadius: BorderRadiusGeometry.only(
-                                        topLeft: Radius.circular(20),
-                                        topRight: Radius.circular(20),
-                                      ),
-                                    ),
+                                  AppSnackBar.build(
+                                    message: AppLocalizations.of(
+                                      context,
+                                    )!.snack_bar_empty_exercise,
                                   ),
                                 );
                         },
@@ -205,11 +163,11 @@ class EditWorkoutScreen extends StatelessWidget {
                           AppLocalizations.of(
                             context,
                           )!.button_start_workout,
+                          textAlign: .center,
                           style: TextStyle(
                             fontSize: 20,
                             color: Colors.black,
                           ),
-                          textAlign: .center,
                         ),
                       ),
                     ],
@@ -226,7 +184,7 @@ class EditWorkoutScreen extends StatelessWidget {
   }
 }
 
-bool _workoutCanStart(List<Exercise> list) => list
+bool _workoutCanEditOrStart(List<Exercise> list) => list
     .map((e) {
       return [e.weight, e.sets, e.repetitions].every((p) => p != null);
     })
