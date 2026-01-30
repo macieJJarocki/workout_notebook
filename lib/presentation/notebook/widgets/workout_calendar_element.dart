@@ -6,7 +6,6 @@ import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/data/services/date_service.dart';
-import 'package:workout_notebook/utils/consts.dart';
 import 'package:workout_notebook/utils/enums/hive_enums.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 import 'package:workout_notebook/utils/widgets/app_dailog.dart';
@@ -49,6 +48,7 @@ class _CalendarElementState extends State<CalendarElement> {
           ? showDialog(
               context: context,
               builder: (context) {
+                // TODO when tere is no workout error occure "(Null check operator used on a null value)"
                 return workouts.isNotEmpty ||
                         workoutsAssigned[dateAsString]!.isNotEmpty
                     ? AppDailog(

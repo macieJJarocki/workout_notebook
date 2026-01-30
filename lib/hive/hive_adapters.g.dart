@@ -17,13 +17,13 @@ class ExerciseAdapter extends TypeAdapter<Exercise> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Exercise(
-      uuid: fields[0] as String,
-      name: fields[2] as String,
-      isCompleted: fields[3] as bool,
-      weight: (fields[4] as num?)?.toDouble(),
-      repetitions: (fields[5] as num?)?.toInt(),
-      sets: (fields[6] as num?)?.toInt(),
-      comment: fields[1] as String?,
+      fields[6] as String?,
+      uuid: fields[4] as String,
+      name: fields[5] as String,
+      isCompleted: fields[0] as bool,
+      weight: (fields[1] as num?)?.toDouble(),
+      repetitions: (fields[2] as num?)?.toInt(),
+      sets: (fields[3] as num?)?.toInt(),
     );
   }
 
@@ -32,19 +32,19 @@ class ExerciseAdapter extends TypeAdapter<Exercise> {
     writer
       ..writeByte(7)
       ..writeByte(0)
-      ..write(obj.uuid)
-      ..writeByte(1)
-      ..write(obj.comment)
-      ..writeByte(2)
-      ..write(obj.name)
-      ..writeByte(3)
       ..write(obj.isCompleted)
-      ..writeByte(4)
+      ..writeByte(1)
       ..write(obj.weight)
-      ..writeByte(5)
+      ..writeByte(2)
       ..write(obj.repetitions)
+      ..writeByte(3)
+      ..write(obj.sets)
+      ..writeByte(4)
+      ..write(obj.uuid)
+      ..writeByte(5)
+      ..write(obj.name)
       ..writeByte(6)
-      ..write(obj.sets);
+      ..write(obj.comment);
   }
 
   @override
@@ -69,31 +69,28 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Workout(
-      uuid: fields[0] as String,
-      name: fields[2] as String,
-      exercises: (fields[3] as List).cast<Exercise>(),
-      isCompleted: fields[4] as bool,
-      assignedDates: (fields[5] as List).cast<DateTime>(),
-      comment: fields[1] as String?,
+      fields[4] as String?,
+      uuid: fields[2] as String,
+      name: fields[3] as String,
+      exercises: (fields[0] as List).cast<Model>(),
+      isCompleted: fields[1] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Workout obj) {
     writer
-      ..writeByte(6)
-      ..writeByte(0)
-      ..write(obj.uuid)
-      ..writeByte(1)
-      ..write(obj.comment)
-      ..writeByte(2)
-      ..write(obj.name)
-      ..writeByte(3)
-      ..write(obj.exercises)
-      ..writeByte(4)
-      ..write(obj.isCompleted)
       ..writeByte(5)
-      ..write(obj.assignedDates);
+      ..writeByte(0)
+      ..write(obj.exercises)
+      ..writeByte(1)
+      ..write(obj.isCompleted)
+      ..writeByte(2)
+      ..write(obj.uuid)
+      ..writeByte(3)
+      ..write(obj.name)
+      ..writeByte(4)
+      ..write(obj.comment);
   }
 
   @override
@@ -103,6 +100,49 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is WorkoutAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class SupersetAdapter extends TypeAdapter<Superset> {
+  @override
+  final typeId = 2;
+
+  @override
+  Superset read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return Superset(
+      fields[3] as String?,
+      uuid: fields[1] as String,
+      name: fields[2] as String,
+      exercises: (fields[0] as List).cast<Exercise>(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, Superset obj) {
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.exercises)
+      ..writeByte(1)
+      ..write(obj.uuid)
+      ..writeByte(2)
+      ..write(obj.name)
+      ..writeByte(3)
+      ..write(obj.comment);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SupersetAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

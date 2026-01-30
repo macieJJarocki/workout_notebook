@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_data_element.dart';
@@ -56,7 +57,7 @@ class ActiveWorkoutScreen extends StatelessWidget {
                         child: ListView.builder(
                           itemCount: exercises.length,
                           itemBuilder: (context, index) {
-                            final exercise = exercises[index];
+                            final exercise = exercises[index] as Exercise;
                             return Card(
                               color: Colors.blueGrey.shade100,
                               child: ListTile(
@@ -118,17 +119,14 @@ class ActiveWorkoutScreen extends StatelessWidget {
                                             )!.string_exercise_done,
                                           ),
                                           Checkbox.adaptive(
-                                            value: workout
-                                                .exercises[index]
-                                                .isCompleted,
+                                            value: exercise.isCompleted,
                                             onChanged: (value) {
                                               final exercisesEdited = workout
                                                   .exercises
-                                                  .map(
+                                                  .map<Exercise>(
                                                     (e) {
-                                                      if (workout
-                                                              .exercises[index]
-                                                              .uuid ==
+                                                      e as Exercise;
+                                                      if (exercise.uuid ==
                                                           e.uuid) {
                                                         e = e.copyWith(
                                                           isCompleted: value,
@@ -166,7 +164,10 @@ class ActiveWorkoutScreen extends StatelessWidget {
                         padding: .all(8),
                         onPressed: () {
                           if (exercises.every(
-                            (element) => element.isCompleted == true,
+                            (e) {
+                              e as Exercise;
+                              return e.isCompleted == true;
+                            },
                           )) {
                             context.goNamed(RouterNames.workout.name);
                             context.read<NotebookBloc>().add(

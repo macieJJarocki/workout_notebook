@@ -30,6 +30,7 @@
     "button_start_workout": "Rozpocznij trening",
     "button_create": "Stwórz",
     "button_create_workout": "Stwórz trening",
+    "button_create_superset": "Stwórz superset",
     "snack_bar_assign_workout": "Przypisz trening!",
     "snack_bar_empty_exercise": "Zanim rozpoczniesz trening upewnij się, że wszystkie ćwiczenia posiadają niezbęde informace!"
 }

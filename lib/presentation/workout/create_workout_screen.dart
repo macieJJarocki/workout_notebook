@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:workout_notebook/data/models/exercise.dart';
+import 'package:workout_notebook/data/models/superset.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
+import 'package:workout_notebook/presentation/workout/widgets/superset_list_element.dart';
 import 'package:workout_notebook/utils/enums/hive_enums.dart';
 import 'package:workout_notebook/utils/widgets/app_one_field_dailog.dart';
 import 'package:workout_notebook/utils/widgets/app_form_field.dart';
@@ -25,6 +28,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
   final FocusNode nameFocusNode = FocusNode();
   final FocusNode exerciseNameFocusNode = FocusNode();
   bool isSupersetMode = false;
+  final List<Exercise> supersetExercises = [];
 
   @override
   void dispose() {
@@ -109,11 +113,44 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                                             children: List.generate(
                                               state.unsavedExercises.length,
                                               (int index) {
-                                                return ExerciseListElement(
-                                                  isNewWorkout: true,
-                                                  exercise: state
-                                                      .unsavedExercises[index],
-                                                );
+                                                final model = state
+                                                    .unsavedExercises[index];
+                                                late final Widget renderWidget;
+                                                switch (model.runtimeType) {
+                                                  case == Exercise:
+                                                    model as Exercise;
+                                                    renderWidget = ExerciseListElement(
+                                                      isSupersetMode:
+                                                          isSupersetMode,
+                                                      isNewWorkout: true,
+                                                      exercise: model,
+                                                      onTap: () {
+                                                        !supersetExercises
+                                                                    .contains(
+                                                                      model,
+                                                                    ) &&
+                                                                isSupersetMode
+                                                            ? supersetExercises
+                                                                  .add(
+                                                                    model,
+                                                                  )
+                                                            : supersetExercises
+                                                                  .remove(
+                                                                    model,
+                                                                  );
+                                                        setState(() {});
+                                                      },
+                                                    );
+                                                  case == Superset:
+                                                    model as Superset;
+                                                    renderWidget =
+                                                        SupersetListElement(
+                                                          superset: model,
+                                                          isSupersetMode: false,
+                                                          width: width * .9,
+                                                        );
+                                                }
+                                                return renderWidget;
                                               },
                                             ),
                                           ),
@@ -135,11 +172,20 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                                                 width: width * 0.12,
                                                 height: width * 0.12,
                                                 padding: .only(right: 4),
-                                                onPressed: () {},
-                                                backgrounColor:
-                                                    Colors.blueGrey.shade100,
+                                                onPressed: () {
+                                                  setState(() {
+                                                    isSupersetMode =
+                                                        !isSupersetMode;
+                                                  });
+                                                },
+                                                backgrounColor: isSupersetMode
+                                                    ? Colors.yellowAccent
+                                                    : Colors.blueGrey.shade100,
                                                 child: Image.asset(
                                                   'lib/utils/icons/power.png',
+                                                  color: isSupersetMode
+                                                      ? Colors.redAccent
+                                                      : null,
                                                 ),
                                               )
                                             : SizedBox(),
@@ -189,18 +235,38 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                                       backgrounColor: Colors.blueGrey.shade100,
                                       padding: .all(8),
                                       onPressed: () {
+                                        if (!isSupersetMode &&
+                                            supersetExercises.length < 2) {
+                                          context.read<NotebookBloc>().add(
+                                            NotebookEntityCreated(
+                                              name: nameController.text,
+                                              key: DataBoxKeys.workouts,
+                                            ),
+                                          );
+                                          context.goNamed(
+                                            RouterNames.workout.name,
+                                          );
+                                        }
                                         context.read<NotebookBloc>().add(
-                                          NotebookEntityCreated(
-                                            name: nameController.text,
-                                            key: DataBoxKeys.workouts,
+                                          NotebookSupersetCreated(
+                                            exercises: supersetExercises,
+                                            firstExerciseIdx: state
+                                                .unsavedExercises
+                                                .indexOf(
+                                                  supersetExercises[0],
+                                                ),
                                           ),
                                         );
-                                        context.goNamed(RouterNames.workout.name);
                                       },
                                       child: Text(
-                                        AppLocalizations.of(
-                                          context,
-                                        )!.button_create_workout,
+                                        isSupersetMode &&
+                                                supersetExercises.length >= 2
+                                            ? AppLocalizations.of(
+                                                context,
+                                              )!.button_create_superset
+                                            : AppLocalizations.of(
+                                                context,
+                                              )!.button_create_workout,
                                         style: TextStyle(fontSize: 20),
                                         textAlign: .center,
                                       ),

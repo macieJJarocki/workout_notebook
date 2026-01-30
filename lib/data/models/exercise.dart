@@ -1,19 +1,16 @@
 import 'package:workout_notebook/data/models/model.dart';
 
 class Exercise extends Model {
-  Exercise({
-    required this.uuid,
-    required this.name,
+  Exercise(
+    String? comment, {
+    required super.uuid,
+    required super.name,
     required this.isCompleted,
     this.weight,
     this.repetitions,
     this.sets,
-    this.comment,
-  }) : super(uuid, comment, name);
+  });
 
-  final String uuid;
-  final String? comment;
-  final String name;
   final bool isCompleted;
   final double? weight;
   final int? repetitions;
@@ -21,6 +18,7 @@ class Exercise extends Model {
 
   factory Exercise.fromMap(Map<String, dynamic> map) {
     return Exercise(
+      map['comment'],
       uuid: map['uuid'],
       isCompleted: map['isCompleted'],
       name: map['name'],
@@ -44,24 +42,26 @@ class Exercise extends Model {
 
   @override
   Exercise copyWith({
-    bool? isCompleted,
     String? name,
     double? weight,
     int? repetitions,
     int? sets,
+    bool? isCompleted,
+    String? comment,
   }) {
     return Exercise(
+      comment ?? this.comment,
       uuid: uuid,
-      isCompleted: isCompleted ?? this.isCompleted,
       name: name ?? this.name,
       weight: weight ?? this.weight,
       repetitions: repetitions ?? this.repetitions,
       sets: sets ?? this.sets,
+      isCompleted: isCompleted ?? this.isCompleted,
     );
   }
 
   @override
   String toString() {
-    return toMap().toString();
+    return 'Exercise: ${toMap().toString()}';
   }
 }

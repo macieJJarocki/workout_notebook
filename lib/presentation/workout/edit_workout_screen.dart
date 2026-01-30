@@ -9,12 +9,11 @@ import 'package:workout_notebook/utils/widgets/app_snack_bar.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_list_element.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
-import 'package:workout_notebook/utils/consts.dart';
 import 'package:workout_notebook/utils/enums/router_names.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
 
-class EditWorkoutScreen extends StatelessWidget {
-  EditWorkoutScreen({
+class EditWorkoutScreen extends StatefulWidget {
+  const EditWorkoutScreen({
     super.key,
     required this.uuid,
     required this.date,
@@ -22,7 +21,15 @@ class EditWorkoutScreen extends StatelessWidget {
 
   final String uuid;
   final DateTime date;
+
+  @override
+  State<EditWorkoutScreen> createState() => _EditWorkoutScreenState();
+}
+
+class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
   late Workout workout;
+
+  bool isSupersetMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +57,10 @@ class EditWorkoutScreen extends StatelessWidget {
             child: BlocBuilder<NotebookBloc, NotebookState>(
               builder: (context, state) {
                 if (state is NotebookSuccess) {
-                  workout = state.workoutsAssigned[date.toString()]!.firstWhere(
-                    (e) => e.uuid == uuid,
-                  );
+                  workout = state.workoutsAssigned[widget.date.toString()]!
+                      .firstWhere(
+                        (e) => e.uuid == widget.uuid,
+                      );
                   return Column(
                     mainAxisAlignment: .spaceBetween,
                     children: [
@@ -60,7 +68,6 @@ class EditWorkoutScreen extends StatelessWidget {
                         workout.name,
                         style: TextStyle(fontSize: 20),
                       ),
-
                       Expanded(
                         child: Padding(
                           padding: .all(4),
@@ -75,10 +82,13 @@ class EditWorkoutScreen extends StatelessWidget {
                                       workout.exercises.length,
                                       (int index) {
                                         return ExerciseListElement(
+                                          isSupersetMode: isSupersetMode,
                                           isNewWorkout: false,
-                                          exercise: workout.exercises[index],
+                                          exercise:
+                                              (workout.exercises
+                                                  as List<Exercise>)[index],
                                           workout: workout,
-                                          date: date,
+                                          date: widget.date,
                                           index: index,
                                         );
                                       },
@@ -95,7 +105,12 @@ class EditWorkoutScreen extends StatelessWidget {
                                               width: width * 0.12,
                                               height: width * 0.12,
                                               padding: .only(right: 4),
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                setState(() {
+                                                  isSupersetMode =
+                                                      !isSupersetMode;
+                                                });
+                                              },
                                               backgrounColor:
                                                   Colors.blueGrey.shade100,
                                               child: Image.asset(
@@ -119,7 +134,7 @@ class EditWorkoutScreen extends StatelessWidget {
                                               return ExerciseFormDailog(
                                                 isNewExercise: true,
                                                 workout: workout,
-                                                date: date,
+                                                date: widget.date,
                                                 title: AppLocalizations.of(
                                                   context,
                                                 )!.dailog_create_exercise,
@@ -146,10 +161,12 @@ class EditWorkoutScreen extends StatelessWidget {
                         backgrounColor: Colors.blueGrey.shade100,
                         padding: .all(8),
                         onPressed: () {
-                          _workoutCanEditOrStart(workout.exercises)
+                          _workoutCanEditOrStart(
+                                workout.exercises as List<Exercise>,
+                              )
                               ? context.goNamed(
                                   RouterNames.active.name,
-                                  extra: [workout.uuid, date],
+                                  extra: [workout.uuid, widget.date],
                                 )
                               : ScaffoldMessenger.of(context).showSnackBar(
                                   AppSnackBar.build(

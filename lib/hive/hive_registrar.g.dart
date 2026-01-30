@@ -8,6 +8,7 @@ import 'package:workout_notebook/hive/hive_adapters.dart';
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
     registerAdapter(ExerciseAdapter());
+    registerAdapter(SupersetAdapter());
     registerAdapter(WorkoutAdapter());
   }
 }
@@ -15,6 +16,7 @@ extension HiveRegistrar on HiveInterface {
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
     registerAdapter(ExerciseAdapter());
+    registerAdapter(SupersetAdapter());
     registerAdapter(WorkoutAdapter());
   }
 }

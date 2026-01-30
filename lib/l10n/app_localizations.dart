@@ -275,6 +275,12 @@ abstract class AppLocalizations {
   /// **'Create workout'**
   String get button_create_workout;
 
+  /// No description provided for @button_create_superset.
+  ///
+  /// In en, this message translates to:
+  /// **'Create superset'**
+  String get button_create_superset;
+
   /// No description provided for @snack_bar_assign_workout.
   ///
   /// In en, this message translates to:

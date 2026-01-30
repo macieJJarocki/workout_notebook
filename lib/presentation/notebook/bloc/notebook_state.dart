@@ -10,7 +10,7 @@ final class NotebookSuccess extends NotebookState {
   final List<Workout> savedWorkouts;
   final String unsavedWorkoutName;
   final List<String> savedExercisesNames;
-  final List<Exercise> unsavedExercises;
+  final List<Model> unsavedExercises;
   final Map<String, List<Workout>> workoutsAssigned;
 
   NotebookSuccess({
@@ -25,7 +25,7 @@ final class NotebookSuccess extends NotebookState {
     List<Workout>? savedWorkouts,
     String? unsavedWorkoutName,
     List<String>? savedExercisesNames,
-    List<Exercise>? unsavedExercises,
+    List<Model>? unsavedExercises,
     Map<String, List<Workout>>? workoutsAssigned,
   }) {
     return NotebookSuccess(

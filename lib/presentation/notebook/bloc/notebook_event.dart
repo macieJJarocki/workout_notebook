@@ -28,6 +28,15 @@ class NotebookEntityCreated extends NotebookEvent {
   final DateTime? date;
 }
 
+class NotebookSupersetCreated extends NotebookEvent {
+  NotebookSupersetCreated({
+    required this.exercises,
+    required this.firstExerciseIdx,
+  });
+  final List<Exercise> exercises;
+  final int firstExerciseIdx;
+}
+
 class NotebookEntityEdited extends NotebookEvent {
   NotebookEntityEdited({required this.model, this.exerciseIdx, this.date});
 

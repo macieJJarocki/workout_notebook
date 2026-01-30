@@ -99,6 +99,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get button_create_workout => 'Create workout';
 
   @override
+  String get button_create_superset => 'Create superset';
+
+  @override
   String get snack_bar_assign_workout => 'Assign workout!';
 
   @override

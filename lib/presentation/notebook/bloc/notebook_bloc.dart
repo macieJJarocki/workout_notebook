@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/data/models/model.dart';
+import 'package:workout_notebook/data/models/superset.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/data/repository/local_db_repository.dart';
 import 'package:workout_notebook/utils/enums/hive_enums.dart';
@@ -21,6 +22,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     on<NotebookEntityCreated>(_onNotebookEntityCreated);
     on<NotebookEntityEdited>(_onNotebookEdited);
     on<NotebookEntityDeleted>(_onNotebookEntityDeleted);
+    on<NotebookSupersetCreated>(_onNotebookSupersetCreated);
   }
 
   // TODO refactor NotebookBloc to unify method for DateBoxKeys !!!!!!!!!!!!
@@ -30,6 +32,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     Emitter<NotebookState> emit,
   ) async {
     try {
+      // TODO emit initial state
       final exerciseData = await _repository.read(DataBoxKeys.exercises);
       final workoutData = await _repository.read(DataBoxKeys.workouts);
       final otherData = await _repository.read(DataBoxKeys.other);
@@ -41,7 +44,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
           unsavedWorkoutName: workoutData[AppWorkoutKeys.unsaved.name],
           savedExercisesNames:
               exerciseData[AppWorkoutKeys.saved.name] as List<String>,
-          unsavedExercises: List<Exercise>.from(
+          unsavedExercises: List<Model>.from(
             exerciseData[AppWorkoutKeys.unsaved.name],
           ),
           workoutsAssigned: Map<String, dynamic>.from(
@@ -70,6 +73,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
         case DataBoxKeys.exercises:
           // Exercises
           model = Exercise(
+            null,
             uuid: _getUuid(),
             name: event.name,
             isCompleted: false,
@@ -95,11 +99,11 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
         case DataBoxKeys.workouts:
           // Workouts
           model = Workout(
+            null,
             uuid: _getUuid(),
             name: event.name,
             exercises: notebookState.unsavedExercises,
             isCompleted: false,
-            assignedDates: [],
           );
           notebookState.savedWorkouts.add(model as Workout);
           list = notebookState.savedWorkouts;
@@ -161,6 +165,41 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
           AppWorkoutKeys.unsaved.name: notebookState.unsavedExercises,
         });
       }
+      emit(notebookState);
+    } catch (e) {
+      emit(NotebookFailure(e.toString()));
+    }
+  }
+
+  void _onNotebookSupersetCreated(
+    NotebookSupersetCreated event,
+    Emitter<NotebookState> emit,
+  ) async {
+    try {
+      var notebookState = state as NotebookSuccess;
+      emit(NotebookLoading());
+      final superset = Superset(
+        null,
+        uuid: _getUuid(),
+        name:
+            'superset #${notebookState.unsavedExercises.whereType<List>().length.toString()}',
+        exercises: event.exercises,
+      );
+      final exercises = List<Model>.from(
+        notebookState.unsavedExercises.map((e) {
+          return !event.exercises.contains(e) ? e : null;
+        }).whereType<Exercise>(),
+      );
+      exercises.insert(event.firstExerciseIdx, superset);
+      // print(exercises);
+      print(notebookState.unsavedExercises);
+      notebookState = notebookState.copyWith(unsavedExercises: exercises);
+      print(notebookState.unsavedExercises);
+
+      await _repository.write(DataBoxKeys.exercises, {
+        AppWorkoutKeys.saved.name: notebookState.savedExercisesNames,
+        AppWorkoutKeys.unsaved.name: notebookState.unsavedExercises,
+      });
       emit(notebookState);
     } catch (e) {
       emit(NotebookFailure(e.toString()));
@@ -322,6 +361,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
       final notebookState = state as NotebookSuccess;
 
       final newExercise = Exercise(
+        null,
         uuid: _getUuid(),
         name: event.name,
         weight: double.tryParse(event.weight),

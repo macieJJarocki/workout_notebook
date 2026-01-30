@@ -1,5 +1,9 @@
 abstract class Model {
-  Model(this.uuid, this.comment, this.name);
+  Model({
+    required this.uuid,
+    required this.name,
+    this.comment,
+  });
 
   final String uuid;
   final String name;

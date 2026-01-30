@@ -46,6 +46,7 @@ class _AppOneFieldDailogState extends State<AppOneFieldDailog> {
       content: Column(
         mainAxisSize: .min,
         children: [
+          // TODO field is not validated right now i can be assigned with empty field value
           AppFormField(
             name: AppLocalizations.of(context)!.string_name,
             validator: AppFormValidator.validateNameField,

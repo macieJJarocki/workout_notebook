@@ -1,5 +1,6 @@
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
+import 'package:workout_notebook/data/models/model.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/utils/enums/hive_enums.dart';
 import 'package:workout_notebook/utils/exceptions.dart';
@@ -47,7 +48,7 @@ class LocalDBService {
     },
     DataBoxKeys.exercises.name: {
       AppWorkoutKeys.saved.name: <String>[],
-      AppWorkoutKeys.unsaved.name: <Exercise>[],
+      AppWorkoutKeys.unsaved.name: <Model>[],
     },
     DataBoxKeys.other.name: {
       AppOtherKeys.dateWorkoutsAsssigned.name: <String, List<Workout>>{},

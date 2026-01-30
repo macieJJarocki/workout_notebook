@@ -30,6 +30,7 @@
     "button_start_workout": "Start workout",
     "button_create": "Create",
     "button_create_workout": "Create workout",
+    "button_create_superset": "Create superset",
     "snack_bar_assign_workout": "Assign workout!",
     "snack_bar_empty_exercise": "Before you start training, fill in the missing exercise data. "
 }
