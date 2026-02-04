@@ -93,9 +93,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
             AppWorkoutKeys.saved.name: notebookState.savedExercisesNames,
             AppWorkoutKeys.unsaved.name: list,
           };
-          notebookState.copyWith(
-            unsavedExercises: List<Exercise>.from(list),
-          );
+          notebookState.copyWith(unsavedExercises: []);
         case DataBoxKeys.workouts:
           // Workouts
           model = Workout(
@@ -157,9 +155,10 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
           notebookState.copyWith(workoutsAssigned: workoutsAssigned);
       }
       await _repository.write(event.key, payload);
-      if (event.key == DataBoxKeys.workouts && event.date != null) {
-        // [&& event.date != null] avoid unnecessary db call during the "WorkoutAssigned'' case
+      if (event.key == DataBoxKeys.workouts) {
+        // if (event.key == DataBoxKeys.workouts && event.date != null) {
         // Saved exercises names
+        // [&& event.date != null] avoid unnecessary db call during the "WorkoutAssigned'' case
         await _repository.write(DataBoxKeys.exercises, {
           AppWorkoutKeys.saved.name: notebookState.savedExercisesNames,
           AppWorkoutKeys.unsaved.name: notebookState.unsavedExercises,
@@ -183,7 +182,16 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
         uuid: _getUuid(),
         name:
             'superset #${notebookState.unsavedExercises.whereType<List>().length.toString()}',
-        exercises: event.exercises,
+        exercises: event.exercises.fold(
+          <Exercise>[],
+          (previousValue, element) {
+            if (element is Superset) {
+              return [...previousValue, ...element.exercises];
+            } else {
+              return [...previousValue, element as Exercise];
+            }
+          },
+        ),
       );
       final exercises = List<Model>.from(
         notebookState.unsavedExercises.map((e) {
@@ -191,10 +199,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
         }).whereType<Exercise>(),
       );
       exercises.insert(event.firstExerciseIdx, superset);
-      // print(exercises);
-      print(notebookState.unsavedExercises);
       notebookState = notebookState.copyWith(unsavedExercises: exercises);
-      print(notebookState.unsavedExercises);
 
       await _repository.write(DataBoxKeys.exercises, {
         AppWorkoutKeys.saved.name: notebookState.savedExercisesNames,

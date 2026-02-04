@@ -13,13 +13,14 @@ import 'package:workout_notebook/utils/widgets/app_dailog.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
 
 class ExerciseListElement extends StatefulWidget {
-  const ExerciseListElement({
+  ExerciseListElement({
     super.key,
     this.workout,
     this.date,
     this.index,
     this.menuItems,
-    this.onTap,
+    this.isSupersetElement = false,
+    required this.onTap,
     required this.exercise,
     required this.isNewWorkout,
     required this.isSupersetMode,
@@ -31,15 +32,14 @@ class ExerciseListElement extends StatefulWidget {
   final int? index;
   final List<PopupMenuItem>? menuItems;
   final bool isSupersetMode;
-  final void Function()? onTap;
+  final void Function() onTap;
+  bool isSupersetElement;
 
   @override
   State<ExerciseListElement> createState() => _ExerciseListElementState();
 }
 
 class _ExerciseListElementState extends State<ExerciseListElement> {
-  bool isSupersetElement = false;
-
   @override
   Widget build(BuildContext context) {
     final width = AppTheme.deviceWidth(context);
@@ -133,16 +133,16 @@ class _ExerciseListElementState extends State<ExerciseListElement> {
         if (state is NotebookSuccess) {
           return GestureDetector(
             onTap: () {
-              widget.isSupersetMode
-                  ? setState(() {
-                      isSupersetElement = !isSupersetElement;
-                    })
-                  : null;
-              widget.onTap != null ? widget.onTap!() : null;
+              if (widget.isSupersetMode) {
+                setState(() {
+                  widget.isSupersetElement = !widget.isSupersetElement;
+                });
+                widget.onTap();
+              }
             },
             child: Card(
               color: _getExerciseColor(
-                isSupersetElement,
+                widget.isSupersetElement,
                 widget.exercise.isCompleted,
               ),
               child: ListTile(
@@ -188,36 +188,40 @@ class _ExerciseListElementState extends State<ExerciseListElement> {
                     ),
                   ],
                 ),
-                subtitle: Row(
-                  mainAxisAlignment: .spaceBetween,
+                subtitle: Column(
+                  // TODO remove column
                   children: [
-                    ExerciseDataElement(
-                      fieldName: AppLocalizations.of(
-                        context,
-                      )!.string_weight,
-                      fieldValue: widget.exercise.weight,
-                      iconPath: 'lib/utils/icons/weight1.png',
-                      isNewWorkout: widget.isNewWorkout,
-                      color: Colors.blueGrey.shade100,
+                    Row(
+                      mainAxisAlignment: .spaceBetween,
+                      children: [
+                        ExerciseDataElement(
+                          fieldName: AppLocalizations.of(
+                            context,
+                          )!.string_weight,
+                          fieldValue: widget.exercise.weight,
+                          iconPath: 'lib/utils/icons/weight1.png',
+                          isNewWorkout: widget.isNewWorkout,
+                          color: Colors.blueGrey.shade100,
+                        ),
+                        ExerciseDataElement(
+                          fieldName: AppLocalizations.of(
+                            context,
+                          )!.string_repetitions,
+                          fieldValue: widget.exercise.repetitions,
+                          iconPath: 'lib/utils/icons/rep2.png',
+                          isNewWorkout: widget.isNewWorkout,
+                          color: Colors.blueGrey.shade100,
+                        ),
+                        ExerciseDataElement(
+                          fieldName: AppLocalizations.of(context)!.string_sets,
+                          fieldValue: widget.exercise.sets,
+                          iconPath: 'lib/utils/icons/sets.png',
+                          isNewWorkout: widget.isNewWorkout,
+                          color: Colors.blueGrey.shade100,
+                        ),
+                      ],
                     ),
-                    ExerciseDataElement(
-                      fieldName: AppLocalizations.of(
-                        context,
-                      )!.string_repetitions,
-                      fieldValue: widget.exercise.repetitions,
-                      iconPath: 'lib/utils/icons/rep2.png',
-                      isNewWorkout: widget.isNewWorkout,
-                      color: Colors.blueGrey.shade100,
-                    ),
-                    ExerciseDataElement(
-                      fieldName: AppLocalizations.of(
-                        context,
-                      )!.string_sets,
-                      fieldValue: widget.exercise.sets,
-                      iconPath: 'lib/utils/icons/sets.png',
-                      isNewWorkout: widget.isNewWorkout,
-                      color: Colors.blueGrey.shade100,
-                    ),
+                    Text(widget.isSupersetElement.toString()),
                   ],
                 ),
               ),
@@ -238,6 +242,7 @@ class _ExerciseListElementState extends State<ExerciseListElement> {
   }
 }
 
+// TODO extract this as helper function
 Color _getExerciseColor(bool isSupersetElement, bool isExerciseCompleted) {
   final Color color;
   if (isSupersetElement) {

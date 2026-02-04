@@ -33,7 +33,7 @@ class NotebookSupersetCreated extends NotebookEvent {
     required this.exercises,
     required this.firstExerciseIdx,
   });
-  final List<Exercise> exercises;
+  final List<Model> exercises;
   final int firstExerciseIdx;
 }
 

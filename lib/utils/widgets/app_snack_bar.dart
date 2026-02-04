@@ -10,8 +10,8 @@ class AppSnackBar {
         style: TextStyle(fontSize: 20, fontWeight: .bold, color: Colors.black),
         textAlign: .center,
       ),
-      backgroundColor: Colors.white,
       duration: snackBarDuration,
+      backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         side: BorderSide(
           color: Colors.black,
