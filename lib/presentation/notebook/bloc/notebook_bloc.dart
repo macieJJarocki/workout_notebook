@@ -20,11 +20,10 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     on<NotebookWorkoutNameRequested>(_onNotebookWorkoutNameRequested);
     on<NotebookPlanExerciseAdded>(_onNotebookPlanExerciseAdded);
     on<NotebookEntityCreated>(_onNotebookEntityCreated);
-    on<NotebookEntityEdited>(_onNotebookEdited);
+    on<NotebookEntityEdited>(_onNotebookEntityEdited);
     on<NotebookEntityDeleted>(_onNotebookEntityDeleted);
     on<NotebookSupersetCreated>(_onNotebookSupersetCreated);
   }
-
   // TODO refactor NotebookBloc to unify method for DateBoxKeys !!!!!!!!!!!!
 
   void _onNotebookDataRequested(
@@ -32,7 +31,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     Emitter<NotebookState> emit,
   ) async {
     try {
-      // TODO emit initial state
+      emit(NotebookLoading());
       final exerciseData = await _repository.read(DataBoxKeys.exercises);
       final workoutData = await _repository.read(DataBoxKeys.workouts);
       final otherData = await _repository.read(DataBoxKeys.other);
@@ -129,26 +128,24 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
           );
 
         case DataBoxKeys.other:
+          final String date = event.date.toString();
           final Map<String, List<Workout>> workoutsAssigned =
               notebookState.workoutsAssigned;
-          var workout = event.workout;
-          final String date = event.date.toString();
+          final workout = event.workout!.copyWith(
+            exercises: [...event.workout!.exercises],
+          );
 
           if (!workoutsAssigned.containsKey(date)) {
-            workout = workout!.copyWith(uuid: _getUuid());
             workoutsAssigned[date] = [workout];
           } else {
-            //TODO It is necessary ??? right now there cant be duplicated workout in one day
             switch (workoutsAssigned[date]!.any(
-              (element) => element.name == event.workout!.name,
+              (element) => element.name == workout.name,
             )) {
               case false:
-                workout = workout!.copyWith(uuid: _getUuid());
                 workoutsAssigned[date]!.add(workout);
               case true:
             }
           }
-
           payload = {
             AppOtherKeys.dateWorkoutsAsssigned.name: workoutsAssigned,
           };
@@ -181,24 +178,27 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
         null,
         uuid: _getUuid(),
         name:
-            'superset #${notebookState.unsavedExercises.whereType<List>().length.toString()}',
-        exercises: event.exercises.fold(
-          <Exercise>[],
-          (previousValue, element) {
-            if (element is Superset) {
-              return [...previousValue, ...element.exercises];
-            } else {
-              return [...previousValue, element as Exercise];
-            }
-          },
-        ),
+            'superset #${(notebookState.unsavedExercises.whereType<List>().length + 1).toString()}',
+        exercises: event.supersetExercises.fold(<Exercise>[], (
+          previousValue,
+          element,
+        ) {
+          if (element is Superset) {
+            return [...previousValue, ...element.exercises];
+          } else {
+            return [...previousValue, element as Exercise];
+          }
+        }),
       );
       final exercises = List<Model>.from(
         notebookState.unsavedExercises.map((e) {
-          return !event.exercises.contains(e) ? e : null;
+          return !event.supersetExercises.contains(e) ? e : null;
         }).whereType<Exercise>(),
       );
-      exercises.insert(event.firstExerciseIdx, superset);
+      // TODO In supersetMode error occure when [Exercise] ia added before [Superset] into supersetExercises
+      // exercises.insert(event.supersetPosition, superset);
+      exercises.add(superset);
+
       notebookState = notebookState.copyWith(unsavedExercises: exercises);
 
       await _repository.write(DataBoxKeys.exercises, {
@@ -211,7 +211,7 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     }
   }
 
-  void _onNotebookEdited(
+  void _onNotebookEntityEdited(
     NotebookEntityEdited event,
     Emitter<NotebookState> emit,
   ) async {
@@ -260,8 +260,9 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
       }
       list.removeAt(idx);
       // WorkoutAssigned exercises
-      if (event.exerciseIdx != null) {
-        (event.model as Workout).exercises.removeAt(event.exerciseIdx!);
+      // TODO ??????????? duplicated delete logic
+      if (event.modelExercisesIdx != null) {
+        (event.model as Workout).exercises.removeAt(event.modelExercisesIdx!);
       }
       list.insert(idx, event.model);
 
@@ -311,27 +312,58 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
                   notebookState.workoutsAssigned,
             };
           }
-        case == Exercise:
-          // Exercises
-          list = notebookState.unsavedExercises;
-          key = DataBoxKeys.exercises;
-          idx = _getElementPosition(list, event.model);
-          payload = {
-            AppWorkoutKeys.saved.name: notebookState.savedExercisesNames,
-            AppWorkoutKeys.unsaved.name: list,
-          };
-
-          notebookState.copyWith(unsavedExercises: list as List<Exercise>);
+        default:
+          // Exercise and Superset
+          if (event.date == null) {
+            // CreateWorkoutScreeen
+            key = DataBoxKeys.exercises;
+            if (event.supersetExerciseIdx is int) {
+              list = (event.model as Superset).exercises;
+              idx = event.supersetExerciseIdx!;
+              payload = {
+                AppWorkoutKeys.saved.name: notebookState.savedExercisesNames,
+                AppWorkoutKeys.unsaved.name: list,
+              };
+            } else {
+              list = notebookState.unsavedExercises;
+              idx = _getElementPosition(list, event.model);
+              payload = {
+                AppWorkoutKeys.saved.name: notebookState.savedExercisesNames,
+                AppWorkoutKeys.unsaved.name: list,
+              };
+            }
+            notebookState.copyWith(unsavedExercises: list);
+          } else {
+            // EditWorkoutScreeen
+            final String dateAsString = event.date!.toString();
+            key = DataBoxKeys.other;
+            final workoutsList = notebookState.workoutsAssigned[dateAsString];
+            final workoutIdx = _getElementPosition(
+              workoutsList!,
+              event.workout!,
+            );
+            if (event.supersetExerciseIdx is int) {
+              // Remove [Exercise] from [Superset] exercises to assigned [WorkoutAssigned]
+              list = (event.model as Superset).exercises;
+              idx = event.supersetExerciseIdx!;
+            } else {
+              // Remove [Exercise] or [Superset] from [WorkoutAssigned] exeercises
+              list = workoutsList[workoutIdx].exercises;
+              idx = event.modelExerciseIdx!;
+            }
+            payload = {
+              AppOtherKeys.dateWorkoutsAsssigned.name:
+                  notebookState.workoutsAssigned,
+            };
+            workoutsList[workoutIdx].copyWith(exercises: list);
+          }
       }
-
       list.removeAt(idx);
-      if (event.date != null) {
-        notebookState.workoutsAssigned[event.date.toString()] =
-            list as List<Workout>;
-        if (list.isEmpty) {
-          // Remove key[date] if list of the assigned workouts is empty
-          notebookState.workoutsAssigned.remove(event.date.toString());
-        }
+      if (event.date != null && event.model is Workout) {
+        // Remove key[date] if list of the assigned workouts is empty
+        list.isEmpty
+            ? notebookState.workoutsAssigned.remove(event.date.toString())
+            : null;
       }
       await _repository.write(key, payload);
       emit(notebookState);

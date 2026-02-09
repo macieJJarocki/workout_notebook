@@ -6,6 +6,7 @@ import 'package:workout_notebook/data/models/model.dart';
 import 'package:workout_notebook/data/models/superset.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
+import 'package:workout_notebook/presentation/workout/widgets/superset_list_element.dart';
 import 'package:workout_notebook/utils/app_form_validator.dart';
 import 'package:workout_notebook/utils/enums/hive_enums.dart';
 import 'package:workout_notebook/utils/widgets/app_form_field.dart';
@@ -28,7 +29,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
   final TextEditingController nameController = TextEditingController();
   final FocusNode nameFocusNode = FocusNode();
   final FocusNode exerciseNameFocusNode = FocusNode();
-  final List<Model> supersetExercises = [];
+  List<Model> supersetExercises = [];
 
   @override
   void dispose() {
@@ -97,6 +98,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                           padding: .symmetric(horizontal: 8),
                           backgroundColor: Colors.blueGrey.shade100,
                         ),
+                        // Text(supersetExercises.toString()),
                         Expanded(
                           child: Padding(
                             padding: .all(4),
@@ -120,13 +122,13 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                                                   case == Exercise:
                                                     model as Exercise;
                                                     renderWidget = ExerciseListElement(
+                                                      exercise: model,
                                                       isSupersetMode:
                                                           isSupersetMode,
                                                       isNewWorkout: true,
                                                       isSupersetElement:
                                                           supersetExercises
                                                               .contains(model),
-                                                      exercise: model,
                                                       onTap: () {
                                                         !supersetExercises
                                                                     .contains(
@@ -158,48 +160,35 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                                                           supersetExercises
                                                               .remove(model);
                                                         }
+                                                        setState(() {});
                                                       },
-                                                      child: Card(
-                                                        color:
+                                                      child: SupersetListElement(
+                                                        superset: model,
+                                                        modelExerciseIdx: index,
+                                                        isSupersetMode:
+                                                            isSupersetMode,
+                                                        isNewWorkout: true,
+                                                        isSupersetElement:
                                                             supersetExercises
                                                                 .contains(
                                                                   model,
-                                                                )
-                                                            ? Colors.red
-                                                            : Colors.white,
-                                                        child: Column(
-                                                          children: model.exercises.map(
-                                                            (e) {
-                                                              return ExerciseListElement(
-                                                                exercise: e,
-                                                                isNewWorkout:
-                                                                    false,
-                                                                isSupersetMode:
-                                                                    isSupersetMode,
-                                                                isSupersetElement:
-                                                                    supersetExercises
-                                                                        .contains(
-                                                                          model,
-                                                                        ),
-                                                                onTap: () {
-                                                                  !supersetExercises.contains(
-                                                                            model,
-                                                                          ) &&
-                                                                          isSupersetMode
-                                                                      ? supersetExercises.add(
-                                                                          model,
-                                                                        )
-                                                                      : supersetExercises.remove(
-                                                                          model,
-                                                                        );
-                                                                  setState(
-                                                                    () {},
-                                                                  );
-                                                                },
-                                                              );
-                                                            },
-                                                          ).toList(),
-                                                        ),
+                                                                ),
+                                                        onTap: () {
+                                                          !supersetExercises
+                                                                      .contains(
+                                                                        model,
+                                                                      ) &&
+                                                                  isSupersetMode
+                                                              ? supersetExercises
+                                                                    .add(model)
+                                                              : supersetExercises
+                                                                    .remove(
+                                                                      model,
+                                                                    );
+                                                          setState(
+                                                            () {},
+                                                          );
+                                                        },
                                                       ),
                                                     );
                                                 }
@@ -226,9 +215,14 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                                                 height: width * 0.12,
                                                 padding: .only(right: 4),
                                                 onPressed: () {
+                                                  // Reset models assigned as potencial Supereset exercises
                                                   setState(() {
                                                     isSupersetMode =
                                                         !isSupersetMode;
+                                                    if (isSupersetMode ==
+                                                        false) {
+                                                      supersetExercises = [];
+                                                    }
                                                   });
                                                 },
                                                 backgrounColor: isSupersetMode
@@ -292,14 +286,21 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                                             supersetExercises.length >= 2) {
                                           context.read<NotebookBloc>().add(
                                             NotebookSupersetCreated(
-                                              exercises: supersetExercises,
-                                              firstExerciseIdx: state
+                                              supersetExercises:
+                                                  // Check position of the first exercise stored in supersetExercises
+                                                  // TODO In supersetMode error occure when [Exercise] ia added before [Superset] into supersetExercises
+                                                  supersetExercises,
+                                              supersetPosition: state
                                                   .unsavedExercises
                                                   .indexOf(
-                                                    supersetExercises[0],
+                                                    supersetExercises.first,
                                                   ),
                                             ),
                                           );
+                                          setState(() {
+                                            supersetExercises = [];
+                                            isSupersetMode = !isSupersetMode;
+                                          });
                                         } else {
                                           context.read<NotebookBloc>().add(
                                             NotebookEntityCreated(
@@ -344,14 +345,13 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                     child: Column(
                       mainAxisAlignment: .spaceAround,
                       children: [
-                        Text(state.unsavedExercises.toString()),
-                        // Text(
-                        //   AppLocalizations.of(
-                        //     context,
-                        //   )!.string_dont_waste_time_etc,
-                        //   textAlign: .center,
-                        //   style: TextStyle(fontSize: 26, fontWeight: .bold),
-                        // ),
+                        Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.string_dont_waste_time_etc,
+                          textAlign: .center,
+                          style: TextStyle(fontSize: 26, fontWeight: .bold),
+                        ),
                         AppOutlinedButton(
                           backgrounColor: Colors.blueGrey.shade100,
                           padding: EdgeInsets.only(top: 8),

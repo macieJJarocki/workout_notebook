@@ -242,11 +242,11 @@ EdgeInsetsGeometry _getMargin(int index) {
   return .all(2);
 }
 
-Color _getColor(Map<String, List<Workout>> workoutAssigned, DateTime date) {
+Color _getColor(Map<String, List<Workout>> workoutsAssigned, DateTime date) {
   late Color color;
-  switch (workoutAssigned.containsKey(date.toString())) {
+  switch (workoutsAssigned.containsKey(date.toString())) {
     case true:
-      if ((workoutAssigned[date.toString()] as List<Workout>).every(
+      if ((workoutsAssigned[date.toString()] as List<Workout>).every(
         (e) => e.isCompleted,
       )) {
         color = Colors.green;

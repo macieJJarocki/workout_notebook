@@ -30,26 +30,49 @@ class NotebookEntityCreated extends NotebookEvent {
 
 class NotebookSupersetCreated extends NotebookEvent {
   NotebookSupersetCreated({
-    required this.exercises,
-    required this.firstExerciseIdx,
+    required this.supersetExercises,
+    required this.supersetPosition,
+    this.date,
+    this.workout,
   });
-  final List<Model> exercises;
-  final int firstExerciseIdx;
+
+  final List<Model> supersetExercises;
+  final DateTime? date;
+  // TODO change name supersetPosition
+  final int supersetPosition;
+  final Workout? workout;
 }
 
 class NotebookEntityEdited extends NotebookEvent {
-  NotebookEntityEdited({required this.model, this.exerciseIdx, this.date});
+  NotebookEntityEdited({
+    required this.model,
+    this.date,
+    // TODO check if modelExercisesIdx is necessary, there is method to check index.
+    this.modelExercisesIdx,
+    this.supersetExerciseIdx,
+  });
 
   final Model model;
   final DateTime? date;
-  final int? exerciseIdx;
+  final int? modelExercisesIdx;
+  final int? supersetExerciseIdx;
 }
 
 class NotebookEntityDeleted extends NotebookEvent {
-  NotebookEntityDeleted({required this.model, this.date});
+  NotebookEntityDeleted({
+    required this.model,
+    this.date,
+    this.workout,
+    // TODO check if modelExercisesIdx is necessary, there is method to check index.
+    this.modelExerciseIdx,
+    this.supersetExerciseIdx,
+  });
 
   final Model model;
+  final Workout? workout;
   final DateTime? date;
+  final int? modelExerciseIdx;
+  final int? supersetExerciseIdx;
 }
 
 class NotebookWorkoutNameRequested extends NotebookEvent {

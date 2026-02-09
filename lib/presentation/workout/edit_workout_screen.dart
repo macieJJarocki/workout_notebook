@@ -7,6 +7,7 @@ import 'package:workout_notebook/data/models/superset.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
+import 'package:workout_notebook/presentation/workout/widgets/superset_list_element.dart';
 import 'package:workout_notebook/utils/widgets/app_snack_bar.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_form_dailog.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_list_element.dart';
@@ -31,7 +32,7 @@ class EditWorkoutScreen extends StatefulWidget {
 class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
   late Workout workout;
   bool isSupersetMode = false;
-  final List<Model> supersetExercises = [];
+  List<Model> supersetExercises = [];
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +65,8 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
                   return Column(
                     mainAxisAlignment: .spaceBetween,
                     children: [
-                      Text(supersetExercises.toString()),
                       Text(workout.name, style: TextStyle(fontSize: 20)),
+
                       Expanded(
                         child: Padding(
                           padding: .all(4),
@@ -79,20 +80,22 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
                                     children: List.generate(
                                       workout.exercises.length,
                                       (int index) {
-                                        final model =
-                                            state.unsavedExercises[index];
+                                        final model = workout.exercises[index];
                                         late final Widget renderWidget;
                                         switch (model.runtimeType) {
                                           case == Exercise:
                                             model as Exercise;
                                             renderWidget = ExerciseListElement(
+                                              workout: workout,
+                                              exercise: model,
+                                              modelExerciseIdx: index,
+                                              date: widget.date,
                                               isSupersetMode: isSupersetMode,
                                               isNewWorkout: false,
                                               isSupersetElement:
                                                   supersetExercises.contains(
                                                     model,
                                                   ),
-                                              exercise: model,
                                               onTap: () {
                                                 if (!supersetExercises.contains(
                                                       model,
@@ -122,44 +125,29 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
                                                   );
                                                 }
                                               },
-                                              child: Card(
-                                                color:
+                                              child: SupersetListElement(
+                                                superset: model,
+                                                workout: workout,
+                                                date: widget.date,
+                                                modelExerciseIdx: index,
+                                                isSupersetMode: isSupersetMode,
+                                                isNewWorkout: true,
+                                                isSupersetElement:
                                                     supersetExercises.contains(
                                                       model,
-                                                    )
-                                                    ? Colors.orangeAccent
-                                                    : Colors.white,
-                                                child: Column(
-                                                  children: model.exercises.map(
-                                                    (e) {
-                                                      return ExerciseListElement(
-                                                        exercise: e,
-                                                        isNewWorkout: false,
-                                                        isSupersetMode:
-                                                            isSupersetMode,
-                                                        isSupersetElement:
-                                                            supersetExercises
-                                                                .contains(
-                                                                  model,
-                                                                ),
-                                                        onTap: () {
-                                                          !supersetExercises
-                                                                      .contains(
-                                                                        model,
-                                                                      ) &&
-                                                                  isSupersetMode
-                                                              ? supersetExercises
-                                                                    .add(model)
-                                                              : supersetExercises
-                                                                    .remove(
-                                                                      model,
-                                                                    );
-                                                          setState(() {});
-                                                        },
-                                                      );
-                                                    },
-                                                  ).toList(),
-                                                ),
+                                                    ),
+                                                onTap: () {
+                                                  !supersetExercises.contains(
+                                                            model,
+                                                          ) &&
+                                                          isSupersetMode
+                                                      ? supersetExercises.add(
+                                                          model,
+                                                        )
+                                                      : supersetExercises
+                                                            .remove(model);
+                                                  setState(() {});
+                                                },
                                               ),
                                             );
                                         }
@@ -179,9 +167,13 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
                                               height: width * 0.12,
                                               padding: .only(right: 4),
                                               onPressed: () {
+                                                // Reset models assigned as potencial Supereset exercises
                                                 setState(() {
                                                   isSupersetMode =
                                                       !isSupersetMode;
+                                                  if (isSupersetMode == false) {
+                                                    supersetExercises = [];
+                                                  }
                                                 });
                                               },
                                               backgrounColor: isSupersetMode
@@ -210,7 +202,7 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
                                             builder: (context) {
                                               return ExerciseFormDailog(
                                                 isNewExercise: true,
-                                                workout: workout,
+                                                model: workout,
                                                 date: widget.date,
                                                 title: AppLocalizations.of(
                                                   context,
@@ -233,28 +225,56 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
                           ),
                         ),
                       ),
-                      AppOutlinedButton(
-                        width: width * 0.8,
-                        backgrounColor: Colors.blueGrey.shade100,
-                        padding: .all(8),
-                        onPressed: () {
-                          _isWorkoutReadyToStart(workout.exercises)
-                              ? context.goNamed(
-                                  RouterNames.active.name,
-                                  extra: [workout.uuid, widget.date],
-                                )
-                              : ScaffoldMessenger.of(context).showSnackBar(
-                                  AppSnackBar.build(
-                                    message: AppLocalizations.of(
-                                      context,
-                                    )!.snack_bar_empty_exercise,
-                                  ),
-                                );
-                        },
-                        child: Text(
-                          AppLocalizations.of(context)!.button_start_workout,
-                          style: TextStyle(fontSize: 20, color: Colors.black),
-                          textAlign: .center,
+                      Align(
+                        alignment: .bottomCenter,
+                        child: AppOutlinedButton(
+                          width: width * 0.8,
+                          backgrounColor: Colors.blueGrey.shade100,
+                          padding: .all(8),
+                          onPressed: () {
+                            if (isSupersetMode &&
+                                supersetExercises.length >= 2) {
+                              context.read<NotebookBloc>().add(
+                                NotebookSupersetCreated(
+                                  supersetExercises: supersetExercises,
+                                  date: widget.date,
+                                  workout: workout,
+                                  // Check position of the first exercise stored in supersetExercises
+                                  // TODO In supersetMode error occure when [Exercise] ia added before [Superset] into supersetExercises
+                                  supersetPosition: state.unsavedExercises
+                                      .indexOf(supersetExercises.first),
+                                ),
+                              );
+                              setState(() {
+                                supersetExercises = [];
+                                isSupersetMode = !isSupersetMode;
+                              });
+                            } else {
+                              _isWorkoutReadyToStart(workout.exercises)
+                                  ? context.goNamed(
+                                      RouterNames.active.name,
+                                      extra: [workout.uuid, widget.date],
+                                    )
+                                  : ScaffoldMessenger.of(context).showSnackBar(
+                                      AppSnackBar.build(
+                                        message: AppLocalizations.of(
+                                          context,
+                                        )!.snack_bar_empty_exercise,
+                                      ),
+                                    );
+                            }
+                          },
+                          child: Text(
+                            isSupersetMode && supersetExercises.length >= 2
+                                ? AppLocalizations.of(
+                                    context,
+                                  )!.button_create_superset
+                                : AppLocalizations.of(
+                                    context,
+                                  )!.button_start_workout,
+                            style: TextStyle(fontSize: 20, color: Colors.black),
+                            textAlign: .center,
+                          ),
                         ),
                       ),
                     ],

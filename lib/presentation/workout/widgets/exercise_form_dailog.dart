@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
+import 'package:workout_notebook/data/models/model.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
@@ -13,14 +14,14 @@ class ExerciseFormDailog extends StatefulWidget {
   const ExerciseFormDailog({
     super.key,
     this.exercise,
-    this.workout,
+    this.model,
     this.date,
     required this.isNewExercise,
     required this.title,
   });
   final Exercise? exercise;
   final String title;
-  final Workout? workout;
+  final Model? model;
   final DateTime? date;
 
   final bool isNewExercise;
@@ -155,10 +156,11 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
           ),
           onPressed: () {
             if (_formKey.currentState!.validate()) {
+              final workout = (widget.model! as Workout);
               if (widget.isNewExercise) {
                 context.read<NotebookBloc>().add(
                   NotebookPlanExerciseAdded(
-                    workout: widget.workout!,
+                    workout: workout,
                     date: widget.date!,
                     name: nameController.text,
                     weight: weightController.text,
@@ -167,8 +169,7 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
                   ),
                 );
               } else {
-                final exercises = widget.workout!.exercises;
-                final editedExercises = exercises.map(
+                final editedExercises = workout.exercises.map(
                   (e) {
                     if (e.uuid == widget.exercise!.uuid) {
                       return widget.exercise!.copyWith(
@@ -184,9 +185,7 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
                 context.read<NotebookBloc>().add(
                   NotebookEntityEdited(
                     date: widget.date as DateTime,
-                    model: widget.workout!.copyWith(
-                      exercises: editedExercises,
-                    ),
+                    model: workout.copyWith(exercises: editedExercises),
                   ),
                 );
               }
