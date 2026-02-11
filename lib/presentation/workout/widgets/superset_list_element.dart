@@ -58,50 +58,7 @@ class _SupersetListElementState extends State<SupersetListElement> {
                 ),
               ),
               PopupMenuButton(
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    child: ListTile(
-                      title: Text(
-                        AppLocalizations.of(context)!.button_delete,
-                        textAlign: .center,
-                        style: TextStyle(fontSize: 18, color: Colors.red),
-                      ),
-                      contentPadding: .zero,
-                    ),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AppDailog(
-                          title: AppLocalizations.of(
-                            context,
-                          )!.dailog_delete_exercise,
-                          actions: [
-                            AppOutlinedButton(
-                              padding: EdgeInsetsGeometry.zero,
-                              backgrounColor: Colors.blueGrey.shade200,
-                              onPressed: () {
-                                context.read<NotebookBloc>().add(
-                                  NotebookEntityDeleted(
-                                    model: widget.superset,
-                                    date: widget.date,
-                                    workout: widget.workout,
-                                    modelExerciseIdx: widget.modelExerciseIdx,
-                                  ),
-                                );
-                                context.pop();
-                              },
-                              child: Text(
-                                AppLocalizations.of(context)!.button_delete,
-                                style: TextStyle(fontSize: 20),
-                                textAlign: .center,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                itemBuilder: (context) => _popupMenuItems(context),
               ),
             ],
           ),
@@ -132,4 +89,49 @@ class _SupersetListElementState extends State<SupersetListElement> {
       ),
     );
   }
+
+  List<PopupMenuItem> _popupMenuItems(BuildContext context) => [
+    PopupMenuItem(
+      child: ListTile(
+        title: Text(
+          AppLocalizations.of(context)!.button_delete,
+          textAlign: .center,
+          style: TextStyle(fontSize: 18, color: Colors.red),
+        ),
+        contentPadding: .zero,
+      ),
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => AppDailog(
+            title: AppLocalizations.of(
+              context,
+            )!.dailog_delete_exercise,
+            actions: [
+              AppOutlinedButton(
+                padding: EdgeInsetsGeometry.zero,
+                backgrounColor: Colors.blueGrey.shade200,
+                onPressed: () {
+                  context.read<NotebookBloc>().add(
+                    NotebookEntityDeleted(
+                      model: widget.superset,
+                      date: widget.date,
+                      workout: widget.workout,
+                      modelExerciseIdx: widget.modelExerciseIdx,
+                    ),
+                  );
+                  context.pop();
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.button_delete,
+                  style: TextStyle(fontSize: 20),
+                  textAlign: .center,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ),
+  ];
 }

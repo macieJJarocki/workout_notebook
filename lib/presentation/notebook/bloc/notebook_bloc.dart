@@ -172,39 +172,64 @@ class NotebookBloc extends Bloc<NotebookEvent, NotebookState> {
     Emitter<NotebookState> emit,
   ) async {
     try {
-      var notebookState = state as NotebookSuccess;
+      NotebookSuccess notebookState = state as NotebookSuccess;
+      late final DataBoxKeys key;
+      late final Map<String, dynamic> payload;
+      late final int idx;
       emit(NotebookLoading());
       final superset = Superset(
         null,
         uuid: _getUuid(),
         name:
-            'superset #${(notebookState.unsavedExercises.whereType<List>().length + 1).toString()}',
-        exercises: event.supersetExercises.fold(<Exercise>[], (
-          previousValue,
-          element,
-        ) {
-          if (element is Superset) {
-            return [...previousValue, ...element.exercises];
-          } else {
-            return [...previousValue, element as Exercise];
-          }
-        }),
+            'Superset #${((event.workout is Workout ? event.workout!.exercises : notebookState.unsavedExercises).whereType<List>().length + 1).toString()}',
+        exercises: event.supersetExercises.fold(
+          <Exercise>[],
+          (prev, element) => element is Superset
+              ? [...prev, ...element.exercises]
+              : [...prev, element as Exercise],
+        ),
       );
-      final exercises = List<Model>.from(
-        notebookState.unsavedExercises.map((e) {
-          return !event.supersetExercises.contains(e) ? e : null;
-        }).whereType<Exercise>(),
+      final List<Model> list = List<Model>.from(
+        (event.workout is Workout
+                ? event.workout!.exercises
+                : notebookState.unsavedExercises)
+            .map((e) {
+              return !event.supersetExercises.contains(e) ? e : null;
+            })
+            .whereType<Exercise>(),
       );
+      if (event.workout is Workout) {
+        // EditWorkoutScreen
+        final dateAsString = event.date!.toString();
+        key = DataBoxKeys.other;
+        payload = {
+          AppOtherKeys.dateWorkoutsAsssigned.name:
+              notebookState.workoutsAssigned,
+        };
+        idx = _getElementPosition(
+          notebookState.workoutsAssigned[dateAsString]!,
+          event.workout!,
+        );
+        final updated = notebookState.workoutsAssigned;
+        updated[dateAsString]![idx] = updated[dateAsString]![idx].copyWith(
+          exercises: list,
+        );
+        notebookState = notebookState.copyWith(workoutsAssigned: updated);
+      } else {
+        // CreateWorkoutScreen
+        key = DataBoxKeys.exercises;
+        payload = {
+          AppWorkoutKeys.saved.name: notebookState.savedExercisesNames,
+          AppWorkoutKeys.unsaved.name: notebookState.unsavedExercises,
+        };
+        notebookState = notebookState.copyWith(unsavedExercises: list);
+      }
+
       // TODO In supersetMode error occure when [Exercise] ia added before [Superset] into supersetExercises
+      // In future replece .add() with vvvv
       // exercises.insert(event.supersetPosition, superset);
-      exercises.add(superset);
-
-      notebookState = notebookState.copyWith(unsavedExercises: exercises);
-
-      await _repository.write(DataBoxKeys.exercises, {
-        AppWorkoutKeys.saved.name: notebookState.savedExercisesNames,
-        AppWorkoutKeys.unsaved.name: notebookState.unsavedExercises,
-      });
+      list.add(superset);
+      await _repository.write(key, payload);
       emit(notebookState);
     } catch (e) {
       emit(NotebookFailure(e.toString()));
