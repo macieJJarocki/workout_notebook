@@ -100,7 +100,11 @@ class _ExerciseListElementState extends State<ExerciseListElement> {
                       Column(
                         children: [
                           PopupMenuButton(
-                            itemBuilder: (context) => _popupMenuItems(context),
+                            itemBuilder: (context) => _popupMenuItems(
+                              context,
+                              widget.supersetExerciseIdx,
+                              widget.modelExerciseIdx,
+                            ),
                           ),
                         ],
                       ),
@@ -149,7 +153,11 @@ class _ExerciseListElementState extends State<ExerciseListElement> {
     );
   }
 
-  List<PopupMenuItem> _popupMenuItems(BuildContext context) => [
+  List<PopupMenuItem> _popupMenuItems(
+    BuildContext context,
+    int? supersetExerciseIdx,
+    int? modelExerciseIdx,
+  ) => [
     PopupMenuItem(
       child: ListTile(
         title: Text(
@@ -162,25 +170,35 @@ class _ExerciseListElementState extends State<ExerciseListElement> {
       onTap: () {
         showDialog(
           context: context,
-          builder: (context) => widget.isNewWorkout
-              // called in CreateWorkoutScreen
-              ? AppOneFieldDailog(
-                  title: AppLocalizations.of(context)!.dailog_edit_exercise,
-                  model: widget.exercise,
-                  onPressed: (String name) => context.read<NotebookBloc>().add(
-                    NotebookEntityEdited(
-                      model: widget.exercise.copyWith(name: name),
-                    ),
-                  ),
-                )
-              // called in EditWorkoutScreen
-              : ExerciseFormDailog(
-                  isNewExercise: false,
-                  exercise: widget.exercise,
-                  model: widget.model,
-                  date: widget.date,
-                  title: AppLocalizations.of(context)!.dailog_edit_exercise,
-                ),
+          builder: (context) {
+            return widget.isNewWorkout
+                // called in CreateWorkoutScreen
+                ? AppOneFieldDailog(
+                    title: AppLocalizations.of(context)!.dailog_edit_exercise,
+                    model: widget.exercise,
+                    onPressed: (String name) {
+                      context.read<NotebookBloc>().add(
+                        NotebookEntityEdited(
+                          model: widget.exercise.copyWith(name: name),
+                          supersetExerciseIdx: supersetExerciseIdx,
+                          modelExercisesIdx: modelExerciseIdx,
+                        ),
+                      );
+                    },
+                  )
+                // called in EditWorkoutScreen
+                : ExerciseFormDailog(
+                    //TODO This model produce error but workout no
+                    // model: widget.model,
+                    model: widget.workout,
+                    exercise: widget.exercise,
+                    date: widget.date,
+                    supersetExerciseIdx: supersetExerciseIdx,
+                    modelExerciseIdx: modelExerciseIdx,
+                    isNewExercise: false,
+                    title: AppLocalizations.of(context)!.dailog_edit_exercise,
+                  );
+          },
         );
       },
     ),

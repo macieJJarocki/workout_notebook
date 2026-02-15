@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:workout_notebook/data/models/exercise.dart';
 import 'package:workout_notebook/data/models/model.dart';
+import 'package:workout_notebook/data/models/superset.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
 import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
@@ -16,9 +17,13 @@ class ExerciseFormDailog extends StatefulWidget {
     this.exercise,
     this.model,
     this.date,
+    this.modelExerciseIdx,
+    this.supersetExerciseIdx,
     required this.isNewExercise,
     required this.title,
   });
+  final int? supersetExerciseIdx;
+  final int? modelExerciseIdx;
   final Exercise? exercise;
   final String title;
   final Model? model;
@@ -79,6 +84,22 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
     setsController.dispose();
 
     super.dispose();
+  }
+
+  Model _getupdatedExercie(Model model) {
+    if (model.uuid == widget.exercise!.uuid) {
+      return widget.exercise!.copyWith(
+        name: nameController.text,
+        weight: double.tryParse(
+          weightController.text,
+        ),
+        repetitions: int.tryParse(
+          repetitionsController.text,
+        ),
+        sets: int.tryParse(setsController.text),
+      );
+    }
+    return model;
   }
 
   @override
@@ -156,7 +177,7 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
           ),
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              final workout = (widget.model! as Workout);
+              Workout workout = (widget.model! as Workout);
               if (widget.isNewExercise) {
                 context.read<NotebookBloc>().add(
                   NotebookPlanExerciseAdded(
@@ -169,23 +190,32 @@ class _ExerciseFormDailogState extends State<ExerciseFormDailog> {
                   ),
                 );
               } else {
-                final editedExercises = workout.exercises.map(
-                  (e) {
-                    if (e.uuid == widget.exercise!.uuid) {
-                      return widget.exercise!.copyWith(
-                        name: nameController.text,
-                        weight: double.tryParse(weightController.text),
-                        repetitions: int.tryParse(repetitionsController.text),
-                        sets: int.tryParse(setsController.text),
-                      );
-                    }
-                    return e;
-                  },
-                ).toList();
+                final editedExercises = widget.supersetExerciseIdx is int
+                    ? List<Exercise>.from(
+                        (workout.exercises[widget.modelExerciseIdx!]
+                                as Superset)
+                            .exercises
+                            .map(_getupdatedExercie),
+                      )
+                    : workout.exercises.map(_getupdatedExercie).toList();
+                if (widget.supersetExerciseIdx is int) {
+                  final modelUpdated =
+                      (workout.exercises[widget.modelExerciseIdx!] as Superset)
+                          .copyWith(
+                            exercises: editedExercises as List<Exercise>,
+                          );
+
+                  workout.exercises[widget.modelExerciseIdx!] = modelUpdated;
+                } else {
+                  workout = workout.copyWith(exercises: editedExercises);
+                }
+
                 context.read<NotebookBloc>().add(
                   NotebookEntityEdited(
-                    date: widget.date as DateTime,
-                    model: workout.copyWith(exercises: editedExercises),
+                    date: widget.date!,
+                    model: workout,
+                    modelExercisesIdx: widget.modelExerciseIdx,
+                    supersetExerciseIdx: widget.supersetExerciseIdx,
                   ),
                 );
               }

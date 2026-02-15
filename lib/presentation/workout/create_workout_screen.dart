@@ -123,6 +123,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                                                     model as Exercise;
                                                     renderWidget = ExerciseListElement(
                                                       exercise: model,
+                                                      modelExerciseIdx: index,
                                                       isSupersetMode:
                                                           isSupersetMode,
                                                       isNewWorkout: true,

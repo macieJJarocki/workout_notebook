@@ -131,7 +131,7 @@ class _EditWorkoutScreenState extends State<EditWorkoutScreen> {
                                                 date: widget.date,
                                                 modelExerciseIdx: index,
                                                 isSupersetMode: isSupersetMode,
-                                                isNewWorkout: true,
+                                                isNewWorkout: false,
                                                 isSupersetElement:
                                                     supersetExercises.contains(
                                                       model,

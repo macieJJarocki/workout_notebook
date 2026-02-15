@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:workout_notebook/data/models/model.dart';
 import 'package:workout_notebook/data/models/superset.dart';
 import 'package:workout_notebook/data/models/workout.dart';
 import 'package:workout_notebook/l10n/app_localizations.dart';
@@ -8,6 +9,7 @@ import 'package:workout_notebook/presentation/notebook/bloc/notebook_bloc.dart';
 import 'package:workout_notebook/presentation/workout/widgets/exercise_list_element.dart';
 import 'package:workout_notebook/utils/app_theme.dart';
 import 'package:workout_notebook/utils/widgets/app_dailog.dart';
+import 'package:workout_notebook/utils/widgets/app_one_field_dailog.dart';
 import 'package:workout_notebook/utils/widgets/app_outlined_button.dart';
 
 class SupersetListElement extends StatefulWidget {
@@ -75,9 +77,9 @@ class _SupersetListElementState extends State<SupersetListElement> {
                       date: widget.date,
                       isNewWorkout: widget.isNewWorkout,
                       isSupersetMode: widget.isSupersetMode,
+                      isSupersetElement: widget.isSupersetElement,
                       modelExerciseIdx: widget.modelExerciseIdx,
                       supersetExerciseIdx: idx,
-                      isSupersetElement: widget.isSupersetElement,
                       onTap: widget.onTap,
                     );
                   },
@@ -91,6 +93,42 @@ class _SupersetListElementState extends State<SupersetListElement> {
   }
 
   List<PopupMenuItem> _popupMenuItems(BuildContext context) => [
+    PopupMenuItem(
+      child: ListTile(
+        title: Text(
+          AppLocalizations.of(context)!.button_edit,
+          textAlign: .center,
+          style: TextStyle(fontSize: 18, color: Colors.blue),
+        ),
+        contentPadding: .zero,
+      ),
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => AppOneFieldDailog(
+            title: AppLocalizations.of(context)!.dailog_edit_exercise,
+            model: widget.superset,
+            onPressed: (String name) {
+              Model updatedModel = widget.workout ?? widget.superset;
+              if (updatedModel is Workout) {
+                updatedModel.exercises[widget.modelExerciseIdx!] =
+                    (updatedModel.exercises[widget.modelExerciseIdx!]
+                            as Superset)
+                        .copyWith(name: name);
+              } else {
+                updatedModel = (updatedModel as Superset).copyWith(name: name);
+              }
+              context.read<NotebookBloc>().add(
+                NotebookEntityEdited(
+                  model: updatedModel,
+                  modelExercisesIdx: widget.modelExerciseIdx,
+                ),
+              );
+            },
+          ),
+        );
+      },
+    ),
     PopupMenuItem(
       child: ListTile(
         title: Text(

@@ -68,9 +68,7 @@ class _AppOneFieldDailogState extends State<AppOneFieldDailog> {
           },
           child: Text(
             AppLocalizations.of(context)!.button_create,
-            style: TextStyle(
-              fontSize: 20,
-            ),
+            style: TextStyle(fontSize: 20),
           ),
         ),
       ],

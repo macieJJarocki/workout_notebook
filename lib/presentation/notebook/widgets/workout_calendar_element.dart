@@ -49,6 +49,7 @@ class _CalendarElementState extends State<CalendarElement> {
               context: context,
               builder: (context) {
                 // TODO when tere is no workout error occure "(Null check operator used on a null value)"
+                // when savedWorkouts.length == 0 :)
                 return workouts.isNotEmpty ||
                         workoutsAssigned[dateAsString]!.isNotEmpty
                     ? AppDailog(
